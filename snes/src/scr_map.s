@@ -60,6 +60,9 @@ mp_water: .res 2
 mp_nsp: .res 2                 ; last N-Spade palette variant
 mp_node: .res 2                ; node being played / visited (Toad house, spade)
 mp_tmp: .res 8
+nd_x: .res 2                   ; node_at scratch (must not share mp_tmp)
+nd_y: .res 2
+nd_i: .res 2
 mp_nitems: .res 2
 mp_mitems: .res 2              ; menu item count
 scr_lvl: .res 2                ; level to play (LVL_*)
@@ -553,17 +556,18 @@ is_path:
 
 ; X, Y = tile -> A = node index ($FFFF none, N flag set). The airship follows sv_ship when it retreated.
 node_at:
-    stx mp_tmp+4
-    sty mp_tmp+6
+    ; own scratch (nd_*): callers keep their move direction etc. in mp_tmp, which this must not clobber
+    stx nd_x
+    sty nd_y
     jsr ship_node               ; A = airship node index or $FFFF, carry = moved
     bcc @static
-    sta mp_tmp
+    sta nd_i
     jsr ship_pos                ; X, Y = where it is now
-    cpx mp_tmp+4
+    cpx nd_x
     bne @static
-    cpy mp_tmp+6
+    cpy nd_y
     bne @static
-    lda mp_tmp
+    lda nd_i
     rts
 @static:
     ldx #0
@@ -572,11 +576,11 @@ node_at:
     bcs @no
     lda mp_nd+1,x
     and #$00FF
-    cmp mp_tmp+4
+    cmp nd_x
     bne @n
     lda mp_nd+2,x
     and #$00FF
-    cmp mp_tmp+6
+    cmp nd_y
     bne @n
     ; the airship's home cell is empty once it moved
     lda mp_nd+3,x

@@ -15,6 +15,9 @@ bn_items: .res 6               ; the 3 chests' items
 bn_lp: .res 2
 bn_pp: .res 2
 bn_tmp: .res 8
+bn_px: .res 2                  ; Toad house: the player's drawn x (walks to the chosen chest)
+bn_walkt: .res 2
+bn_face: .res 2                ; 1 = facing left
 ; spade
 sp_pos: .res 6
 sp_row: .res 2
@@ -87,6 +90,10 @@ toad_enter:
     jsr bar_setup
     lda #1
     sta bn_sel
+    lda #76 + 48               ; standing beside the middle chest
+    sta bn_px
+    stz bn_walkt
+    stz bn_face
     lda #$FFFF
     sta bn_open
     sta bn_lp
@@ -355,7 +362,7 @@ toad_draw:
     inc bn_tmp
     brl @ch
 @chd:
-    ; the player beside the chosen chest
+    ; the player walks (2 px per frame, walk cycle, facing the way he goes) to the chest beside the chosen one
     lda bn_sel
     asl a
     asl a
@@ -366,16 +373,62 @@ toad_draw:
     clc
     adc bn_tmp
     adc #76
-    sta spr_x
-    lda #128
-    sta spr_y
-    lda #$30
-    sta spr_fl
+    sta bn_tmp+2                ; target x
+    cmp bn_px
+    beq @stand
+    bcc @left
+    stz bn_face
+    lda bn_px
+    inc a
+    inc a
+    cmp bn_tmp+2
+    bcc :+
+    lda bn_tmp+2
+:   sta bn_px
+    bra @walk
+@left:
+    lda #1
+    sta bn_face
+    lda bn_px
+    dec a
+    dec a
+    cmp bn_tmp+2
+    bcs :+
+    lda bn_tmp+2
+:   sta bn_px
+@walk:
+    inc bn_walkt
+    lda bn_walkt
+    lsr a
+    lsr a
+    lsr a
+    and #1                      ; walk frame 1/2, 8 ticks each
+    sta bn_tmp+4
+    ldx ss_cur
+    lda pp_form,x
+    and #$00FF
+    asl a
+    clc
+    adc bn_tmp+4
+    adc #SP_WALK1_SMALL
+    bra @put
+@stand:
+    stz bn_walkt
     ldx ss_cur
     lda pp_form,x
     and #$00FF
     clc
     adc #SP_IDLE_SMALL
+@put:
+    pha
+    lda bn_px
+    sta spr_x
+    lda #128
+    sta spr_y
+    lda #$30
+    ora bn_face                 ; bit0 = hflip
+    sta spr_fl
+    pla
     jsl scr_obj_put
     jsl scr_hud_cards
     rts

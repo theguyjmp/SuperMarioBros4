@@ -717,6 +717,7 @@ namespace SMB4.Tools
             AddSpr(s, "CHEST_O", 16, SprImgPal("chest.open", Art.PreviewPalFor("chest.open")));
             ItemIcons(s);
             PlayerIdle(s);
+            PlayerWalk(s);
             return s;
         }
 
@@ -829,6 +830,20 @@ namespace SMB4.Tools
                     Spr((p, x, y) => Player.DrawIdle(p, ff, true, x, y, false)));
                 im.Slot = 7; im.Dynamic = true;
             }
+        }
+
+        /// <summary>Walk frames 1/2 for every form (ids WALK1_<FORM>, WALK2_<FORM> consecutive per form: id = SP_WALK1_SMALL + form*2 + frame-1), hflip via FlipW.</summary>
+        static void PlayerWalk(Scene s)
+        {
+            foreach (Form f in Enum.GetValues(typeof(Form)))
+                for (int k = 1; k <= 2; k++)
+                {
+                    Form ff = f; int kk = k;
+                    var im = AddSpr(s, "WALK" + k + "_" + Sym(f.ToString()), 16,
+                        Spr((p, x, y) => Player.DrawWalk(p, ff, false, x, y, false, kk)),
+                        Spr((p, x, y) => Player.DrawWalk(p, ff, true, x, y, false, kk)));
+                    im.Slot = 7; im.Dynamic = true;
+                }
         }
 
         // ================================================================== WORLD MAPS

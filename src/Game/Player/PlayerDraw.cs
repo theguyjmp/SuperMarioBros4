@@ -15,7 +15,7 @@ namespace SMB4.Game
         public void Animate()
         {
             int ax = Math.Abs(XVel);
-            if (InAir || State != PState.Normal) return;
+            if (InAir || State != PState.Normal && State != PState.AutoWalk) return;   // the goal walk-off animates too
             if (ax == 0 && !Skidding) { AnimFrame = 2; AnimTick = 0; return; }
             if (AnimTick > 0) { AnimTick--; return; }
             AnimFrame = (AnimFrame + 1) & 3;
@@ -223,6 +223,17 @@ namespace SMB4.Game
             if (form == Form.Small) { Body(ppu, Art.Get("ms.stand"), x, y + 16, 16, p, faceLeft, false, false); return; }
             if (form == Form.Frog && Art.Has("frog.stand")) { ppu.Spr(Art.Get("frog.stand"), x, y, p, faceLeft); return; }
             DrawSuited(ppu, form, "mb.stand", x, y, p, faceLeft, false, false, "tail.down", 0);
+        }
+
+        /// <summary>
+        /// Like DrawIdle, but one frame (1 or 2) of the walk cycle, for screens where the player walks (Toad house).
+        /// </summary>
+        public static void DrawWalk(Ppu ppu, Form form, bool luigi, int x, int y, bool faceLeft, int frame)
+        {
+            ushort[] p = FormPalette(form, luigi);
+            if (form == Form.Small) { Body(ppu, Art.Get(frame == 1 ? "ms.walk" : "ms.stand"), x, y + 16, 16, p, faceLeft, false, false); return; }
+            if (form == Form.Frog && Art.Has("frog.hop1")) { ppu.Spr(Art.Get(frame == 1 ? "frog.hop1" : "frog.hop2"), x, y, p, faceLeft); return; }
+            DrawSuited(ppu, form, frame == 1 ? "mb.walk1" : "mb.walk2", x, y, p, faceLeft, false, false, frame == 1 ? "tail.mid" : "tail.down", 0);
         }
 
         public void Draw(Ppu ppu, int camX, int camY)

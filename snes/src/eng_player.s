@@ -2320,7 +2320,10 @@ pl_animate:
     lda p_inair
     bne @r
     lda p_state
+    beq @anim
+    cmp #PS_AUTOWALK          ; the goal walk-off animates like normal walking
     bne @r
+@anim:
     lda p_xvel
     jsr abs16
     sta e_t0
