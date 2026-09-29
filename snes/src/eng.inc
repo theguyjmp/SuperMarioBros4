@@ -45,8 +45,26 @@ GM_TITLE = 0
 GM_SELECT = 1
 GM_PLAY = 2
 GM_GAMEOVER = 3
+GM_SCREEN = 4               ; screens module (scr_frame / scr_nmi) owns the frame
 
-MAX_ENTS = 20
+; level results (g_result / w_result; C# LevelResult order)
+RES_NONE = 0
+RES_CLEARED = 1
+RES_DIED = 2
+RES_TIMEUP = 3              ; (C# never produces it: time-out = death)
+RES_EXITED = 4              ; pause menu "EXIT LEVEL"
+RES_FORTRESS = 5            ; Boom Boom's orb
+RES_WORLD = 6               ; Koopaling's wand (airship)
+RES_GAME = 7                ; Bowser defeated
+
+; level kinds (lvl_kind)
+LK_LEVEL = 0
+LK_BATTLE = 1
+LK_FORTRESS = 2
+LK_AIRSHIP = 3
+LK_CASTLE = 4
+
+MAX_ENTS = 24
 
 ; ------------------------------------------------------------------ zero page temps
 .globalzp e_t0, e_t1, e_t2, e_t3, e_t4, e_t5, e_t6, e_t7, e_p0, e_p1, e_p2, e_tx, e_ty
@@ -76,8 +94,8 @@ MAX_ENTS = 20
 .global pl_control, pl_power_update, pl_detect_solids, pl_timers, pl_animate, pl_draw, pl_hurt, pl_die, pl_bounce
 .global pl_powerup, pl_get_star, pl_dying_tick, pl_init
 .global w_tick, w_hit_block, w_bump_above, w_update_camera
-.global ent_init, ent_spawn_initial, ent_tick, ent_draw, ent_add, ent_find_free, ent_spawner, ent_count_class
-.global ent_bump_above, ent_kick_carried, ent_drop_carried, ent_tail_hit, ent_add_fx, ent_release
+.global ent_init, ent_spawn_initial, ent_tick, ent_draw, ent_count_class
+.global ent_bump_above, ent_kick_carried, ent_drop_carried, ent_tail_hit, ent_release, ent_statue_landed
 
 ; ------------------------------------------------------------------ macros
 .macro ASR16
@@ -136,5 +154,7 @@ MAX_ENTS = 20
 .global game_arrive_load, eng_is_hidden, eng_find_link
 .global w_tallyend, w_tallydone, w_hurrywait, w_psound, eng_tick_count
 .global ent_add_bump, ent_add_coinpop, ent_add_debris4, ent_add_popup, ent_add_sparkle, ent_effects_tick, ent_remove_carried, game_add_card, game_arrive_show, ent_add_item, ent_add_cardfly, ent_goal_update
-.global w_start_pswitch, eng_pswitch_swap
+.global w_start_pswitch, eng_pswitch_swap, ent_battle_check
 .global bonus_lives, snd_status
+.global g_player, g_pwing, g_star, g_result, g_allowexit, eng_level_start, w_boss_clear, w_clear_res
+.global eng_save_load, eng_save_store, eng_save_erase, eng_save_valid, eng_save_buf

@@ -10,7 +10,7 @@ powershell -ExecutionPolicy Bypass -File snes\test\parity.ps1 -Tools .agentbin\s
    tick: `tick held X Y XVel YVel state form` (X/Y/vel in the game's 1/16-px units, held = C# `Btn` bits).
    SCRIPT = the `shot` token syntax (`R30` right 30 ticks, `BR60` run right, `J`/`A` jump, `L` `U` `D`, `W30` wait);
    Pressed is derived continuously (like a real pad), the same rule the ROM applies to the SNES pad.
-2. parity.ps1 turns the trace into `<Out>\parity_test.lua`: it picks the level through the level select (writes `g_sel`),
+2. parity.ps1 turns the trace into `<Out>\parity_test.lua`: it starts the level through the test hook `eng_dbg_level`,
    sets the start form (`p_form`, poked while the level loads), feeds each tick's buttons (C# A = SNES B, C# B = SNES Y),
    and after every tick compares `p_x p_y p_xvel p_yvel` with the trace; it also checks the ROM saw the intended pad bits
    (`pad_held`, skipped while the course-clear auto-walk overrides it). Output: `PASS: n ticks match exactly` or the first
@@ -45,3 +45,17 @@ Example (current build): `p_x=$0907 p_y=$0909 p_xvel=$090B p_yvel=$090D w_frame=
 
 ## Screenshots
 Any Lua with `save(name)` through the runner; `snes\build-engine\parity_test.lua` can be edited to `save()` at chosen ticks.
+
+## Engine test tools (phase 2, 2026-09-29) — all in `snes/test/`
+| script | what |
+|---|---|
+| `build-engine.ps1 -Tools <exe> -Out <dir> [-NoExport]` | like `snes\build.ps1`, but other agents' `ent_*.s` / `scr_*` files that don't assemble or link right now are left out (listed as "skipped") instead of failing the build |
+| `parity.ps1 ... [-Level] [-Form] [-Script]` | C# trace vs ROM frame by frame (above) |
+| `parity-suite.ps1 -Tools <exe> -Out <dir> [-Only 3-1]` | parity for one level per theme (plains 1-1, underground 1-2, sky 1-4/5-1, desert 2-1, sea 3-1, jungle 4-1, ice 6-1, machine 7-1, volcano 8-2, fortress 1-f, airship 1-a, castle 8-c) + Fire, Big swimming, Frog swimming, Raccoon P-run + flight, Tanooki statue |
+| `qa-rom.ps1 -Tools <exe> -Out <dir> [-Ticks 900] [-Levels 1-1,hb] [-NoParity] [-NoShots]` | boots **every level** (55 incl. `hb`), plays it blind (run right + jump) and fails on BRK/COP (crash), main-loop hang (level tick stalls 180 frames), NMI stall, level never starting; PNG per level in `<Out>\qa\`; then the 1-1 parity test. Batches of 12 levels per Mesen run (the test runner quits after ~25k frames) |
+| `shots.ps1 -Out <dir> -Level 3-3 [-Form 5] [-Hold right,up] [-JumpEvery 20] [-TapY 16] [-Shots 60,160] [-Poke "p_star=500"] [-Tag _x]` | screenshots at given level ticks with scripted input |
+
+All of them start levels through the **test hook `eng_dbg_level`** (poke `LVL_*+1`, any mode; the engine starts
+that level with a fresh session next frame), so they don't depend on the title/level-select/screens code.
+Results 2026-09-29: parity suite 17/17 (1-1 full route 1925 ticks; others until the script ends or Mario dies at
+the same tick in both); QA 55/55 levels (no crash/hang).

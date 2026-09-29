@@ -10,3 +10,5 @@ snes/tools/*.zip
 .vscode/
 Thumbs.db
 *.tmp
+# player self-test output
+bin/selftest/

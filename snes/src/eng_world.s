@@ -30,6 +30,7 @@ hb_t: .res 2
 hb_c: .res 2
 ar_mx: .res 2
 ar_my: .res 2
+w_clear_res: .res 2        ; result the running clear ends with (RES_*)
 
 .segment "CODE2"
 .a16
@@ -146,6 +147,7 @@ w_tick:
 @alive:
     jsl ent_tick                ; Spawner, updates, adds, collisions, despawn, removal
     jsr timers_tick
+    jsl ent_battle_check        ; Hammer Bro battle won -> treasure chest
     lda w_shake
     beq :+
     dec w_shake
@@ -1463,23 +1465,21 @@ pipe_tick:
 @pipe:
     stz e_t0                    ; dx
     stz e_t1                    ; dy
+    ldx #8                      ; step = 0.5 px per tick
+    ldy #$10000-8
     lda p_pipedir
     cmp #2
     bne :+
-    lda #8
-    sta e_t1
+    stx e_t1                    ; down
 :   cmp #8
     bne :+
-    lda #$10000-8
-    sta e_t1
+    sty e_t1                    ; up
 :   cmp #6
     bne :+
-    lda #8
-    sta e_t0
+    stx e_t0                    ; right
 :   cmp #4
     bne :+
-    lda #$10000-8
-    sta e_t0
+    sty e_t0                    ; left
 :   lda p_x
     clc
     adc e_t0
@@ -1797,24 +1797,55 @@ set_xy_plain:
     rts
 
 ; ================================================================== goal / course clear
-; w_start_clear: A = card (0-2, or $FFFF)
+; w_start_clear: A = card (0-2, or $FFFF) (C# StartClear(card, Cleared))
 w_start_clear:
+    ldx #RES_CLEARED
+    stx w_clear_res
+    bra start_clear
+; w_boss_clear: A = result RES_FORTRESS / RES_WORLD (C# StartClear(-1, result): boss jingle, no auto-walk)
+w_boss_clear:
+    sta w_clear_res
+    lda #$FFFF
+start_clear:
     ldx w_clearing
     beq :+
     rtl
 :   sta w_cardgot
     lda #1
     sta w_clearing
-    MUSIC "CLEAR"
+    lda w_clear_res
+    cmp #RES_FORTRESS
+    bne :+
+    MUSIC "FORTRESSCLEAR"
+    bra @m
+:   cmp #RES_WORLD
+    bne :+
+    MUSIC "WORLDCLEAR"
+    bra @m
+:   MUSIC "CLEAR"
+@m: jsr autowalk_on
+    beq :+
     lda #PS_AUTOWALK
     sta p_state
-    lda #1
+:   lda #1
     sta w_endtimer
     stz w_tallydone
     stz p_star
     stz p_hurtinv
     rtl
 
+; auto-walk after the goal: result == Cleared && kind != battle -> Z clear
+autowalk_on:
+    lda w_clear_res
+    cmp #RES_CLEARED
+    bne @no
+    lda lvl_kind
+    cmp #LK_BATTLE
+    beq @no
+    lda #1
+    rts
+@no: lda #0
+    rts
 autowalk_tick:
     lda pad_held
     pha
@@ -1839,7 +1870,9 @@ end_tick:
     sbc #$90
     and #$FF
     sta w_wiggly
-    ; keep walking off with normal physics while on screen
+    ; keep walking off with normal physics while on screen (course clear only)
+    jsr autowalk_on
+    beq :+
     jsr get_px
     sec
     sbc cam_x
@@ -1907,6 +1940,6 @@ end_tick:
     and #$00FF
     bne @r
 @done:
-    lda #1
+    lda w_clear_res
     sta w_result
 @r: rtl

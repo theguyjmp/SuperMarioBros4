@@ -78,18 +78,19 @@ namespace SMB4.Game
         /// <summary>
         /// Where the suit overlays sit on a big body frame (measured on the right-facing art).
         /// view: 0 = side view, 1 = front view, 2 = back view.
-        /// (hx, hy): head offset from its standard place (cap top on row 1, cap over columns 2-14);
+        /// (hx, hy): offset of the head overlays from their art origin (the overlays were drawn for a cap top on row 1);
         /// ears, Tanooki hood and Hammer helmet follow it. (rx, ry): rump point where the tail base attaches.
         /// </summary>
         static void Anchor(string name, out int view, out int hx, out int hy, out int rx, out int ry)
         {
-            view = 0; hx = 0; hy = 0; rx = 4; ry = 21;
+            view = 0; hx = 0; hy = -4; rx = 4; ry = 21;             // cap top on box row -3 (head 12 rows above a 13-row torso)
             switch (name)
             {
-                case "mb.run1": case "mb.run2": case "mb.run3": hx = 1; hy = 2; rx = 5; ry = 23; break;   // P-run: leaning forward
+                case "mb.walk1": hy = -3; ry = 22; break;                 // stride frame: body bobs 1 px down
+                case "mb.run1": case "mb.run2": case "mb.run3": hx = 2; break;   // P-speed sprint: head leaned forward
                 case "mb.skid": hx = -1; rx = 3; break;                  // leaning back against the slide
-                case "mb.duck": hy = 12; rx = 3; ry = 27; break;
-                case "mb.slide": hy = 12; rx = 3; ry = 28; break;
+                case "mb.duck": hy = 9; rx = 3; ry = 27; break;
+                case "mb.slide": hy = 11; rx = 3; ry = 28; break;
                 case "mb.front": case "mb.spinfront": view = 1; break;
                 case "mb.climb1": case "mb.climb2": case "mb.spinback": view = 2; break;
             }
@@ -97,7 +98,7 @@ namespace SMB4.Game
 
         /// <summary>
         /// Draws a body frame anchored to the 16-wide player box: frames wider than 16 px are centered on it and
-        /// frames taller than the nominal height (boxH: 16 small, 32 big) extend upward, so poses with a raised fist
+        /// frames taller than the nominal height (boxH: 16 small, 32 big) extend upward, so poses with an outstretched arm
         /// or a trailing leg aren't cropped by the box (the hitbox is unchanged).
         /// </summary>
         public static void Body(Ppu ppu, Img img, int x, int y, int boxH, ushort[] pal, bool flip, bool flipV, bool behind)
@@ -206,7 +207,7 @@ namespace SMB4.Game
                 if (name == "mb.duck") Overlay(ppu, "shell.duck", sx, sy, 0, 16, p, flip, flipV, behind);
                 else if (view == 2) Overlay(ppu, "shell.back", sx, sy, 0, 12, p, flip, flipV, behind);
                 if (view == 0) Overlay(ppu, "helmet", sx, sy, hx, hy, p, flip, flipV, behind);
-                else Overlay(ppu, Art.Has("helmet.front") ? "helmet.front" : "helmet", sx, sy, 0, 0, p, flip, flipV, behind);
+                else Overlay(ppu, Art.Has("helmet.front") ? "helmet.front" : "helmet", sx, sy, 0, hy, p, flip, flipV, behind);
             }
         }
 

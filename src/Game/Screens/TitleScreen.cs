@@ -12,7 +12,7 @@ namespace SMB4.Game
         readonly MenuNav nav = new MenuNav();
         static readonly string[] Items = { "1 PLAYER GAME", "2 PLAYER GAME", "HOW TO PLAY", "OPTIONS", "QUIT" };
         // attract actors
-        int marioX = -24, marioY, marioVy, goombaX = 290;
+        int marioX = -24, marioY, marioVy, goombaX = 290;   // marioY / marioVy in 1/16 px (SMB3 units)
 
         public override void Enter()
         {
@@ -29,8 +29,8 @@ namespace SMB4.Game
             if (marioX > 300) { marioX = -40; goombaX = 290; }
             goombaX -= 1;
             if (marioY == 0 && Math.Abs((marioX + 8) - (goombaX + 8)) < 40 && marioX < goombaX) { marioVy = -0x3C; }
-            if (marioY < 0 || marioVy < 0) { marioY += marioVy; marioVy += 4; if (marioY >= 0) { marioY = 0; marioVy = 0; } }
-            if (Math.Abs(marioX - goombaX) < 12 && marioY < -4 && marioVy > 0) { goombaX = 400; marioVy = -0x30; Sound.Sfx(SfxId.Stomp); }
+            if (marioY < 0 || marioVy < 0) { marioY += marioVy; marioVy += 4; if (marioVy > 0x40) marioVy = 0x40; if (marioY >= 0) { marioY = 0; marioVy = 0; } }
+            if (Math.Abs(marioX - goombaX) < 12 && marioY < -64 && marioVy > 0) { goombaX = 400; marioVy = -0x30; Sound.Sfx(SfxId.Stomp); }
 
             if (curtainY > -200 && (any.P(Btn.Start) || any.P(Btn.A))) { curtainY = -200; t = 60; return; }
             if (curtainY > -200) return;
@@ -72,8 +72,8 @@ namespace SMB4.Game
             // actors
             var goom = Art.Get((t / 8) % 2 == 0 ? "goomba.1" : "goomba.2");
             if (goombaX < 300) ppu.Spr(goom, goombaX, 176, Art.Pal("goomba"));
-            string mf = marioY < 0 ? "mb.jump" : new[] { "mb.walk1", "mb.walk2", "mb.stand", "mb.walk2" }[(t / 4) % 4];
-            Player.Body(ppu, Art.Get(mf), marioX, 160 + marioY, 32, Art.Pal("mario"), false, false, false);
+            string mf = marioY < -16 ? "mb.jump" : new[] { "mb.walk1", "mb.walk2", "mb.stand", "mb.walk2" }[(t / 4) % 4];
+            Player.Body(ppu, Art.Get(mf), marioX, 160 + (marioY >> 4), 32, Art.Pal("mario"), false, false, false);
             // menu
             if (curtainY <= -200)
             {

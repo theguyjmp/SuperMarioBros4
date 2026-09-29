@@ -61,6 +61,11 @@ namespace SMB4.Platform
         [DllImport("winmm.dll")] public static extern uint timeBeginPeriod(uint ms);
         [DllImport("winmm.dll")] public static extern uint timeEndPeriod(uint ms);
         [DllImport("dwmapi.dll")] public static extern int DwmFlush();
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] public static extern IntPtr LoadLibraryW(string path);
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)] public static extern IntPtr GetProcAddress(IntPtr module, string name);
+        [DllImport("kernel32.dll")] public static extern bool FreeLibrary(IntPtr module);
+        [DllImport("kernel32.dll")] public static extern bool AttachConsole(int pid);
+        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory")] public static extern void CopyMemory(IntPtr dst, IntPtr src, UIntPtr len);
 
         // ------------------------------------------------------------------ OpenGL 1.1
         public const uint GL_TEXTURE_2D = 0x0DE1, GL_TEXTURE_MIN_FILTER = 0x2801, GL_TEXTURE_MAG_FILTER = 0x2800,

@@ -188,7 +188,7 @@ brk_handler:
     .byte "SUPER MARIO BROS 4   "   ; 21-byte title
     .byte $30                        ; LoROM + FastROM
     .byte $02                        ; ROM + RAM + battery (SRAM for saves)
-    .byte $0B                        ; ROM size 2 MB
+    .byte $0C                        ; ROM size 4 MB
     .byte $03                        ; SRAM 8 KB
     .byte $01                        ; region: North America
     .byte $33                        ; developer id

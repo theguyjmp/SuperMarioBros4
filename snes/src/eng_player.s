@@ -927,12 +927,26 @@ jump_fly_flutter:
 actions:
     lda pad_pressed
     and #BTN_B
-    beq @nob
+    jeq @nob
     jsr tail_suit
     beq @notail
     lda pad_held
     and #BTN_DOWN
+    beq @spin
+    ; Tanooki statue (Down + B)
+    lda p_form
+    cmp #PF_TANOOKI
     bne @nob
+    lda p_statue
+    ora p_carrying
+    bne @nob
+    lda #$C0
+    sta p_statue
+    stz p_xvel
+    jsr puff16
+    SFX "STATUE"
+    bra @nob
+@spin:
     lda p_tailattack
     ora p_carrying
     ora p_statue
@@ -944,13 +958,22 @@ actions:
 @notail:
     lda p_form
     cmp #PF_FIRE
+    beq :+
+    cmp #PF_HAMMER
     bne @nob
-    lda p_carrying
+:   lda p_carrying
     ora p_ducking
     bne @nob
-    jsl ent_throw_fireball
+    jsl ent_throw_fireball      ; fireball or hammer (max 2 player projectiles)
 @nob:
-    ; releasing B kicks whatever we carry
+    ; the statue ends when Down is released
+    lda p_statue
+    beq :+
+    lda pad_held
+    and #BTN_DOWN
+    bne :+
+    jsr end_statue
+:   ; releasing B kicks whatever we carry
     lda p_carrying
     beq :+
     lda pad_held
@@ -958,6 +981,25 @@ actions:
     bne :+
     jsl ent_kick_carried
 :   rts
+
+; EndStatue: statue off, puff, poof sound
+end_statue:
+    stz p_statue
+    jsr puff16
+    SFX "POOF"
+    rts
+
+; W.Puff(Px, Py + 16)
+puff16:
+    jsr get_px
+    sta ent_new_x
+    jsr get_py
+    clc
+    adc #16
+    sta ent_new_y
+    jsl ent_puff_at
+    rts
+.global ent_new_x, ent_new_y, ent_puff_at
 
 ; ------------------------------------------------------------------ swimming (C# UpdateWaterState, Swim*)
 update_water_state:
@@ -1107,6 +1149,11 @@ swim_vertical:
     lda #1
     sta e_t5
 @nh:
+    lda p_form
+    cmp #PF_FROG
+    bne @nofrog
+    jmp frog_swim
+@nofrog:
     lda p_leapt
     beq @noleap
     dec p_leapt
@@ -1201,6 +1248,85 @@ swim_vertical:
     lda p_swimanim
     beq :+
     dec p_swimanim
+:   rts
+
+; Frog swimming (C# SwimVertical, Frog branch): the d-pad sets the velocity directly, no sinking. e_t5 = headOut
+frog_swim:
+    ldx #$10
+    lda pad_held
+    and #BTN_A
+    beq :+
+    ldx #$20
+:   stx e_t0                    ; sp
+    stz e_t1                    ; tx
+    lda pad_held
+    and #BTN_LEFT
+    beq :+
+    lda e_t0
+    NEG16
+    sta e_t1
+    bra :++
+:   lda pad_held
+    and #BTN_RIGHT
+    beq :+
+    lda e_t0
+    sta e_t1
+:   stz e_t2                    ; ty
+    lda pad_held
+    and #BTN_UP
+    beq :+
+    lda e_t0
+    NEG16
+    sta e_t2
+    bra :++
+:   lda pad_held
+    and #BTN_DOWN
+    beq :+
+    lda e_t0
+    sta e_t2
+:   ; XVel = tx != 0 ? tx : XVel - Sign(XVel) ; same for Y
+    lda e_t1
+    bne :+
+    lda p_xvel
+    jsr sign16
+    NEG16
+    clc
+    adc p_xvel
+:   sta p_xvel
+    lda e_t2
+    bne :+
+    lda p_yvel
+    jsr sign16
+    NEG16
+    clc
+    adc p_yvel
+:   sta p_yvel
+    ; headOut && YVel < 0 && !(Up && A held) -> YVel = 0
+    lda e_t5
+    beq @nohead
+    lda p_yvel
+    bpl @leap
+    lda pad_held
+    and #(BTN_UP|BTN_A)
+    cmp #(BTN_UP|BTN_A)
+    beq @leap
+    stz p_yvel
+@leap:
+    lda pad_held
+    and #BTN_UP
+    beq @nohead
+    lda c_apressed
+    beq @nohead
+    lda #$10000-$34
+    sta p_yvel
+    stz p_swimming
+@nohead:
+    lda #1
+    sta p_inair
+    lda e_t1
+    ora e_t2
+    beq :+
+    inc p_swimanim
 :   rts
 
 frog_land:
@@ -2119,6 +2245,9 @@ on_land:
     and #BTN_DOWN
     bne :+
     stz p_ducking
+:   lda p_statue
+    beq :+
+    jsl ent_statue_landed       ; a falling statue crushes enemies under it
 :   rts
 
 ; ================================================================== Timers
@@ -2162,6 +2291,8 @@ pl_timers:
     lda p_statue
     beq :+
     dec p_statue
+    bne :+
+    jsr end_statue
 :   lda p_throwpose
     beq :+
     dec p_throwpose

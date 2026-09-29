@@ -7,18 +7,21 @@ namespace SMB4.Platform
     public enum ScaleMode { Integer = 0, Fit = 1, Stretch = 2 }
 
     /// <summary>
-    /// Presents the 256x240 indexed frame through OpenGL 1.1: palette lookup on the CPU (61k pixels),
-    /// one texture upload, one quad. Integer scaling by default; "Fit" uses an integer prescale + linear
-    /// filtering (sharp-bilinear) so pixels stay crisp at non-integer sizes.
+    /// Presents an ARGB frame of any size through OpenGL 1.1: one texture upload, one quad. The frame has a
+    /// "logical" size used for aspect and integer scaling (e.g. a 512x448 SNES hi-res/interlaced frame is logically
+    /// 256x224). Integer scaling by default; "Fit" uses an integer prescale + linear filtering (sharp-bilinear) so
+    /// pixels stay crisp at non-integer sizes (including the 8:7 pixel shape).
     /// </summary>
     public sealed unsafe class GLPresenter : IDisposable
     {
-        public const int W = 256, H = 240;
+        public const int W = 256, H = 240;              // legacy fixed frame (Convert)
         IntPtr hwnd, hdc, hglrc;
         uint baseTex, bigTex;
-        readonly int[] frame = new int[W * H];         // ARGB (little-endian BGRA)
+        int baseTexSize;
+        int[] frame = new int[W * H];                   // ARGB (little-endian BGRA)
+        int fw = W, fh = H, lw = W, lh = H;             // frame size and logical size
         int[] big;                                      // prescaled frame for sharp fit
-        int bigFactor;
+        int bigFactor, bigW, bigH, bigTexSize;
         N.SwapIntervalFn swapInterval;
         int currentInterval = -1;
         public string Renderer = "", Version = "";
@@ -52,7 +55,8 @@ namespace SMB4.Platform
             var t = new uint[2];
             N.glGenTextures(2, t);
             baseTex = t[0]; bigTex = t[1];
-            CreateTexture(baseTex, 256, 256);
+            baseTexSize = 512;
+            CreateTexture(baseTex, baseTexSize, baseTexSize);
             return true;
         }
 
@@ -73,16 +77,30 @@ namespace SMB4.Platform
             currentInterval = interval;
         }
 
-        /// <summary>Latest converted frame (ARGB), used for screenshots.</summary>
+        /// <summary>Latest frame (ARGB, FrameWidth x FrameHeight), used for screenshots.</summary>
         public int[] LastFrame { get { return frame; } }
+        public int FrameWidth { get { return fw; } }
+        public int FrameHeight { get { return fh; } }
 
+        /// <summary>Legacy path: a 256x240 indexed frame through a palette lookup.</summary>
         public void Convert(ushort[] idx, int[] lut)
         {
+            if (frame.Length < W * H) frame = new int[W * H];
+            fw = lw = W; fh = lh = H;
             int n = lut.Length;
             fixed (ushort* s = idx) fixed (int* d = frame) fixed (int* l = lut)
             {
                 for (int i = 0; i < W * H; i++) { int c = s[i]; d[i] = l[c < n ? c : 0x0F]; }
             }
+        }
+
+        /// <summary>Sets the frame to present (copied). logicalW/H drive aspect and integer scaling.</summary>
+        public void SetFrame(int[] argb, int w, int h, int logicalW, int logicalH)
+        {
+            if (w < 1 || h < 1) return;
+            if (frame.Length < w * h) frame = new int[w * h];
+            Buffer.BlockCopy(argb, 0, frame, 0, w * h * 4);
+            fw = w; fh = h; lw = Math.Max(1, logicalW); lh = Math.Max(1, logicalH);
         }
 
         public void Present(int clientW, int clientH, ScaleMode mode, bool ntscAspect, int scanlines, bool finishAfterSwap)
@@ -99,56 +117,64 @@ namespace SMB4.Platform
             double dw, dh;
             if (mode == ScaleMode.Integer)
             {
-                int k = (int)Math.Min(Math.Floor(clientW / (W * par)), Math.Floor(clientH / (double)H));
+                int k = (int)Math.Min(Math.Floor(clientW / (lw * par)), Math.Floor(clientH / (double)lh));
                 if (k < 1) k = 1;
-                dw = Math.Round(W * par * k); dh = H * k;
-                if (dw > clientW || dh > clientH) { double s = Math.Min(clientW / (W * par), clientH / (double)H); dw = W * par * s; dh = H * s; }
+                dw = Math.Round(lw * par * k); dh = lh * k;
+                if (dw > clientW || dh > clientH) { double s = Math.Min(clientW / (lw * par), clientH / (double)lh); dw = lw * par * s; dh = lh * s; }
             }
             else if (mode == ScaleMode.Fit)
             {
-                double s = Math.Min(clientW / (W * par), clientH / (double)H);
-                dw = W * par * s; dh = H * s;
+                double s = Math.Min(clientW / (lw * par), clientH / (double)lh);
+                dw = lw * par * s; dh = lh * s;
             }
             else { dw = clientW; dh = clientH; }
             double dx = Math.Floor((clientW - dw) / 2), dy = Math.Floor((clientH - dh) / 2);
 
-            bool integerExact = mode == ScaleMode.Integer && Math.Abs(dh / H - Math.Round(dh / H)) < 1e-6 && !ntscAspect;
+            bool exact = IsInt(dw / fw) && IsInt(dh / fh);
             N.glEnable(N.GL_TEXTURE_2D);
             float u1, v1;
-            if (integerExact || dh < H * 1.5)
+            if (exact || dh < fh * 1.5 || dw < fw * 1.5)
             {
+                if (fw > baseTexSize || fh > baseTexSize)
+                {
+                    baseTexSize = NextPow2(Math.Max(fw, fh));
+                    CreateTexture(baseTex, baseTexSize, baseTexSize);
+                }
                 N.glBindTexture(N.GL_TEXTURE_2D, baseTex);
-                fixed (int* f = frame) N.glTexSubImage2D(N.GL_TEXTURE_2D, 0, 0, 0, W, H, N.GL_BGRA_EXT, N.GL_UNSIGNED_BYTE, (IntPtr)f);
-                u1 = W / 256f; v1 = H / 256f;
+                fixed (int* f = frame) N.glTexSubImage2D(N.GL_TEXTURE_2D, 0, 0, 0, fw, fh, N.GL_BGRA_EXT, N.GL_UNSIGNED_BYTE, (IntPtr)f);
+                u1 = fw / (float)baseTexSize; v1 = fh / (float)baseTexSize;
             }
             else
             {
                 // Sharp-bilinear: nearest-neighbour prescale by the largest integer <= scale, then linear to the final size.
-                int p = (int)Math.Min(4, Math.Max(1, Math.Floor(Math.Min(dw / W, dh / H))));
-                if (p != bigFactor || big == null)
+                int p = (int)Math.Min(4, Math.Max(1, Math.Floor(Math.Min(dw / fw, dh / fh))));
+                if (p != bigFactor || big == null || bigW != fw || bigH != fh)
                 {
-                    bigFactor = p;
-                    big = new int[W * p * H * p];
-                    int texSize = NextPow2(Math.Max(W * p, H * p));
-                    CreateTexture(bigTex, texSize, texSize);
-                    N.glTexParameteri(N.GL_TEXTURE_2D, N.GL_TEXTURE_MIN_FILTER, (int)N.GL_LINEAR);
-                    N.glTexParameteri(N.GL_TEXTURE_2D, N.GL_TEXTURE_MAG_FILTER, (int)N.GL_LINEAR);
-                    bigTexSize = texSize;
+                    bigFactor = p; bigW = fw; bigH = fh;
+                    big = new int[fw * p * fh * p];
+                    int texSize = NextPow2(Math.Max(fw * p, fh * p));
+                    if (texSize != bigTexSize)
+                    {
+                        CreateTexture(bigTex, texSize, texSize);
+                        N.glTexParameteri(N.GL_TEXTURE_2D, N.GL_TEXTURE_MIN_FILTER, (int)N.GL_LINEAR);
+                        N.glTexParameteri(N.GL_TEXTURE_2D, N.GL_TEXTURE_MAG_FILTER, (int)N.GL_LINEAR);
+                        bigTexSize = texSize;
+                    }
                 }
-                int bw = W * p;
+                int bw = fw * p;
                 fixed (int* f = frame) fixed (int* b = big)
                 {
-                    for (int y = 0; y < H; y++)
+                    for (int y = 0; y < fh; y++)
                     {
                         int* row = b + y * p * bw;
-                        int* src = f + y * W;
-                        for (int x = 0; x < W; x++) { int c = src[x]; int* o = row + x * p; for (int i = 0; i < p; i++) o[i] = c; }
+                        int* src = f + y * fw;
+                        for (int x = 0; x < fw; x++) { int c = src[x]; int* o = row + x * p; for (int i = 0; i < p; i++) o[i] = c; }
                         for (int r = 1; r < p; r++) Buffer.MemoryCopy(row, row + r * bw, bw * 4, bw * 4);
                     }
                     N.glBindTexture(N.GL_TEXTURE_2D, bigTex);
-                    N.glTexSubImage2D(N.GL_TEXTURE_2D, 0, 0, 0, bw, H * p, N.GL_BGRA_EXT, N.GL_UNSIGNED_BYTE, (IntPtr)b);
+                    N.glTexSubImage2D(N.GL_TEXTURE_2D, 0, 0, 0, bw, fh * p, N.GL_BGRA_EXT, N.GL_UNSIGNED_BYTE, (IntPtr)b);
                 }
-                u1 = bw / (float)bigTexSize; v1 = H * p / (float)bigTexSize;
+                u1 = bw / (float)bigTexSize; v1 = fh * p / (float)bigTexSize;
             }
 
             N.glColor4f(1, 1, 1, 1);
@@ -160,15 +186,15 @@ namespace SMB4.Platform
             N.glEnd();
             N.glDisable(N.GL_TEXTURE_2D);
 
-            if (scanlines > 0 && dh >= H * 2)
+            if (scanlines > 0 && dh >= lh * 2)
             {
-                // Darken the lower part of every source row, like a CRT's gaps between scanlines.
+                // Darken the lower part of every logical row, like a CRT's gaps between scanlines.
                 N.glEnable(N.GL_BLEND);
                 N.glBlendFunc(N.GL_SRC_ALPHA, N.GL_ONE_MINUS_SRC_ALPHA);
                 N.glColor4f(0, 0, 0, scanlines / 100f);
-                double rowH = dh / H;
+                double rowH = dh / lh;
                 N.glBegin(N.GL_QUADS);
-                for (int r = 0; r < H; r++)
+                for (int r = 0; r < lh; r++)
                 {
                     float y0 = (float)(dy + r * rowH + rowH * 0.55), y1 = (float)(dy + (r + 1) * rowH);
                     N.glVertex2f((float)dx, y0); N.glVertex2f((float)(dx + dw), y0);
@@ -182,7 +208,7 @@ namespace SMB4.Platform
             if (finishAfterSwap) N.glFinish();   // keeps the driver from queueing frames ahead (lower latency)
         }
 
-        int bigTexSize;
+        static bool IsInt(double v) { return Math.Abs(v - Math.Round(v)) < 1e-6; }
         static int NextPow2(int v) { int p = 1; while (p < v) p <<= 1; return p; }
 
         public void Dispose()

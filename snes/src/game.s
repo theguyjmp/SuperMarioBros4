@@ -7,10 +7,20 @@
 .include "eng.inc"
 .include "spr_ids.inc"
 .include "music.inc"
+; The screens module (scr_*.s, other agent) announces its hooks by emitting SCR_HOOKS = 1 in gen/scr_ids.inc.
+; Without them the engine runs its own test flow (title -> level select -> levels -> game over).
+.scope scrinc
+.include "scr_ids.inc"
+.endscope
+.ifdef scrinc::SCR_HOOKS
+SCR_HOOKS = 1
+.import scr_init, scr_frame, scr_nmi
+.endif
 
-.export game_init, game_frame, eng_nmi
+.export game_init, game_frame, eng_nmi, eng_level_start
+.export g_player, g_pwing, g_star, g_result, g_allowexit, eng_dbg_level
 .export eng_px, eng_py, eng_pxvel, eng_pyvel, eng_cam_x, eng_cam_y
-.importzp pad1, frame_count
+.importzp pad1, pad2, frame_count
 .import eng_nmi_level, eng_anim_reset, eng_find_link, eng_font
 .import ent_area_reset, ent_level_reset, ent_draw_effects
 .import spr_begin, spr_end, spr_level_load, bg_update, bg_cam_x, bg_cam_y
@@ -49,6 +59,13 @@ txq_n: .res 2               ; text queue: words used
 scroll_x: .res 2
 scroll_y: .res 2
 bonus_lives: .res 2
+g_player: .res 2            ; 0 Mario / 1 Luigi (2P alternating: Luigi palette, pad 1|2)
+g_pwing: .res 2             ; session: start the next level with the P-wing (cleared at level start)
+g_star: .res 2              ; session: start the next level with a star (cleared at level start)
+g_result: .res 2            ; RES_* of the last level (screens read it in GM_SCREEN)
+g_allowexit: .res 2         ; pause menu offers EXIT LEVEL (C# AllowExit / TestMode)
+eng_dbg_level: .res 2       ; test hook: poke LVL_*+1 -> that level starts next frame (any mode)
+pause_sel: .res 2
 
 .segment "HIBSS"
 hud_buf: .res 256           ; BG3 rows 24-27 (4 x 32 words)
@@ -131,6 +148,18 @@ game_init:
     sta f:cur_ts_ext
     sta f:spr_loaded
     jsr clear_bg3
+    stz g_player
+    stz g_pwing
+    stz g_star
+    stz g_allowexit
+    stz eng_dbg_level
+.ifdef SCR_HOOKS
+    lda #GM_SCREEN
+    sta g_mode
+    sep #$20
+    jsl scr_init                ; screens: title / file select ... (A8 XY16)
+    rtl
+.else
     lda #GM_TITLE
     sta g_mode
     jsr title_enter
@@ -138,6 +167,7 @@ game_init:
     lda #$0F
     sta INIDISP
     rtl
+.endif
 .a16
 
 ; BG3 palettes: 0 white, 1 gold, 2 red, 3 dim, 4 green, 5 cyan, 6 orange, 7 black-ish
@@ -185,9 +215,12 @@ zero_word: .word 0
 ; ================================================================== frame
 game_frame:
     rep #$30
-    ; C# PadState from the SNES pad: B/A = jump (Btn.A), Y/X = run (Btn.B)
+    ; C# PadState from the SNES pad: B/A = jump (Btn.A), Y/X = run (Btn.B). Player 2 (Luigi) plays with pad 1 | pad 2.
     lda pad1
-    sta e_t0
+    ldx g_player
+    beq :+
+    ora pad2
+:   sta e_t0
     lda #0
     bit e_t0
     bpl :+
@@ -254,14 +287,35 @@ game_frame:
     sta pad_released
     lda pad_held
     sta pad_prev
-    lda g_mode
+    ; test hook: eng_dbg_level = LVL_*+1 starts that level with a fresh session (any mode)
+    lda eng_dbg_level
+    beq :+
+    dec a
+    sta g_level
+    stz eng_dbg_level
+    jsr new_session
+    jsr start_level_play
+    bra @done
+:   lda g_mode
+    cmp #GM_PLAY
+    beq @play
+.ifdef SCR_HOOKS
+    sep #$20
+    jsl scr_frame               ; every non-level frame belongs to the screens module (A8 XY16)
+    rtl
+.else
     asl a
     tax
     jsr (mode_tbl,x)
+    bra @done
+.endif
+@play:
+    jsr play_frame
+@done:
     sep #$20
     rtl
 .a16
-mode_tbl: .addr title_frame, select_frame, play_frame, gameover_frame
+mode_tbl: .addr title_frame, select_frame, play_frame, gameover_frame, gameover_frame
 
 ; ================================================================== title
 title_enter:
@@ -316,6 +370,14 @@ title_frame:
 :   rts
 
 new_game:
+    jsr new_session
+start_level_play:
+    lda #GM_PLAY
+    sta g_mode
+    jmp start_level
+
+; fresh single-player session in the g_* vars (engine test flow; the screens module keeps its own session)
+new_session:
     lda #4
     sta g_lives
     stz g_score
@@ -323,9 +385,28 @@ new_game:
     stz g_coins
     stz g_ncards
     stz g_form
+    stz g_player
+    stz g_pwing
+    stz g_star
+    lda #1
+    sta g_allowexit
+    rts
+
+; ================================================================== level hand-over API (screens -> engine)
+; eng_level_start: X = level index (LVL_*; LVL_HB = Hammer Bro battle). JSL, any A width, XY16, DB = $80.
+; The session is read from g_lives g_score g_coins g_cards/g_ncards g_form g_player g_pwing g_star (g_pwing/g_star
+; are cleared). Forced blank, loads, shows the level and sets g_mode = GM_PLAY; returns at once, the level then runs
+; in game_frame. When it ends the engine stores g_result (RES_*), updates g_form (C# LevelScreen: P-wing -> Raccoon,
+; unchanged after a death), leaves the screen blanked and sets g_mode = GM_SCREEN (see DESIGN.md "Session & saves").
+eng_level_start:
+    php
+    rep #$30
+    stx g_level
     lda #GM_PLAY
     sta g_mode
-    jmp start_level
+    jsr start_level
+    plp
+    rtl
 
 ; ================================================================== level select
 select_enter:
@@ -565,8 +646,26 @@ start_level:
     stz g_paused
     stz g_banner
     stz bonus_lives
+    stz g_result
     lda g_form
     jsl pl_init
+    ; World ctor: P-wing (Raccoon at full power, endless flight) / star from the map inventory
+    lda g_pwing
+    beq :+
+    lda #1
+    sta p_pwing
+    lda #PF_RACCOON
+    sta p_form
+    lda #$7F
+    sta p_power
+    lda #$FF
+    sta p_flytime
+:   lda g_star
+    beq :+
+    lda #448
+    sta p_star
+:   stz g_pwing
+    stz g_star
     jsl ent_level_reset
     lda lvl_start_area
     jsl eng_load_area
@@ -593,6 +692,10 @@ start_level:
     jsl eng_center_camera
     jsl ent_spawn_initial
     jsr show_area
+    lda p_star
+    beq :+
+    jsl w_star_started          ; C#: if (P.Star > 0) Sound.Music("star")
+:
     rts
 
 
@@ -615,6 +718,7 @@ show_area:
 ; called by the world (ArriveAt): A = area to load (forced blank on, entities reset)
 game_arrive_load:
     stz w_pswitch               ; C# LoadArea: the P-switch ends without swapping back
+    stz w_bossarena             ; C# LoadArea: BossArena = false
     pha
     jsr blank_on
     pla
@@ -667,12 +771,37 @@ game_add_card:
     rtl
 
 play_frame:
-    ; ---- pause (LevelScreen: Start when the level is running normally)
+    ; ---- pause menu (LevelScreen: Start while the level runs normally; CONTINUE / EXIT LEVEL)
     lda g_paused
-    beq @notp
+    jeq @notp
+    lda pad_pressed
+    and #(BTN_UP|BTN_DOWN|BTN_SELECT)
+    beq @nomove
+    lda g_allowexit
+    beq @nomove
+    lda pause_sel
+    eor #1
+    sta pause_sel
+    SFX "MENUMOVE"
+    jsr pause_cursor
+@nomove:
     lda pad_pressed
     and #BTN_START
-    beq @draw
+    bne @resume
+    lda pad_pressed
+    and #BTN_A
+    jeq @draw
+    lda pause_sel
+    beq @resume
+    ; EXIT LEVEL: C# done(Exited) with the current form
+    jsr unpause_text
+    sep #$20
+    lda #0
+    jsl snd_pause
+    rep #$30
+    lda #RES_EXITED
+    jmp level_result
+@resume:
     stz g_paused
     sep #$20
     lda #0
@@ -680,7 +809,7 @@ play_frame:
     rep #$30
     SFX "PAUSE"
     jsr unpause_text
-    bra @draw
+    jmp @draw
 @notp:
     lda pad_pressed
     and #BTN_START
@@ -693,6 +822,14 @@ play_frame:
     beq @tick
     lda #1
     sta g_paused
+    stz pause_sel
+.ifdef SFX_PMETER
+    sep #$20
+    lda #SFX_STOP|SFX_PMETER    ; C# StopLoopingSounds
+    jsl snd_sfx
+    rep #$30
+    stz w_psound
+.endif
     sep #$20
     lda #1
     jsl snd_pause
@@ -754,9 +891,34 @@ set_scroll:
     rts
 
 level_result:
-    cmp #1
-    beq @cleared
-    ; died: lives--, restart or game over (form resets to small)
+    ; C# LevelScreen: done(result); the form carries over unless the player died (P-wing -> Raccoon)
+    sta g_result
+    stz g_paused
+.ifdef SFX_PMETER
+    sep #$20
+    lda #SFX_STOP|SFX_PMETER
+    jsl snd_sfx
+    rep #$30
+.endif
+    lda g_result
+    cmp #RES_DIED
+    beq @hand
+    lda p_form
+    ldx p_pwing
+    beq :+
+    lda #PF_RACCOON
+:   sta g_form
+@hand:
+.ifdef SCR_HOOKS
+    jsr blank_on
+    lda #GM_SCREEN
+    sta g_mode
+    rts
+.else
+    ; engine test flow (no screens module): died -> lives--, restart or game over; else next level
+    lda g_result
+    cmp #RES_DIED
+    bne @cleared
     stz g_form
     lda g_lives
     beq @over
@@ -769,8 +931,6 @@ level_result:
     sta g_mode
     jmp gameover_enter
 @cleared:
-    lda p_form
-    sta g_form
     lda g_level
     inc a
     cmp #LEVEL_COUNT
@@ -778,6 +938,7 @@ level_result:
     lda #0
 :   sta g_level
     jmp start_level
+.endif
 
 ; ================================================================== sprites for a play frame
 draw_sprites:
@@ -833,6 +994,11 @@ POSE_I_SPINFRONT = 22
 POSE_I_SPINBACK = 23
 POSE_I_DEATH = 24
 POSE_I_STATUE = 25
+POSE_I_FROG_STAND = 26
+POSE_I_FROG_HOP1 = 27
+POSE_I_FROG_HOP2 = 28
+POSE_I_FROG_SWIM1 = 29
+POSE_I_FROG_FRONT = 32
 
 .macro POSEW name
 .ifdef .ident(.concat("POSE_", name))
@@ -868,6 +1034,13 @@ pose_ids:
     POSEW "SPINBACK"
     POSEW "DEATH"
     POSEW "STATUE"
+    POSEW "FROG_STAND"
+    POSEW "FROG_HOP1"
+    POSEW "FROG_HOP2"
+    POSEW "FROG_SWIM1"
+    POSEW "FROG_SWIM2"
+    POSEW "FROG_SWIM3"
+    POSEW "FROG_FRONT"
 big_cycle: .word POSE_I_WALK1, POSE_I_WALK2, POSE_I_STAND, POSE_I_WALK2
 small_cycle: .word POSE_I_WALK, POSE_I_WALK, POSE_I_STAND, POSE_I_STAND
 big_run: .word POSE_I_RUN1, POSE_I_RUN2, POSE_I_RUN3, POSE_I_RUN2
@@ -902,7 +1075,11 @@ pl_draw:
     sbc cam_y
     sta spr_arg_y
     stz spr_arg_flags
-    lda p_facing
+    lda g_player
+    beq :+
+    lda #$4000                  ; SPR_LUIGI
+    sta spr_arg_flags
+:   lda p_facing
     bpl :+
     inc spr_arg_flags
 :   lda p_state
@@ -1042,7 +1219,15 @@ pl_frame:
     beq :+
     lda #POSE_I_STATUE
     bra @set
-:   lda p_state
+:   lda p_form
+    cmp #PF_FROG
+    bne @nofrog
+    lda p_state
+    cmp #PS_VINE
+    beq @nofrog
+    jmp frog_frame
+@nofrog:
+    lda p_state
     cmp #PS_PIPE
     bne :+
     lda p_pipedir
@@ -1186,6 +1371,62 @@ pl_frame:
     jmp @set
 :   lda f:small_cycle,x
     jmp @set
+
+; Frog Suit frames everywhere except on vines (C# PlayerDraw.Frame)
+frog_frame:
+    lda p_state
+    cmp #PS_DOOR
+    beq @front
+    cmp #PS_PIPE
+    bne @nopipe
+    lda p_pipedir
+    cmp #2
+    beq @front
+    cmp #8
+    beq @front
+    lda p_animframe
+    and #2
+    beq @hop1
+    bra @hop2
+@nopipe:
+    lda p_swimming
+    beq @dry
+    lda p_inair
+    beq @dry
+    ; frog.swim(1 + (Frame / 6) % 3)
+    lda w_frame
+    ldx #0
+@d6: cmp #6
+    bcc @d6d
+    sbc #6
+    inx
+    bra @d6
+@d6d: txa
+@m3: cmp #3
+    bcc :+
+    sbc #3
+    bra @m3
+:   clc
+    adc #POSE_I_FROG_SWIM1
+    bra @set
+@dry:
+    lda p_inair
+    bne @hop2
+    lda p_xvel
+    beq @stand
+    lda w_frame
+    and #31
+    cmp #16
+    bcc @hop1
+@hop2: lda #POSE_I_FROG_HOP2
+    bra @set
+@hop1: lda #POSE_I_FROG_HOP1
+    bra @set
+@stand: lda #POSE_I_FROG_STAND
+    bra @set
+@front: lda #POSE_I_FROG_FRONT
+@set: sta e_t1
+    rts
 
 tail_pose:
     lda p_form
@@ -1365,6 +1606,10 @@ hud_build:
     ldx #2*64+2
     ldy #2
     lda #'M'
+    ldx g_player
+    beq :+
+    lda #'L'
+:   ldx #2*64+2
     jsr hud_ch
     ldy #0
     lda #'*'
@@ -1565,32 +1810,127 @@ dma_hud:
 
 ; ================================================================== banners / pause text (BG3 over the playfield)
 pause_text:
-    lda #10
-    ldx #13
+    lda #9
+    ldx #12
+    ldy #1
+    jsr print_str
+    .byte "PAUSED", 0
+    lda #11
+    ldx #11
     ldy #0
     jsr print_str
-    .byte "PAUSE", 0
+    .byte "CONTINUE", 0
+    lda g_allowexit
+    beq pause_cursor
+    lda #12
+    ldx #11
+    ldy #0
+    jsr print_str
+    .byte "EXIT LEVEL", 0
+pause_cursor:
+    lda pause_sel
+    bne :+
+    lda #11
+    ldx #9
+    ldy #1
+    jsr print_str
+    .byte ">", 0
+    lda #12
+    ldx #9
+    ldy #1
+    jsr print_str
+    .byte " ", 0
+    rts
+:   lda #11
+    ldx #9
+    ldy #1
+    jsr print_str
+    .byte " ", 0
+    lda #12
+    ldx #9
+    ldy #1
+    jsr print_str
+    .byte ">", 0
     rts
 unpause_text:
-    lda #10
-    ldx #13
+    lda #9
+    ldx #9
     ldy #0
     jsr print_str
-    .byte "     ", 0
+    .byte "             ", 0
+    lda #11
+    ldx #9
+    ldy #0
+    jsr print_str
+    .byte "             ", 0
+    lda #12
+    ldx #9
+    ldy #0
+    jsr print_str
+    .byte "             ", 0
     rts
 
 banner_update:
-    lda w_endtimer
-    cmp #70
-    bne @r
+    ; bonus lives from three matching cards: "nUP BONUS!" replaces the card line once the tally is done
+    lda bonus_lives
+    beq :+
+    lda w_tallydone
+    beq :+
     lda g_banner
-    bne @r
+    cmp #1
+    bne :+
     inc g_banner
+    lda #8
+    ldx #9
+    ldy #1
+    jsr print_str
+    .byte " UP BONUS!    ", 0
+    lda bonus_lives
+    clc
+    adc #'0'-32
+    ora #(1<<10)|$2000
+    sta pw_word
+    lda #8
+    ldx #9
+    jsr put_word
+:   lda w_endtimer
+    cmp #70
+    jne @r
+    lda g_banner
+    jne @r
+    inc g_banner
+    lda w_clear_res
+    cmp #RES_FORTRESS
+    bne :+
+    lda #6
+    ldx #8
+    ldy #0
+    jsr print_str
+    .byte "FORTRESS CLEAR!", 0
+    bra @card
+:   cmp #RES_WORLD
+    bne :+
     lda #6
     ldx #9
     ldy #0
     jsr print_str
+    .byte "AIRSHIP CLEAR!", 0
+    bra @card
+:   lda lvl_kind
+    cmp #LK_BATTLE
+    bne :+
+    lda #6
+    ldx #10
+    ldy #0
+    jsr print_str
+    .byte "BATTLE WON!", 0
+    bra @card
+:   lda #6
+    ldx #9
+    ldy #0
+    jsr print_str
     .byte "COURSE CLEAR!", 0
+@card:
     lda w_cardgot
     bmi @r
     lda #8
@@ -1773,7 +2113,12 @@ eng_nmi:
     cmp #GM_PLAY
     bne @noplay
     jsl eng_nmi_level
+    bra @eng
 @noplay:
+.ifdef SCR_HOOKS
+    jml scr_nmi                 ; screens do their own uploads/scroll outside levels (A8 XY16, RTL to main.s)
+.endif
+@eng:
     rep #$20
     .a16
     ; text queue

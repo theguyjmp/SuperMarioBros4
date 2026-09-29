@@ -42,6 +42,9 @@ namespace SMB4.Tools
                 ids.Add(id);
             }
             ids.Sort((a, b) => Rank(a).CompareTo(Rank(b)));
+            // the Hammer Bro battle arena (entered from the map) is last: LVL_HB (= the sprites module's SPR_LEVEL_HB)
+            foreach (var p in Data.List("levels/"))
+                if (string.Equals(Path.GetFileName(p), "hb.lvl", StringComparison.OrdinalIgnoreCase)) { ids.Add("hb"); break; }
             return ids;
         }
 
@@ -112,7 +115,7 @@ namespace SMB4.Tools
                     EmitArea(packer, an, a, tilesets[a.Theme]);
                 }
                 var b = new Blob(lname);
-                int world = d.Id[0] - '0';
+                int world = char.IsDigit(d.Id[0]) ? d.Id[0] - '0' : 9;   // hb: row 9 of the test level select
                 int kind = d.Kind == "battle" ? 1 : d.Kind == "fortress" ? 2 : d.Kind == "airship" ? 3 : d.Kind == "castle" ? 4 : 0;
                 b.Byte(world); b.Byte(kind); b.Word(d.Time);
                 b.Byte(d.StartArea); b.Byte(d.StartX); b.Byte(d.StartY); b.Byte(d.Areas.Count);
@@ -146,6 +149,8 @@ namespace SMB4.Tools
             for (int t = 0; t < 240; t++) tb.Word((int)(Math.Sin(t * 2 * Math.PI / 240.0) * 48 * 16));
             for (int t = 0; t < 240; t++) tb.Word(Math.Cos(t * 2 * Math.PI / 240.0) > 0 ? 1 : 0xFFFF);
             for (int t = 0; t < 240; t++) tb.Word((int)(Math.Sin(t * 2 * Math.PI / 240.0) * 56 * 16));   // MovingLift x
+            // +1800: generic binary-angle sine for ent_sin (256 steps per turn, value = sin * 32767)
+            for (int t = 0; t < 256; t++) tb.Word((int)Math.Round(Math.Sin(t * 2 * Math.PI / 256.0) * 32767));
             packer.Add(tb);
 
             string asm = packer.Emit(new[] { "eng_lvl_dir", "eng_ts_dir", "eng_font", "eng_tables" });
@@ -195,6 +200,7 @@ namespace SMB4.Tools
             var names = new SortedSet<string>();
             foreach (var th in Themes) names.Add("THEME_" + th.ToUpperInvariant());
             foreach (var d in defs) foreach (var a in d.Areas) names.Add("SONG_" + a.Music.ToUpperInvariant());
+            names.Add("SONG_BOSS"); names.Add("SONG_BOWSER");
             foreach (var n in names) sb.AppendLine(".ifndef " + n + "\n" + n + " = 0\n.endif");
             return sb.ToString();
         }
@@ -216,7 +222,11 @@ namespace SMB4.Tools
             b.Byte(Array.IndexOf(Themes, a.Theme));
             b.Raw("\t.byte THEME_" + a.Theme.ToUpperInvariant());
             b.Byte(a.Backdrop >= 0 ? 1 : 0);
+            // boss rooms: the boss song is the area song, so its (slow) SPC upload happens under the area-load blank
+            // instead of when the boss activates mid-gameplay (C# switches at activation)
             string mus = "SONG_" + a.Music.ToUpperInvariant();
+            if (a.Spawns.Exists(s => s.Code == 'Y')) mus = "SONG_BOWSER";
+            else if (a.Spawns.Exists(s => s.Code == 'Z' || s.Code == 'K')) mus = "SONG_BOSS";
             b.Raw("\t.byte " + mus);
             int sc = Array.IndexOf(Scrolls, a.Scroll); if (sc < 0) sc = 0;
             b.Byte(sc);

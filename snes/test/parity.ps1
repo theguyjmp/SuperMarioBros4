@@ -25,7 +25,7 @@ $inc = Get-Content (Join-Path $Out 'gen\levels.inc') -Raw
 $lvlSym = 'LVL_' + $Level.ToUpper().Replace('-', '_')
 if ($inc -notmatch "(?m)^$lvlSym = (\d+)") { throw "unknown level $Level" }
 [void]$sb.AppendLine("local LEVEL=$($Matches[1])")
-[void]$sb.AppendLine("local GSEL=$(Sym 'g_sel')")
+[void]$sb.AppendLine("local DBG=$(Sym 'eng_dbg_level')")
 [void]$sb.AppendLine("local OFF=$Offset")
 [void]$sb.AppendLine("local FORM=$formNum")
 [void]$sb.AppendLine("local PFORM=$(Sym 'p_form')")
@@ -41,10 +41,14 @@ emu.addEventCallback(function()
   local f = curframe()
   local mode = readw(A.mode)
   if mode ~= 2 then
-    if started then print("left the level at tick "..lastn); finish(4) end
-    -- title -> Select (level select) -> pick LEVEL -> Start
-    if mode == 1 then emu.write(GSEL, LEVEL, emu.memType.snesMemory) end
-    if f % 8 < 2 then if mode == 1 then pad{start=true} else pad{select=true} end else pad{} end
+    if started then
+      -- the level ended (death -> map, or goal) before the C# trace did: judge the ticks that were compared
+      print("left the level at tick "..lastn)
+      if fails == 0 and checked > 0 then print("PASS: "..checked.." ticks match exactly (level ended)"); finish(0) else finish(4) end
+    end
+    -- test hook: eng_dbg_level = LEVEL+1 starts the level with a fresh session (works with or without screens)
+    if f >= 60 and f % 30 == 0 then emu.write(DBG, LEVEL + 1, emu.memType.snesMemory) end
+    pad{}
     return
   end
   local n = readw(A.fr)

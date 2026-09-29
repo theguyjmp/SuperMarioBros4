@@ -6,14 +6,19 @@ using N = SMB4.Platform.Native;
 
 namespace SMB4.Platform
 {
-    /// <summary>NES-pad style buttons. Bit index == Act index.</summary>
+    /// <summary>
+    /// Pad buttons. Bit index == Act index. The first eight are the original NES-style set (A = jump = SNES B,
+    /// B = run = SNES Y) that the legacy C# game uses; the last four complete the SNES pad for the libretro player.
+    /// </summary>
     public static class Btn
     {
         public const int Up = 1, Down = 2, Left = 4, Right = 8, A = 16, B = 32, Start = 64, Select = 128;
+        public const int SnesA = 256, SnesX = 512, L = 1024, R = 2048;
         public const int Dirs = Up | Down | Left | Right;
     }
 
-    public enum Act { Up = 0, Down, Left, Right, Jump, Run, Start, Select }
+    /// <summary>Jump = SNES B, Run = SNES Y (names kept for the legacy game and its settings file).</summary>
+    public enum Act { Up = 0, Down, Left, Right, Jump, Run, Start, Select, SnesA, SnesX, L, R }
 
     public struct PadState
     {
@@ -30,7 +35,7 @@ namespace SMB4.Platform
     /// <summary>User-configurable bindings. Directions on controllers are always D-pad + (optional) left stick.</summary>
     public sealed class Bindings
     {
-        public const int ActCount = 8;
+        public const int ActCount = 12;
         public int[][] Keys = new int[ActCount][];      // Windows virtual-key codes (L/R shift/ctrl/alt distinguished)
         public int[][] XBtn = new int[ActCount][];      // XInput button masks; 0x10000 = LT, 0x20000 = RT
         public int[][] JoyBtn = new int[ActCount][];    // generic controller button indices (0..31)
@@ -49,23 +54,45 @@ namespace SMB4.Platform
             b.Keys[(int)Act.Run] = new[] { 0x5A, 0x4A, 0xA0 };
             b.Keys[(int)Act.Start] = new[] { 0x0D };
             b.Keys[(int)Act.Select] = new[] { 0xA1, 0x09 };
+            b.Keys[(int)Act.SnesA] = new[] { 0x43, 0x4C };     // C, L
+            b.Keys[(int)Act.SnesX] = new[] { 0x56, 0x49 };     // V, I
+            b.Keys[(int)Act.L] = new[] { 0x51 };               // Q
+            b.Keys[(int)Act.R] = new[] { 0x45 };               // E
             b.SetPadPreset(0);
+            // DirectInput-class pads in DualShock order: 0 Square, 1 Cross, 2 Circle, 3 Triangle, 4 L1, 5 R1, 6 L2, 7 R2, 8 Share, 9 Options
             b.JoyBtn[(int)Act.Up] = new int[0]; b.JoyBtn[(int)Act.Down] = new int[0];
             b.JoyBtn[(int)Act.Left] = new int[0]; b.JoyBtn[(int)Act.Right] = new int[0];
-            b.JoyBtn[(int)Act.Jump] = new[] { 1, 2 };
-            b.JoyBtn[(int)Act.Run] = new[] { 0, 3, 7 };
+            b.JoyBtn[(int)Act.Jump] = new[] { 1 };
+            b.JoyBtn[(int)Act.Run] = new[] { 0, 7 };
             b.JoyBtn[(int)Act.Start] = new[] { 9 };
             b.JoyBtn[(int)Act.Select] = new[] { 8 };
+            b.JoyBtn[(int)Act.SnesA] = new[] { 2 };
+            b.JoyBtn[(int)Act.SnesX] = new[] { 3 };
+            b.JoyBtn[(int)Act.L] = new[] { 4, 6 };
+            b.JoyBtn[(int)Act.R] = new[] { 5 };
             return b;
         }
 
-        /// <summary>0 = Modern (A/B jump, X/Y/RT/RB run), 1 = Nintendo layout (B jump, A/X run).</summary>
+        /// <summary>
+        /// Xbox-style pad → SNES pad. 0 = positional (buttons in the same place as on a SNES pad: Xbox A = SNES B,
+        /// B = A, X = Y, Y = X; RT also runs), 1 = by label (Xbox A = SNES A, B = B, X = X, Y = Y).
+        /// </summary>
         public void SetPadPreset(int preset)
         {
             XBtn[(int)Act.Up] = new int[0]; XBtn[(int)Act.Down] = new int[0];
             XBtn[(int)Act.Left] = new int[0]; XBtn[(int)Act.Right] = new int[0];
-            if (preset == 1) { XBtn[(int)Act.Jump] = new[] { XB }; XBtn[(int)Act.Run] = new[] { XA, XX, XRT }; }
-            else { XBtn[(int)Act.Jump] = new[] { XA, XB }; XBtn[(int)Act.Run] = new[] { XX, XY, XRT, XRB }; }
+            if (preset == 1)
+            {
+                XBtn[(int)Act.Jump] = new[] { XB }; XBtn[(int)Act.Run] = new[] { XY, XRT };
+                XBtn[(int)Act.SnesA] = new[] { XA }; XBtn[(int)Act.SnesX] = new[] { XX };
+            }
+            else
+            {
+                XBtn[(int)Act.Jump] = new[] { XA }; XBtn[(int)Act.Run] = new[] { XX, XRT };
+                XBtn[(int)Act.SnesA] = new[] { XB }; XBtn[(int)Act.SnesX] = new[] { XY };
+            }
+            XBtn[(int)Act.L] = new[] { XLB, XLT };
+            XBtn[(int)Act.R] = new[] { XRB };
             XBtn[(int)Act.Start] = new[] { XStart };
             XBtn[(int)Act.Select] = new[] { XBack };
         }

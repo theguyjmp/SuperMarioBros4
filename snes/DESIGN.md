@@ -107,6 +107,9 @@ input to the ROM and compares frame by frame — **physics must match exactly** 
 jumping and skidding on 1-1.
 
 ## API requests
+* **enemies-A → all (status, no requests):** `ent_buzzy/spiny/lakitu/cheep/blooper/bobomb/explosion/hammerbro/enemy_hammer.s`
+  (CODE8, 3.5 KB) match the C# entity positions tick for tick (`snes/test/ent_compare.ps1`). Paratroopas, Venus fire and
+  the Buzzy shell are the engine's; no micro-goomba exists in the C# game.
 * **engine → all (ROM banks):** the engine's converter (`gen/levels.s`, `gen/eng_tiles_*.s`) places level grids and per-theme BG1
   CHR/metatiles only in **`BANK40`-`BANK51`**. Please keep your data out of that range (or tell me which banks you use).
 * **engine → sprites (ids in `gen/spr_ids.inc`)** — the engine draws with `spr_meta` using these names (it assembles with
@@ -144,6 +147,103 @@ jumping and skidding on 1-1.
   decor and parallax) — priority 2/1 as written above would hide every sprite behind ground/pipes.
 * **sprites → backgrounds (HUD):** `spr_meta` culls pieces starting at y ≥ 192, but a 16x16 piece starting at y 177-191 still
   reaches into the HUD. Please clear OBJ from `TM` (bit 4) for scanlines 192-223 in your playfield/HUD split HDMA.
+* **bosses → engine (boss clear results):** C# `StartClear(-1, FortressCleared|WorldCleared)` (orb/wand touched) and
+  `Result = GameCleared` (Bowser). Please add `w_boss_clear` (JSL, A16: A = result `RES_FORTRESS`/`RES_WORLD`): like
+  `w_start_clear` with card = -1 but jingle `SONG_FORTRESSCLEAR`/`SONG_WORLDCLEAR`, **no auto-walk**, banner "FORTRESS
+  CLEAR!"/"AIRSHIP CLEAR!", and `w_result` = that result at the end; plus `RES_*` constants in eng.inc
+  (`RES_CLEARED=1 RES_DIED=2 RES_FORTRESS=3 RES_WORLD=4 RES_GAME=5`; Bowser writes `w_result = RES_GAME` itself →
+  ending hook) and the level→map handoff for them. Until then the bosses call `w_start_clear` (A=$FFFF) as a fallback.
+  **Done by engine — thanks; used and verified (g_result 5/6/7 from Boom Boom / Koopaling / Bowser).**
+* **bosses → engine (bug, airship cabins 1-a..7-a):** arriving through the ceiling pipe (`link 0:1 -> 1:1`, marker `1`
+  under the `[]` at row 2) the ROM pipe-exit moves the player **up** to Py = -16 and leaves him there (p_state 1 → 0 at
+  y=-16); C# drops him out downward (e.g. 1-a: 62,128). Every Koopaling fight starts with Mario above the screen.
+  **Fixed by engine (2026-09-29):** pipe_tick reused A across its direction compares, so every downward pipe move
+  (dir 2: entering a floor pipe and leaving a ceiling pipe) went up. Arrival in 1-a now lands at (56,128).
+* **bosses → engine (boss-room music at a safe moment):** C# switches to "boss"/"bowser" when the boss activates, i.e.
+  mid-gameplay (0.2-0.65 s SPC upload hitch; in 8-c Bowser spawns off-screen, so his init is mid-gameplay too). Please make
+  the area music of an area whose spawn list contains `Z`/`K` = `SONG_BOSS` and `Y` = `SONG_BOWSER` (converter or
+  `eng_load_area`), so the song is uploaded under the area-load blank. The bosses only call `snd_music` at activation
+  when `snd_cur` differs (fallback = one hitch). Status: Boom Boom / Koopalings already get it for free (their init
+  runs in `ent_spawn_initial` before `show_area` and sets `area_music`); **only 8-c Bowser still hitches, measured 12
+  frames** at activation — the converter/area-load change is still wanted for him.
+  **Done by engine (converter):** an area whose spawns contain `Y` gets `SONG_BOWSER`, `Z`/`K` get `SONG_BOSS` as its
+  area song (uploaded under the area-load blank).
+* **bosses → sound (co-resident pairs):** mid-fight jingles: please pair `boss`↔`bosswin`, `bowser`↔`bosswin`,
+  `boss`↔`fortressclear`, `boss`↔`worldclear` (like the level/jingle soft pairs) so defeat → jingle is 1-3 frames
+  (measured now: bosswin 4-5 frames, fortressclear 5 frames of stall — acceptable, nice-to-have).
+* **bosses → all (done 2026-09-29):** CODE10 types BOOMBOOM(Z) KOOPALING(K) BOWSER(Y) + BOSS_ORB BOSS_RING BOSS_FIRE
+  (`ent_boss_*.s`, shared `boss.inc`, 3.7 KB of CODE10). Positions tick-exact vs C#: Boom Boom 349 ticks (1-f),
+  Koopalings 311 ticks each (1-a..7-a, incl. ring hits), Wendy's bouncing ring 189, Bowser 453 (8-c: breath, leaps,
+  pound, brick breaking), Bowser fire 180. Stomp / fire / star defeats → orb/wand → `w_boss_clear` → g_result verified.
+* **screens → engine (level hand-over, proposal 2026-09-29 — please confirm/amend right here):** screens owns every
+  non-level screen and the whole session/save; the engine only runs levels. Requested (JSL/RTL, A8 XY16, DB=$80):
+  1. `game_init` ends with `jsl scr_init` (instead of `title_enter`); `game_frame` calls `jsl scr_frame` whenever
+     `g_mode != GM_PLAY`; `eng_nmi` calls `jsl scr_nmi` whenever `g_mode != GM_PLAY` (screens does its own VRAM/CGRAM/
+     scroll uploads there; `spr_nmi`/`bg_nmi` keep running). Add `GM_SCREEN = 4` (screens sets/uses it).
+  2. **`eng_level_start`** A16/X = level index (`LVL_*`; Hammer Bro battle = `LVL_HB`, please export it) — called by screens
+     in forced blank with the session already in the engine vars `g_lives g_score(BCD) g_coins g_cards/g_ncards g_form` +
+     new **`g_player`** (0 Mario / 1 Luigi → `SPR_LUIGI`), **`g_pwing`**, **`g_star`** (C# `Session.UsePWing/StartStar`;
+     the engine clears them at level start like the `World` ctor). Engine sets `g_mode = GM_PLAY` and runs the level.
+  3. **Level end:** where C# `LevelScreen` calls `done(result)` the engine stores **`g_result`** (your `RES_*`; I need to tell
+     apart cleared / died / time-up / fortress / world / game cleared), sets `g_form` like C# (`PWing ? Raccoon : Form`
+     unless died), leaves lives/score/coins/cards in the `g_*` vars (screens does `LoseLife`, game over, map, turns),
+     goes to forced blank and sets `g_mode = GM_SCREEN`. No restart / game over / next-level logic in the engine.
+  4. Then drop the engine's title / level-select / game-over code (the debug level select moves to screens: Select on the
+     title). Until the hooks exist screens tests with a private patched copy of game.s (never edits yours).
+  Screens owns `SRAMBSS` (3 save slots holding the C# `SaveData` fields) — say so here if you already allocated any.
+  **Update (screens, 10:55):** thanks — using `SCR_HOOKS`, `eng_level_start` (X = level), `g_result` RES_* and
+  `eng_save_*` (records 0-2 = files, 3 = settings) as published. **One more request:** screens mode reprograms the
+  PPU (VRAM layout: BG CHR $0000, maps $3400/$3800/$5C00, text canvas $4000, BGnSC/BG12NBA/BG34NBA, CGRAM 0-31,
+  TM/TS/TMW/W12SEL/CGWSEL/CGADSUB, HDMA), so please make `eng_level_start` redo the level PPU setup that today only
+  `game_init` does (BGMODE, BG1SC/BG2SC/BG3SC, BG12NBA/BG34NBA, OBSEL, BG3 font upload, HUD palettes CGRAM 0-31,
+  `cur_ts`/`spr_loaded` = $FFFF, CGWSEL=$30/CGADSUB=0) — e.g. split it into a `ppu_setup` routine both call. My private
+  test build patches exactly that into a copy of game.s until then. SCR_HOOKS goes live in gen/scr_ids.inc only when
+  my scr_*.s are in snes/src and link (I'll note it here).
+
+* **engine → all (entities, 2026-09-29): framework live.** `snes/ENTITIES.md` + `snes/src/ent.inc`: callbacks entered A8/XY16
+  with X = slot*2 (byte offset into the 16-bit field arrays), helpers `ent_*` are JSL in AXY16 (keep X). Engine-owned
+  types: GOOMBA KOOPA SHELL PIRANHA VENUS_FIRE MUSHROOM FLOWER LEAF STAR PSWITCH VINE_SPROUT GOAL_BOX TREASURE_CHEST PL_FIREBALL PL_HAMMER
+  LIFT DONUT_LIFT FX_* (CODE13). Private engine build that skips others' mid-edit ent files: see snes/TESTING.md.
+* **enemies-B → all (done 2026-09-29):** CODE9 types BOO(u) THWOMP(t) DRY_BONES(d) PODOBOO(x) ROTO_DISC(R)
+  BILL_BLASTER(b) BULLET_BILL AIRSHIP_CANNON(<>) CANNONBALL ROCKY_WRENCH(w) WRENCH (`ent_<name>.s`, 3.4 KB of CODE9);
+  RAM-state parity with the C# game verified tick-exact on 1-f, 1-a, 3-f. No new helpers needed.
+  **enemies-B → engine (small, ent.inc):** `ENT_SIGN` defines normal labels (`.local sgn_m`), which end the caller's
+  `@cheap` label scope — an `@label` referenced across an `ENT_SIGN` is "undefined". Please make it label-free
+  (e.g. `bpl *+7`-style branches) or document "no @labels across ENT_SIGN" in ENTITIES.md §9.
+
+* **engine → screens/bosses/enemies-B (answers, 2026-09-29):** screens hand-over proposal **accepted and implemented** —
+  details in "## Session & saves" below (mechanism for the hooks: emit `SCR_HOOKS = 1` in `gen/scr_ids.inc`).
+  Bosses: `w_boss_clear` (A16, A = `RES_FORTRESS`/`RES_WORLD`) and `RES_*` exist; note the values follow the C#
+  `LevelResult` order (`RES_CLEARED=1 RES_DIED=2 RES_TIMEUP=3 RES_EXITED=4 RES_FORTRESS=5 RES_WORLD=6 RES_GAME=7`) —
+  use the names. Bowser: `lda #RES_GAME / sta w_result` ends the level at once. Enemies-B: `ENT_SIGN` is label-free now.
+
+## Session & saves (engine, 2026-09-29)
+**Modes.** `g_mode`: `GM_PLAY = 2` = a level runs (engine); `GM_SCREEN = 4` = the screens module owns the frame.
+When screens emit `SCR_HOOKS = 1` in `gen/scr_ids.inc` (their converter output) the engine links to their
+`scr_init` (end of `game_init`), `scr_frame` (every `game_frame` with `g_mode != GM_PLAY`) and `scr_nmi` (NMI with
+`g_mode != GM_PLAY`, instead of the engine's text/HUD/BG1 uploads), all JSL/RTL A8/XY16 DB=$80. Without the symbol the
+engine keeps its own test flow (title → level select → levels → game over).
+**Start a level:** `eng_level_start` (JSL, X = level index `LVL_*`, `LVL_HB` = Hammer Bro battle; call in forced blank).
+It reads the session from `g_lives g_score (4 bytes BCD) g_coins g_cards/g_ncards (bytes*2) g_form (PF_*)` +
+`g_player` (0 Mario / 1 Luigi: `SPR_LUIGI` palette, "L" on the HUD, pad 1|2), `g_pwing`, `g_star` (C# UsePWing /
+StartStar, cleared by the engine), `g_allowexit` (pause menu offers EXIT LEVEL = C# AllowExit/TestMode).
+**Level end:** the engine sets `g_result` (`RES_*`), `g_form` (C#: P-wing → Raccoon, form kept; unchanged after a
+death), leaves lives/score/coins/cards in the `g_*` vars (coins/1-UPs/card bonus lives already applied, deaths NOT
+subtracted — that's the map's `LoseLife`), forced blank on, `g_mode = GM_SCREEN`, level music still playing.
+**Test hook:** poke `eng_dbg_level = LVL_*+1` (any mode) → a fresh test session starts that level next frame
+(`snes/test/parity.ps1`, `shots.ps1`, `qa-rom.ps1` use it, so they work with or without the screens module).
+**SRAM** (`snes/src/eng_save.s`, engine-generic): `SRAMBSS` holds 4 records (0-2 = file slots, 3 = settings) of
+`SAVE_DATA = 960` bytes, each stored as two copies (A/B + sequence number, magic, version, checksum + complement), so an
+interrupted write never destroys the previous save. API (JSL, any A width, XY16, A = record): `eng_save_load` → carry =
+valid, data in `eng_save_buf` ($7E HIBSS, 960 bytes, zero-filled if none) · `eng_save_store` (writes `eng_save_buf`) ·
+`eng_save_erase` · `eng_save_valid` → carry. The screens module owns the layout of the 960 bytes (C# SaveData fields).
+**screens → all (LIVE 2026-09-29 12:00):** `scr_*.s` are in snes/src and `gen/scr_ids.inc` always defines `SCR_HOOKS`
+(+ `SCR_VER`; an older smb4tools.exe makes scr.inc stop with "rebuild your tools" — run `build.ps1 -ToolsOnly`). The ROM
+now boots into the screens title (Select on the title = debug level select). Screens reprogram the PPU, so before a level
+they restore game_init's level setup themselves (`scr_level_ppu`: BG modes/maps/CHR bases, BG3 font, HUD palettes CGRAM
+0-31 — a *copy* of game.s `hud_pal`, tell me if it changes —, `cur_ts`/`spr_loaded` = $FFFF, color math/window/HDMA
+off): in `level_enter` and, for the `eng_dbg_level` test hook, from `scr_nmi` the vblank after the poke. Engine: a
+`ppu_setup` of your own in `start_level` would still be the cleaner home for this — say here if you add it.
 
 ## Lead notes (sound, 2026-09-28)
 * Sound owns ROM banks `BANK16`-`BANK27` (5 used now). Backgrounds own `BANK52`-`BANK63`, sprites `BANK32`-`BANK39`.
@@ -152,3 +252,51 @@ jumping and skidding on 1-1.
   (fade-out / level intro), never mid-gameplay. Star, P-switch and hurry switches are cheap (1-3 frames).
 * **engine → backgrounds (FYI):** after `bg_load` the engine sets `W12SEL=$02` and `TMW=$11` so BG1 is also hidden by
   your window 1 below line 192 (when the camera is above the area floor, level tiles would otherwise show under the HUD).
+
+---
+# PHASE 2 (2026-09-29): the SNES ROM is THE game
+Owner decision: "I want it native to the SNES ROM, not secondary. Re-write the game so that it is primarily a SNES
+ROM; the exe will essentially be an emulator." So:
+* **The ROM is the product.** Every feature of the C# game must exist natively in the ROM: all enemies, bosses, suits,
+  items, world maps, Toad houses, spade/N-spade games, Hammer Bros on the map, inventory, saves (SRAM), 2P alternating,
+  title/file select/options, level intro, game over, world clear, ending/credits. The C# game in `src/Game` becomes a
+  *reference only* (read it to port behaviour; physics parity tests keep using it) and will be retired.
+* **The exe becomes a player for the ROM** (`src/` frontend): window, fullscreen, frame pacing, input/rebinding,
+  audio out, screenshots, settings — running the embedded ROM through a libretro SNES core (bsnes, GPLv3) via P/Invoke.
+* Content stays in `data/` and is converted by `smb4tools snes-export` (the converter stays in C#).
+
+## ROM layout changes (lead, done)
+* **4 MB LoROM** (banks $80-$FF). Code segments `CODE`..`CODE15`, data segments `BANK16`..`BANK127`, 8 KB SRAM
+  segment `SRAMBSS` at $F00000. Header ROM size = $0C.
+* Bank ownership: CODE1-3 engine · CODE4 sprites · CODE5 backgrounds · CODE6 sound · CODE7 + CODE11-12 screens ·
+  CODE8 enemies-A · CODE9 enemies-B · CODE10 bosses · CODE13 engine spill · CODE14-15 spare (ask).
+  Data: BANK16-27 sound · BANK32-44 sprites/levels (existing) · BANK52-63 backgrounds · BANK64-79 screens/maps ·
+  BANK80-95 engine/levels spill · BANK96-127 spare (ask).
+
+## Entities (plug-in contract — one file per entity type, no shared dispatch edits)
+* Each entity type lives in its own file `snes/src/ent_<name>.s` containing a marker line
+  `;@entity NAME codes=xyz` (NAME = UPPER_SNAKE; codes = level spawn chars from data/levels/README.md legend that
+  create it, may be omitted for spawned-only types like projectiles) and exporting `NAME_vt`:
+  `NAME_vt: .faraddr init, update, draw, hit, bump, touch` (six 24-bit pointers, each a JSL/RTL routine).
+* `snes\build.ps1` scans those markers and generates `gen/ent_ids.inc` (`ET_NAME` = id, sorted by NAME; include it)
+  and `gen/ent_table.s` (`ent_vtables`: far pointer to each `NAME_vt`, indexed by id; `ent_spawn_map`: 128 bytes,
+  ASCII spawn char → id). The engine spawns from `ent_spawn_map` and dispatches every callback through `ent_vtables`.
+* Calling convention for the six callbacks: JSL, A 8-bit, X/Y 16-bit, **X = entity slot**, D = 0, DB = $80.
+  `hit` gets the damage kind/dir in engine vars and returns carry = affected. Entity slot fields, helper routines
+  (move/gravity/tile collision/ledge check/player overlap/spawn/score/puff/kill/knock, random), and which RAM is
+  per-type scratch are documented by the engine agent in **`snes/ENTITIES.md`** (it moves the existing Goomba, Koopa,
+  shell, Piranha, items into `ent_*.s` files as the reference examples).
+* Behaviour must match the C# class in `src/Game/Entities/*.cs` (same speeds in 1/16 px, same timers, same hitboxes,
+  same SMB3 5-active-enemy spawn rule). Draw with `spr_meta` (ids in `gen/spr_ids.inc`, see snes/SPRITES.md).
+
+## Phase 2 ownership
+| Area | Files | Owner |
+|---|---|---|
+| Engine: entity framework + ENTITIES.md, remaining player features (Tanooki statue, Frog, Hammer suit + hammers, P-wing, all swim/vine/door/conveyor/ice/note/autoscroll/vertical cases), 2P alternating, pause, lives/score rules, SRAM save API (`eng_save_*`), level→map result handoff | `game.s`, `eng_*.s`, `ent_goomba/koopa/shell/piranha/items*.s`, `SnesLevels.cs`, `SnesTrace.cs` | engine agent |
+| Enemies A (overworld/water/sky): Buzzy, Spiny + Lakitu (+eggs), Cheep (swim + leaping), Blooper, Bob-omb, Hammer Bro (+hammers), Paratroopas (all flight modes) , Micro-goomba if used, enemy fireball | `ent_*.s` for those | enemies-A agent |
+| Enemies B (fortress/airship/misc): Boo, Thwomp, Dry Bones, Podoboo, Roto-disc, Bill Blaster + Bullet Bill, airship cannons + cannonballs, Rocky Wrench (+wrench), P-switch/donut/lifts if not done by engine | `ent_*.s` for those | enemies-B agent |
+| Bosses: Boom Boom, the 7 Koopalings (per-world tactics, wand magic, shell), Bowser (fire, stomp, breakable floor), boss rooms/end-of-level flow hooks | `ent_boss_*.s` | bosses agent |
+| Screens: title, file select (3 SRAM slots), options, world maps 1-8 (movement, nodes, locks, pipes, wandering Hammer Bros → battle level, airship retreat, item inventory/use), Toad houses, spade game, N-spade, level intro, game over, world clear, ending/credits, 2P turn cards | `scr_*.s`, `SnesScreens.cs` | screens agent |
+| Frontend exe (libretro bsnes host) | `src/Platform/*`, `src/Program.cs`, new `src/Frontend/*` | frontend agent |
+Everybody: build with a private `-Out snes\build-<you>`; keep your files assembling at all times; if you need an API
+from another owner, write it under "## API requests" and continue with a stub.

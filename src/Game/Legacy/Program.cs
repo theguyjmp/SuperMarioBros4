@@ -5,6 +5,8 @@ using SMB4.Platform;
 
 namespace SMB4
 {
+    /// <summary>LEGACY entry point of the retired C# game (reference only). It is compiled into smb4tools (the converter and
+    /// reference tests use src/Game) but is no longer the shipped exe: that is the libretro player in src/Frontend.</summary>
     public static class Program
     {
         public static string[] Args = new string[0];
