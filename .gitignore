@@ -1,14 +1,15 @@
+# Release layout: SuperMarioBros4.exe + SuperMarioBros4.sfc + README.md at the top; everything else lives in dev/.
+# dev/bin is build output (dev/release.ps1 copies the release files to the top level).
+dev/bin/
 # private per-agent/dev builds
-.agentbin/
-snes/build/
-snes/build-*/
-# third-party toolchain (downloaded by snes/tools/setup.ps1)
-snes/tools/mesen/
-snes/tools/cc65/
-snes/tools/*.zip
+dev/.agentbin/
+dev/snes/build/
+dev/snes/build-*/
+# third-party toolchain (downloaded by dev/snes/tools/setup.ps1 and dev/tools/fetch-core.ps1)
+dev/snes/tools/mesen/
+dev/snes/tools/cc65/
+dev/snes/tools/*.zip
 # editor / OS
 .vscode/
 Thumbs.db
 *.tmp
-# player self-test output
-bin/selftest/

@@ -77,7 +77,36 @@ namespace SMB4.Frontend
                 p = Path.Combine(dir, "bin", "cores", cfg.Core);
                 if (File.Exists(p)) return p;
             }
+            // release builds carry the core inside the exe (resource "core.dll") so players only need the exe
+            string ext = ExtractEmbeddedCore(cfg);
+            if (ext != null) return ext;
             return Path.Combine(PlayerProgram.ExeDir, "cores", cfg.Core);
+        }
+
+        /// <summary>
+        /// Writes the embedded core to %LOCALAPPDATA%\&lt;exe name&gt;\cores\&lt;size&gt;\ (once per core version) and returns
+        /// its path, or null when the exe has no embedded core.
+        /// </summary>
+        static string ExtractEmbeddedCore(GameConfig cfg)
+        {
+            try
+            {
+                using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("core.dll"))
+                {
+                    if (s == null) return null;
+                    string app = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
+                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), app, "cores", s.Length.ToString());
+                    string p = Path.Combine(dir, cfg.Core);
+                    if (File.Exists(p) && new FileInfo(p).Length == s.Length) return p;
+                    Directory.CreateDirectory(dir);
+                    string tmp = p + ".tmp";
+                    using (var f = File.Create(tmp)) s.CopyTo(f);
+                    if (File.Exists(p)) File.Delete(p);
+                    File.Move(tmp, p);
+                    return p;
+                }
+            }
+            catch { return null; }
         }
 
         // ---------------------------------------------------------------- start / stop

@@ -1,4 +1,4 @@
-# Builds the game exe (a libretro SNES player with the ROM embedded) and the developer tool smb4tools.exe with the
+﻿# Builds the game exe (a libretro SNES player with the ROM embedded) and the developer tool smb4tools.exe with the
 # C# compiler that ships with Windows (.NET Framework 4.8).
 # Usage:  powershell -ExecutionPolicy Bypass -File build.ps1 [-Debug] [-ToolsOnly] [-Out dir] [-Rom file.sfc]
 #                     [-GameIni src\Frontend\game.ini] [-Icon src\app.ico] [-ExeName SuperMarioBros4]
@@ -51,6 +51,9 @@ if (-not $ToolsOnly) {
         $gameRes += "/resource:$romFull,rom.sfc"
         Write-Host ("Embedding ROM {0} ({1:N0} KB)" -f $Rom, ($len / 1KB))
     } else { Write-Host "No ROM found to embed: the exe will need $ExeName.sfc (game.ini RomFile) next to it" -ForegroundColor Yellow }
+    # embed the libretro core too, so a release is just the exe (it unpacks the core to %LOCALAPPDATA% on first run)
+    $embCore = Get-ChildItem -Path "$Out\cores\*_libretro.dll", 'bin\cores\*_libretro.dll' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($embCore) { $gameRes += "/resource:$($embCore.FullName),core.dll"; Write-Host "Embedding core $($embCore.Name)" }
     $game = $common + @('/target:winexe', '/main:SMB4.Frontend.PlayerProgram', "/out:$Out\$ExeName.exe")
     if ($Icon -and (Test-Path $Icon)) { $game += "/win32icon:$Icon" }
     & $csc @game @gameRes @gameSources

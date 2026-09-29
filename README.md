@@ -12,12 +12,12 @@ conveniences.
 
 ## Play it
 
-**Option 1 — any SNES emulator:** open [`bin/SuperMarioBros4.sfc`](bin/SuperMarioBros4.sfc) in Mesen, bsnes,
+**Option 1 — any SNES emulator:** open [`SuperMarioBros4.sfc`](SuperMarioBros4.sfc) in Mesen, bsnes,
 snes9x or RetroArch. `.sfc` is the standard headerless SNES ROM format (4 MB LoROM with battery save), and it
 should also run from SNES flash carts.
 
-**Option 2 — the Windows player:** download the `bin` folder and double-click `bin\SuperMarioBros4.exe` (keep the
-`bin\cores` folder next to it). Nothing to install on Windows 10/11. Saves live in `%APPDATA%\SuperMarioBros4\`,
+**Option 2 — the Windows player:** download [`SuperMarioBros4.exe`](SuperMarioBros4.exe) and double-click it. That single
+file is the whole thing (ROM and emulator core built in); nothing to install on Windows 10/11. Saves live in `%APPDATA%\SuperMarioBros4\`,
 screenshots (F12) in `Pictures\Super Mario Bros 4\`.
 
 ### Controls
@@ -45,31 +45,35 @@ and jump with a full P-meter to **fly**.
   P-Wing; an item inventory; goal cards; 3 battery-saved files; 2-player alternating.
 * 16-bit presentation: outlined 15-color sprites, gradient skies and parallax backgrounds, and an SPC700 soundtrack
   of original compositions with echo.
-* Physics reproduced rule-for-rule from SMB3 and verified frame-by-frame (see `docs/01-game-feel-and-physics.md`).
+* Physics reproduced rule-for-rule from SMB3 and verified frame-by-frame (see `dev/docs/01-game-feel-and-physics.md`).
 
 ## Repository layout
 | Path | What it is |
 |---|---|
-| `snes/` | **The game.** 65816 source (`snes/src`), linker config, build and test scripts, design docs |
-| `data/` | Game content as plain text: levels, world maps, pixel art, music |
-| `src/Tools/` | `smb4tools` — converts `data/` into SNES format, renders previews, runs tests |
-| `src/Frontend/`, `src/Platform/` | The Windows ROM player (hosts the bsnes libretro core) |
-| `src/Game/` | The original C# version of the game, kept as the behaviour reference the ROM was ported from |
-| `docs/` | Design documents (game feel & physics, architecture, game design, art/audio, roadmap) |
-| `bin/` | Ready-to-play builds: the ROM, the Windows player, and the dev tool |
+| `SuperMarioBros4.exe` | **Play this** on Windows (single file) |
+| `SuperMarioBros4.sfc` | **Or this** in any SNES emulator |
+| `dev/` | Everything used to make it (below) |
+| `dev/snes/` | **The game source.** 65816 source (`dev/snes/src`), linker config, build and test scripts, design docs |
+| `dev/data/` | Game content as plain text: levels, world maps, pixel art, music |
+| `dev/src/Tools/` | `smb4tools` — converts `data/` into SNES format, renders previews, runs tests |
+| `dev/src/Frontend/`, `dev/src/Platform/` | The Windows ROM player (hosts the bsnes libretro core) |
+| `dev/src/Game/` | The original C# version of the game, kept as the behaviour reference the ROM was ported from |
+| `dev/docs/` | Design documents (game feel & physics, architecture, game design, art/audio, roadmap) |
 
 ## Build from source (Windows)
+Everything lives in `dev/`. From the repository root:
 ```powershell
-powershell -ExecutionPolicy Bypass -File snes\tools\setup.ps1   # once: downloads the ca65 assembler + Mesen2 (tests)
-powershell -ExecutionPolicy Bypass -File tools\fetch-core.ps1   # once: downloads the bsnes libretro core
-powershell -ExecutionPolicy Bypass -File build.ps1 -ToolsOnly   # builds bin\smb4tools.exe (C# compiler built into Windows)
-powershell -ExecutionPolicy Bypass -File snes\build.ps1         # converts data\ and assembles snes\build\smb4.sfc
-powershell -ExecutionPolicy Bypass -File build.ps1              # builds bin\SuperMarioBros4.exe with the ROM embedded
+powershell -ExecutionPolicy Bypass -File dev\snes\tools\setup.ps1   # once: downloads the ca65 assembler + Mesen2 (tests)
+powershell -ExecutionPolicy Bypass -File dev\tools\fetch-core.ps1   # once: downloads the bsnes libretro core
+powershell -ExecutionPolicy Bypass -File dev\release.ps1            # builds + tests, then updates the top-level exe and ROM
 ```
-Tests: `snes\test\qa-rom.ps1` (every level boots and runs), `snes\test\parity-suite.ps1` (frame-exact physics
+`release.ps1` converts `dev\data` and assembles the ROM (`dev\snes\build.ps1`), runs the ROM tests, builds the
+Windows player (`dev\build.ps1`, C# compiler built into Windows) with the ROM and core embedded, self-tests it, and
+copies `SuperMarioBros4.exe` + `SuperMarioBros4.sfc` to the top level. Tests on their own:
+`dev\snes\test\qa-rom.ps1` (every level boots and runs), `dev\snes\test\parity-suite.ps1` (frame-exact physics
 against the reference), `SuperMarioBros4.exe --selftest` (player: video, audio, saves). Technical docs:
-`snes/DESIGN.md`, `snes/ENTITIES.md`, `snes/TESTING.md`, and `snes/KIT-NOTES.md` — notes for reusing this setup to
-make other SNES homebrew games.
+`dev/snes/DESIGN.md`, `dev/snes/ENTITIES.md`, `dev/snes/TESTING.md`, and `dev/snes/KIT-NOTES.md` — notes for reusing
+this setup to make other SNES homebrew games.
 
 ## Disclaimer
 * This is a **personal hobby project made for fun**. It is free, non-commercial, and **not intended to be sold**.
@@ -83,6 +87,6 @@ make other SNES homebrew games.
 * If you enjoy this, please support the official games — buy and play Nintendo's Mario titles.
 
 ## Licenses
-The emulator core used by the Windows player, `bin/cores/bsnes_libretro.dll`, is **bsnes** (GPLv3); see
-[`LICENSE-THIRD-PARTY.md`](LICENSE-THIRD-PARTY.md). The toolchain downloaded by the setup scripts (cc65, Mesen2) is
+The emulator core embedded in the Windows player (`SuperMarioBros4.exe`) is **bsnes** (GPLv3); see
+[`dev/LICENSE-THIRD-PARTY.md`](dev/LICENSE-THIRD-PARTY.md). The toolchain downloaded by the setup scripts (cc65, Mesen2) is
 not included in this repository.
