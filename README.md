@@ -1,87 +1,88 @@
 # Super Mario Bros. 4 — The Lantern Tour
 
-A fan-made, 16-bit-style sequel to **Super Mario Bros. 3** (the generation after it), built as a native Windows desktop game.
-Movement is a rule-for-rule reproduction of SMB3's physics (see `docs/01-game-feel-and-physics.md`), with an
-optional "Modern" layer of invisible leniency (coyote time + jump buffer).
+> **A personal, just-for-fun fan project.** This is an unofficial, non-commercial fan game made by one hobbyist as
+> a love letter to Super Mario Bros. 3. It is **not affiliated with, endorsed by, sponsored by, or connected to
+> Nintendo** in any way. It is **not for sale** and never will be — please don't sell it, bundle it, or charge for it
+> in any form. See the [Disclaimer](#disclaimer) below.
 
-## Play
-Double-click **`bin\SuperMarioBros4.exe`** (keep the `bin\cores` folder next to it). Nothing to install (it runs on the
-.NET Framework 4.8 built into Windows 10/11). The game itself is the SNES ROM embedded in the exe; the exe is a
-player for it built on the bsnes emulator core (libretro). A `SuperMarioBros4.sfc` placed next to the exe is played
-instead of the embedded one. Settings, the battery save (`save.srm`) and save states live in
-`%APPDATA%\SuperMarioBros4\`; screenshots (F12) go to `Pictures\Super Mario Bros 4\`.
+An imagined "next generation after Super Mario Bros. 3": eight new worlds with SMB3's exact movement and feel,
+presented in a 16-bit style. The game is a **native Super Nintendo (SNES) ROM** written in 65816 assembly, so it
+runs in any SNES emulator; this repo also includes a small Windows player that runs the ROM with modern
+conveniences.
 
-### Controls (all rebindable in the Esc menu → Controls)
-| SNES pad | Keyboard | Xbox-style controller | Other controllers (PlayStation, Switch Pro, 8BitDo, USB) |
+## Play it
+
+**Option 1 — any SNES emulator:** open [`bin/SuperMarioBros4.sfc`](bin/SuperMarioBros4.sfc) in Mesen, bsnes,
+snes9x or RetroArch. `.sfc` is the standard headerless SNES ROM format (4 MB LoROM with battery save), and it
+should also run from SNES flash carts.
+
+**Option 2 — the Windows player:** download the `bin` folder and double-click `bin\SuperMarioBros4.exe` (keep the
+`bin\cores` folder next to it). Nothing to install on Windows 10/11. Saves live in `%APPDATA%\SuperMarioBros4\`,
+screenshots (F12) in `Pictures\Super Mario Bros 4\`.
+
+### Controls
+| SNES pad | Keyboard | Xbox-style controller | Other controllers |
 |---|---|---|---|
 | D-pad | Arrow keys / WASD | D-pad or left stick | D-pad/hat or left stick |
-| B (jump) | X, K, Space | A | Cross / button 2 |
-| Y (run / fire / tail) | Z, J, Left Shift | X or RT | Square / button 1 |
-| A | C, L | B | Circle / button 3 |
-| X | V, I | Y | Triangle / button 4 |
-| L / R | Q / E | LB (or LT) / RB | L1 / R1 |
-| Start | Enter | Menu | Options / button 10 |
-| Select | Right Shift, Tab | View | Share / button 9 |
+| B — jump | X, K, Space | A | Cross / button 2 |
+| Y — run / fire / tail | Z, J, Left Shift | X or RT | Square / button 1 |
+| Start — pause | Enter | Menu | Options |
+| Select — items (map) | Right Shift, Tab | View | Share |
 
-| Player | Key / button |
-|---|---|
-| Options menu (pauses) | Esc, or hold Select+Start on a controller |
-| Fullscreen | F11 or Alt+Enter |
-| Screenshot | F12 |
-| Save / load state | F5 / F9 |
-| Pause | Pause/Break |
-
-Options menu: window/fullscreen, window size, pixel-perfect or sharp scaling, SNES 8:7 pixel shape, scanlines, FPS
-readout; frame pacing (auto-locks to 60/120/240 Hz displays; VRR mode for G-Sync/FreeSync), 1-frame run-ahead,
-low-latency mode, pause when inactive; volume and audio buffer; controller layout (SNES positions / by label),
-per-button rebinding for keyboard, XInput and DirectInput-class pads, stick deadzone and up/down angle, left-stick
-on/off, SOCD handling, live controller test, hot-plugging (the game pauses if a controller disconnects); emulator
-core options; save/load state, reset, quit.
+Windows player extras: **Esc** options menu (rebinding, scaling, 8:7 pixels, scanlines, frame pacing for
+60/120/240 Hz and VRR, run-ahead), **F11** fullscreen, **F5/F9** save/load state, **F12** screenshot.
 
 ### Moves
-Hold **Run** to speed up; keep running to fill the **P-meter** for P-speed. Hold **Jump** longer to jump higher.
-Press the opposite direction to **skid** and turn. **Down** ducks (big Mario), **slides down slopes** (knocking
-enemies away) and enters pipes; **Up** opens doors and climbs vines. Hold Run to **carry shells**, release to kick
-them. In water, tap Jump to swim; **Up + Jump** at the surface leaps out.
-With the **Super Leaf**: tap Jump to float, Run to tail-spin, and jump with a full P-meter to **fly**.
+Hold **Run** to speed up and fill the **P-meter**; hold **Jump** longer to jump higher; press the opposite
+direction to **skid**. **Down** ducks, **slides down slopes** and enters pipes; **Up** opens doors and climbs
+vines. Hold Run to **carry shells**, release to kick. With the **Super Leaf**, tap Jump to float, Run to tail-spin,
+and jump with a full P-meter to **fly**.
 
-## What's in the game
-* 8 worlds of original levels (plains, desert, sea, jungle, sky, ice, machines, Bowser's volcano) with world maps,
-  Toad houses, spade bonus games, the N-Spade card-matching game (appears every 80,000 points), wandering
-  Hammer Bros, fortresses (Boom Boom), airships (7 Koopalings) and a final battle with Bowser.
-* SMB3 power-ups: Super Mushroom, Fire Flower, Super Leaf (Raccoon), Tanooki Suit, Frog Suit, Hammer Suit,
-  Starman, P-Wing; items usable from the map; goal cards with 1-UP bonuses; 3 save slots; 2-player alternating mode.
-* A 16-bit-style renderer (256×240, 24-bit palettes, 15-color outlined sprites, gradient skies, parallax layers) and an SNES-style sampled-instrument sound engine with echo, original music and sound effects.
+## What's in it
+* 8 worlds plus Bowser's castle, 55 original levels, world maps, Toad houses, spade and N-Spade bonus games,
+  wandering Hammer Bros, fortresses (Boom Boom), airships (7 Koopalings) and a final battle with Bowser.
+* SMB3-style power-ups: Super Mushroom, Fire Flower, Super Leaf, Tanooki Suit, Frog Suit, Hammer Suit, Starman,
+  P-Wing; an item inventory; goal cards; 3 battery-saved files; 2-player alternating.
+* 16-bit presentation: outlined 15-color sprites, gradient skies and parallax backgrounds, and an SPC700 soundtrack
+  of original compositions with echo.
+* Physics reproduced rule-for-rule from SMB3 and verified frame-by-frame (see `docs/01-game-feel-and-physics.md`).
 
-## Build from source
-`powershell -ExecutionPolicy Bypass -File tools\fetch-core.ps1` once (downloads the bsnes libretro core into
-`bin\cores`), then `powershell -ExecutionPolicy Bypass -File build.ps1` compiles `bin\SuperMarioBros4.exe` (the player,
-`src\Frontend` + `src\Platform`, with `bin\SuperMarioBros4.sfc` — else `snes\build\smb4.sfc` — embedded; `-Rom x.sfc`
-picks another) and the developer tool `bin\smb4tools.exe` with the C# compiler that ships with Windows. `-Out dir`
-builds elsewhere, `-ToolsOnly` builds just the tool. `SuperMarioBros4.exe --selftest` runs the ROM headless for 300
-frames with scripted input and checks video, audio, run-ahead, save states and SRAM saving (report + PNGs in
-`selftest\`). The player is generic: see "Frontend player" in `snes/KIT-NOTES.md` to package another SNES ROM.
+## Repository layout
+| Path | What it is |
+|---|---|
+| `snes/` | **The game.** 65816 source (`snes/src`), linker config, build and test scripts, design docs |
+| `data/` | Game content as plain text: levels, world maps, pixel art, music |
+| `src/Tools/` | `smb4tools` — converts `data/` into SNES format, renders previews, runs tests |
+| `src/Frontend/`, `src/Platform/` | The Windows ROM player (hosts the bsnes libretro core) |
+| `src/Game/` | The original C# version of the game, kept as the behaviour reference the ROM was ported from |
+| `docs/` | Design documents (game feel & physics, architecture, game design, art/audio, roadmap) |
+| `bin/` | Ready-to-play builds: the ROM, the Windows player, and the dev tool |
 
-The original C# version of the game (`src\Game`, content in `data\`) is no longer the runtime; it is kept as the
-reference the ROM is ported from and is compiled into `smb4tools.exe`, whose converter and tests use it.
-Developer tools (`bin\smb4tools.exe`): `selftest` (physics checks against the spec), `validate`, `reach <level>`
-(proves a level is completable), `progress` (proves every world map can be finished), `fuzz <level>`,
-`level <id> <png>`, `map <n> <png>`, `shot <level> <png> <script>`, `sheet <png>`, `screen <name> <png>`,
-`song <name> <wav>`, `flow <dir> <script>`. `qa.ps1` runs the whole suite.
+## Build from source (Windows)
+```powershell
+powershell -ExecutionPolicy Bypass -File snes\tools\setup.ps1   # once: downloads the ca65 assembler + Mesen2 (tests)
+powershell -ExecutionPolicy Bypass -File tools\fetch-core.ps1   # once: downloads the bsnes libretro core
+powershell -ExecutionPolicy Bypass -File build.ps1 -ToolsOnly   # builds bin\smb4tools.exe (C# compiler built into Windows)
+powershell -ExecutionPolicy Bypass -File snes\build.ps1         # converts data\ and assembles snes\build\smb4.sfc
+powershell -ExecutionPolicy Bypass -File build.ps1              # builds bin\SuperMarioBros4.exe with the ROM embedded
+```
+Tests: `snes\test\qa-rom.ps1` (every level boots and runs), `snes\test\parity-suite.ps1` (frame-exact physics
+against the reference), `SuperMarioBros4.exe --selftest` (player: video, audio, saves). Technical docs:
+`snes/DESIGN.md`, `snes/ENTITIES.md`, `snes/TESTING.md`, and `snes/KIT-NOTES.md` — notes for reusing this setup to
+make other SNES homebrew games.
 
-## Legal
-This is a non-commercial fan project. Mario and all related characters and names are trademarks of Nintendo.
-All art, music, sound and code here are original works made for this project; no Nintendo assets are included.
-Please don't distribute it publicly under this name (see `PLAN.md` §7). The emulator core `bin\cores\bsnes_libretro.dll`
-is bsnes (GPLv3) — see `LICENSE-THIRD-PARTY.md`.
+## Disclaimer
+* This is a **personal hobby project made for fun**. It is free, non-commercial, and **not intended to be sold**.
+* **Not affiliated with Nintendo.** *Super Mario Bros.*, Mario, Luigi, Bowser, the Koopalings, Toad and all related
+  names and characters are trademarks and copyrights of **Nintendo**. No endorsement by Nintendo is implied.
+* **No Nintendo assets are included.** All art, music, sound, levels and code in this repository were made from
+  scratch for this project; nothing was ripped, traced or copied from any Nintendo game or ROM. The original
+  games were used only as a reference for how things should feel.
+* If you are a rights holder and want something changed or taken down, please open an issue on this repository and
+  it will be handled promptly.
+* If you enjoy this, please support the official games — buy and play Nintendo's Mario titles.
 
-## SNES ROM
-`bin/SuperMarioBros4.sfc` **is the game**: a native SNES (Super Nintendo) ROM, 4 MB LoROM, written in 65816 assembly with an
-SPC700 sound driver. Open it in any SNES emulator (Mesen, bsnes, snes9x, RetroArch) or just run the exe (it embeds it).
-Everything is in: 8 worlds + Bowser's castle, all enemies and bosses, all suits, world maps, Toad houses, spade and
-N-Spade games, Hammer Bro battles, 3 battery-saved files, 2P alternating, ending. Controls: B = jump, Y = run/fire/
-tail, Start = start/pause, Select on the title = debug level select.
-Rebuild: `powershell -File snes/tools/setup.ps1` once (downloads the assembler + test emulator), then
-`powershell -File snes/build.ps1` → `snes/build/smb4.sfc`. Tests: `snes/test/qa-rom.ps1` (every level boots and
-runs), `snes/test/parity-suite.ps1` (frame-exact physics vs the C# reference). Docs: `snes/DESIGN.md`,
-`snes/ENTITIES.md`, `snes/TESTING.md`, and `snes/KIT-NOTES.md` (how to build the next SNES game with this kit).
+## Licenses
+The emulator core used by the Windows player, `bin/cores/bsnes_libretro.dll`, is **bsnes** (GPLv3); see
+[`LICENSE-THIRD-PARTY.md`](LICENSE-THIRD-PARTY.md). The toolchain downloaded by the setup scripts (cc65, Mesen2) is
+not included in this repository.

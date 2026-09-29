@@ -120,7 +120,7 @@ The project folder was empty, and there's no compiler, CMake or git installed ye
 - All art, music and sound are original (04 §6). Nothing is ripped from a ROM.
 - The original game is used only as a measurement reference.
 
-Even so, **a public release under this name and with these characters is very likely to be taken down.** Keep it private, or plan a rebrand (original hero, enemies, title) before any public release. The engine, feel, tools and level designs carry over unchanged.
+Even so, a public release under this name and with these characters could be taken down. The owner chose to publish it as a clearly-labelled, free, non-commercial fan project (see the README disclaimer); if a rights holder objects, rebrand (original hero, enemies, title) — the engine, feel, tools and level designs carry over unchanged.
 
 ---
 
