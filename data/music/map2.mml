@@ -1,0 +1,60 @@
+# World 2 map - Desert Canyon. Latin groove, oboe lead with a flat-2 desert twist on the "Hop Along" motif.
+# Written in C, sounds in D (K2). 12-bar loop: C | F | C | Bb | Ab | Bb | C | C7 | F | Fm | Ab Bb | C
+tempo 112
+title Canyon Caravan
+echo 7 45 32
+swing 50
+
+# ---------------- C1: lead (oboe) ----------------
+C1: @oboe v12 p0 q6 E1 V2 K2
+C1: L
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 a4 g8 e8 ^4 c8 d8 |
+C1: o5 e8 f8 e8 d-8 c4 o4 b-8 o5 c8 | o5 d4 f8 d8 ^4 c8 o4 b-8 |
+C1: o5 c8 e-8 r8 a-8 r8 g8 f8 e-8 | o5 d8 f8 r8 b-8 r8 a-8 g8 f8 |
+C1: o5 g8 a-8 g8 f8 e4 d-8 c8 | o5 c4 e8 g8 b-4 a8 g8 |
+C1: o5 a4. g8 f8 e8 f8 a8 | o5 a-4. g8 f8 e8 f8 a-8 |
+C1: o5 c8 e-8 a-8 e-8 d8 f8 b-8 f8 | o5 g8 f8 e8 d-8 c4 r4 |
+
+# ---------------- C2: marimba chord answers ----------------
+C2: @marimba v9 p-4 q4 E1 K2
+C2: L
+C2: r1 | o4 r2 {c f a}8 r8 {c f a}8 r8 | r1 | o4 r2 {d f b-}8 r8 {d f b-}8 r8 |
+C2: r1 | o4 r2 {d f b-}8 r8 {d f b-}8 r8 | r1 | o4 r2 {e g b-}8 r8 {e g b-}8 r8 |
+C2: r1 | o4 r2 {c f a-}8 r8 {c f a-}8 r8 | r1 | o4 r2 {e g > c}8 r8 {e g > c}8 r8 |
+
+# ---------------- C3: warm pad (quiet) ----------------
+C3: @pad v5 p4 q8 E1 K2
+C3: L
+C3: o4 {c e g}1 | {c f a}1 | {c e g}1 | {d f b-}1 |
+C3: o4 {c e- a-}1 | {d f b-}1 | {c e g}1 | {e g b-}1 |
+C3: o4 {c f a}1 | {c f a-}1 | {c e- a-}2 {d f b-}2 | {c e g}1 |
+
+# ---------------- C4: nylon guitar tresillo ----------------
+C4: @guitar v8 p5 q4 E0 K2
+C4: L
+C4: o4 {e g > c}4. {e g > c}4. {e g > c}4 | {f a > c}4. {f a > c}4. {f a > c}4 | {e g > c}4. {e g > c}4. {e g > c}4 | {d f b-}4. {d f b-}4. {d f b-}4 |
+C4: o4 {e- a- > c}4. {e- a- > c}4. {e- a- > c}4 | {d f b-}4. {d f b-}4. {d f b-}4 | {e g > c}4. {e g > c}4. {e g > c}4 | {e g b-}4. {e g b-}4. {e g b-}4 |
+C4: o4 {f a > c}4. {f a > c}4. {f a > c}4 | {f a- > c}4. {f a- > c}4. {f a- > c}4 | {e- a- > c}4. {e- a- > c}8 {d f b-}4 {d f b-}4 | {e g > c}4. {e g > c}4. {e g > c}4 |
+
+# ---------------- C5: tresillo bass with approach notes ----------------
+C5: @bass v12 p0 q6 E0 K2
+C5: L
+C5: o2 c4. g4. e4 | o2 f4. c4. d4 | o2 c4. g4. o1 b4 | o1 b-4. o2 f4. o1 a4 |
+C5: o1 a-4. o2 e-4. o1 a4 | o1 b-4. o2 f4. o1 b4 | o2 c4. g4. c4 | o2 c4. g4. e4 |
+C5: o2 f4. c4. f4 | o2 f4. c4. g4 | o2 a-4. e-8 b-4 o1 b4 | o2 c4. g4. o1 b4 |
+
+# ---------------- C6: congas + kick (tumbao) ----------------
+C6: @kit v11
+C6: L
+C6: [[k8 r8 f8 f8 g8 k8 f8 f8]5 k8 f8 g8 f8 g16 g16 f8 z16 z16 b8]2 |
+
+# ---------------- C7: son clave on woodblock + shaker ----------------
+C7: @kit v8
+C7: L
+C7: [i8 j8 j8 i8 j8 j8 i8 j8 | j8 j8 i8 j8 i8 j8 j8 j8 |]6
+
+# ---------------- C8: harp glissando fills ----------------
+C8: @harp v8 p6 q8 E1 K2
+C8: L
+C8: r1 | r1 | r1 | r2 o5 d16 f16 b-16 o6 d16 f4 | r1 | r1 | r1 | r2 o5 e16 g16 b-16 o6 c16 e4 |
+C8: r1 | r1 | r1 | r2 o5 c16 e16 g16 o6 c16 e4 |

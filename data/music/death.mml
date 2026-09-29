@@ -1,0 +1,24 @@
+# Player down (~3 s) - a startled up-down flourish with an orchestra hit, a beat of shock, then a descending
+# tumble (Ab G F Eb D B G) with toms, landing on low C minor.
+tempo 120
+title Player Down
+loop 0
+echo 5 35 25
+
+C1: @snaplead v12 p0 q5 E1
+C1: o5 b16 o6 c16 d16 c16 r4 o5 a-8 g8 f8 e-8 | o5 d12 o4 b12 g12 c4
+
+C2: @xylo v10 p-4 q6 E1
+C2: o5 g16 a-16 b16 a-16 r4 o5 f8 e-8 d8 c8 | o4 b12 g12 f12 e-4
+
+C3: @orchhit v10 p3 q8 E1
+C3: o4 {g b > f}8 r8 r2. | r2
+
+C5: @bass v11 p0 q6 E0
+C5: r2 o2 f4 e-4 | o2 d8 o1 b8 o2 c4
+
+C6: @kit v11
+C6: r2 u8 m8 t8 t8 | x4 r4
+
+C8: @timpani v10 p-2 q8 E0
+C8: r2. o2 g4 | o2 c4 r4

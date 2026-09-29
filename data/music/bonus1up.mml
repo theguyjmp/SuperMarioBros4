@@ -1,0 +1,38 @@
+# 3-card bonus fanfare (~3 s) - bright sparkling arpeggios C - F - G7 in a snappy lead with glock, then "ta-DA!".
+tempo 160
+title Card Bonus
+loop 0
+echo 5 40 30
+
+# ---------------- C1: snappy lead arpeggios + ta-da ----------------
+C1: @snaplead v12 p0 q5 E1
+C1: o5 c16 e16 g16 o6 c16 e16 g16 e16 c16 o5 f16 a16 o6 c16 f16 a16 f16 c16 o5 a16 |
+C1: o5 g16 b16 o6 d16 f16 g16 f16 d16 o5 b16 o6 c8. o5 g16 q8 o6 c4 |
+
+# ---------------- C2: brass ta-da ----------------
+C2: @brass v10 p-4 q5 E1
+C2: r1 | r2 o5 {e g}8. {d f}16 q8 {e g > c}4 |
+
+# ---------------- C3: low strings ----------------
+C3: @strings v5 p4 q8 E1
+C3: o4 {c e g}2 {c f a}2 | o3 {g b > f}2 o4 {e g > c}2 |
+
+# ---------------- C4: glock sparkles ----------------
+C4: @glock v6 p6 q8 E1
+C4: o6 c16 e16 g16 o7 c16 r4 o6 f16 a16 o7 c16 f16 r4 | o6 g16 b16 o7 d16 f16 r4 r4 o7 c4 |
+
+# ---------------- C5: tuba ----------------
+C5: @tuba v12 p0 q5 E0
+C5: o2 c4 o1 g4 o2 f4 c4 | o1 g4 b4 o2 c8. o1 g16 q8 o2 c4 |
+
+# ---------------- C6: kick / rim / ta-da hits ----------------
+C6: @kit v11
+C6: k4 d4 k8 k8 d4 | k8 d8 s16 s16 s8 s8. s16 x4 |
+
+# ---------------- C7: shaker + woodblock, crash on DA ----------------
+C7: @kit v9
+C7: j8 j8 i8 j8 j8 j8 i8 j8 | j8 j8 i8 j8 r4 v11 c4 |
+
+# ---------------- C8: timpani ----------------
+C8: @timpani v11 p-2 q8 E1
+C8: o3 c4 r4 o2 f4 r4 | o2 g8 g8 [g32]8 o3 c8. o2 g16 o3 c4 |

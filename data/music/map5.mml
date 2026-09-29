@@ -1,0 +1,65 @@
+# World 5 map - Sky Kingdom. Floating 3/4 waltz: the "Hop Along" motif on harp doubled by glockenspiel,
+# pizzicato oom-pah-pah. Written in C, sounds in Eb (K3). 16 bars of 3/4:
+# C | C | F | Am | Dm7 | G7 | C | G7 | F | Fm | C | A7 | Dm7 | G7 | Ab | Bb
+tempo 144
+title Cloud Parade
+echo 8 55 40
+swing 50
+
+# ---------------- C1: lead (harp) ----------------
+C1: @harp v13 p0 q8 E1 K3
+C1: L
+C1: o4 g4 o5 c4 e4 | o5 g4 e4 c4 | o5 a2 g4 | o5 e2 c8 d8 |
+C1: o5 f4 a4 o6 c4 | o5 b2 g4 | o5 e4 g4 o6 c4 | o5 d2. |
+C1: o5 c4 f4 a4 | o5 a-2 f4 | o5 g4 e4 c4 | o5 a2 g4 |
+C1: o5 f4 e4 d4 | o5 g4 b4 o6 d4 | o6 c2 o5 a-4 | o5 f4 d4 o4 b-4 |
+
+# ---------------- C2: counter-melody (flute) ----------------
+C2: @flute v8 p-4 q7 E1 V2 K3
+C2: L
+C2: r2. | r2. | o5 c2. | o4 a2. |
+C2: o4 a2. | o5 f2. | o4 g2. | o4 b4 o5 d4 f4 |
+C2: o4 a2. | o5 c2. | o5 c2. | o5 c+2. |
+C2: o4 a2. | o5 f2. | o5 e-2. | o5 d2. |
+
+# ---------------- C3: string pad (quiet) ----------------
+C3: @strings v5 p4 q8 E1 K3
+C3: L
+C3: o4 {c e g}2. | {c e g}2. | {c f a}2. | {c e a}2. |
+C3: o4 {d f a}2. | o3 {b > d f}2. | o4 {c e g}2. | o3 {b > d f}2. |
+C3: o4 {c f a}2. | {c f a-}2. | {c e g}2. | {c+ e g}2. |
+C3: o4 {d f a}2. | o3 {b > d f}2. | o4 {c e- a-}2. | {d f b-}2. |
+
+# ---------------- C4: pizzicato "pah-pah" ----------------
+C4: @pizz v8 p5 q4 E1 K3
+C4: L
+C4: o4 r4 {e g > c}4 {e g > c}4 | r4 {e g > c}4 {e g > c}4 | r4 {f a > c}4 {f a > c}4 | r4 {e a > c}4 {e a > c}4 |
+C4: o4 r4 {d f a}4 {d f a}4 | r4 {d f b}4 {d f b}4 | r4 {e g > c}4 {e g > c}4 | r4 {d f b}4 {d f b}4 |
+C4: o4 r4 {f a > c}4 {f a > c}4 | r4 {f a- > c}4 {f a- > c}4 | r4 {e g > c}4 {e g > c}4 | r4 {e g > c+}4 {e g > c+}4 |
+C4: o4 r4 {d f a}4 {d f a}4 | r4 {d f b}4 {d f b}4 | r4 {e- a- > c}4 {e- a- > c}4 | r4 {d f b-}4 {d f b-}4 |
+
+# ---------------- C5: bass "oom" ----------------
+C5: @bass v11 p0 q5 E0 K3
+C5: L
+C5: o2 c2 r4 | o2 g2 r4 | o2 f2 r4 | o2 a2 r4 |
+C5: o2 d2 r4 | o2 g2 r4 | o2 c2 r4 | o2 g4 a4 b4 |
+C5: o2 f2 r4 | o2 f2 r4 | o2 e2 r4 | o2 a2 r4 |
+C5: o2 d2 r4 | o2 g2 r4 | o2 a-2 r4 | o2 b-4 o1 b-4 o2 b4 |
+
+# ---------------- C6: soft kick + woodblock ticks ----------------
+C6: @kit v8
+C6: L
+C6: [[k4 i4 i4]7 k4 i8 i8 d4]2 |
+
+# ---------------- C7: shaker ----------------
+C7: @kit v6
+C7: L
+C7: [r8 j8 j8 j8 j8 j8]16 |
+
+# ---------------- C8: glockenspiel doubling the motif ----------------
+C8: @glock v6 p-6 q8 E1 K3
+C8: L
+C8: o5 g4 o6 c4 e4 | o6 g4 e4 c4 | o6 a2 g4 | o6 e2 c8 d8 |
+C8: r2. | r2. | r2. | r2. |
+C8: r2. | r2. | o6 g4 e4 c4 | o6 a2 g4 |
+C8: r2. | r2. | r4 o6 e-8 a-8 o7 c4 | r4 o6 f8 b-8 o7 d4 |

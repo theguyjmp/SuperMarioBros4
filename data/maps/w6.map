@@ -1,0 +1,27 @@
+name  = FROSTBITE PEAKS
+music = map6
+node 1 = 6-1
+node 2 = 6-2
+node 3 = 6-3
+node 4 = 6-4
+node 5 = 6-5
+node F = 6-f
+node A = 6-a
+node H = toad:flower,tanooki,hammer
+node P = spade
+lock L = F
+hbro = 11 2 hammer
+grid
+^^^ww^^^wwTww^^^
+^^wwwTww^^www^^w
+^wwwwwwwA-+--5^w
+^^wTwww^^r^ww|^^
+^wwww^^wwFwwP+Tw
+wwTwwwwww|wwr|wT
+wwwwww^3-+-L-4ww
+wTww^^w|w^^wTww^
+wwwwwH-+wwwwww~~
+wwwTwww|www~~~~~
+wS-1-+-2w~~~~~~~
+~~~wwTw~~~~~~~~~
+end

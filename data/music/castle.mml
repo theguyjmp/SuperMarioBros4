@@ -1,0 +1,72 @@
+# Castle (Bowser's keep) - dark, chromatic A minor. The "Hop Along" hook IN MINOR on the organ (bars 1-2, 5-6:
+# E A . C . E C A | F . E C~), tritone answers, a chromatic organ section over an A pedal with Bb/A (bII) rubs,
+# pounding synth-bass octaves, choir pad, brass counter-line, bell tolls, then F - G - Am (bVI-bVII-i) into E7.
+# 16-bar loop:  Am F Dm E7 | Am F D#dim7 E | Am Bb/A Am Bb/A | F G Am E7
+tempo 112
+title Throne of Cinders
+echo 8 50 36
+swing 50
+
+# ---------------- C1: organ lead ----------------
+C1: @organ v11 p0 q6 E1 V1
+C1: L
+# A: minor motif
+C1: o4 e8 a8 r8 o5 c8 r8 e8 c8 o4 a8 | o5 f4 e8 c8 ^4 o4 a8 b8 |
+C1: o5 d8 f8 r8 a8 r8 g+8 a8 f8 | o5 g+4 d8 o4 b8 ^4 g+8 b8 |
+C1: o4 e8 a8 r8 o5 c8 r8 e8 c8 o4 a8 | o5 f4 e8 c8 ^4 e8 f+8 |
+C1: o5 a8 r8 f+8 a8 o6 c8 r8 o5 a8 f+8 | o5 e2 ^8 d+8 e8 f8 |
+# B: chromatic organ over the A pedal
+C1: o5 e8 f8 e8 d+8 e8 r8 o4 b8 r8 | o5 f8 g8 f8 e8 f8 r8 d8 r8 |
+C1: o5 a8 b-8 a8 g+8 a8 r8 e8 r8 | o5 b-8 o6 c8 o5 b-8 a8 b-8 r8 f8 r8 |
+# cadence F - G - Am - E7
+C1: o5 a4. g8 f4 c4 | o5 b4. a8 g4 d4 | o5 c4 e4 a4 o6 c4 | o5 b4 g+4 e4 d4 |
+
+# ---------------- C2: brass counter-line (chromatic, tritones) ----------------
+C2: @brass v8 p-4 q7 E1
+C2: L
+C2: o4 c2 o3 b2 | o3 a2 o4 c2 | o4 d2 f2 | o4 d2 o3 b2 |
+C2: o4 c2 e2 | o4 f2 e-2 | o4 d+2 f+2 | o4 e2 g+2 |
+C2: o4 c2 e2 | o4 d2 e2 | o4 e2 c2 | o4 d2 f2 |
+C2: o4 c2 f2 | o4 d2 g2 | o4 e2 a2 | o4 g+2 f2 |
+
+# ---------------- C3: choir pad ----------------
+C3: @choir v6 p4 q8 E1
+C3: L
+C3: o3 {a > c e}1 | o3 {a > c f}1 | o3 {a > d f}1 | o3 {g+ b > d}1 |
+C3: o3 {a > c e}1 | o3 {a > c f}1 | o3 {a > c f+}1 | o3 {g+ b > e}1 |
+C3: o3 {a > c e}1 | o3 {b- > d f}1 | o3 {a > c e}1 | o3 {b- > d f}1 |
+C3: o3 {a > c f}1 | o3 {g b > d}1 | o3 {a > c e}1 | o3 {g+ b > d}1 |
+
+# ---------------- C4: driving organ arpeggio ostinato ----------------
+C4: @organ v6 p5 q4 E1
+C4: L
+C4: o3 [a8 > c8 e8 c8 <]2 | o3 [a8 > c8 f8 c8 <]2 | o3 [a8 > d8 f8 d8 <]2 | o3 [g+8 b8 > d8 < b8]2 |
+C4: o3 [a8 > c8 e8 c8 <]2 | o3 [a8 > c8 f8 c8 <]2 | o3 [a8 > c8 f+8 c8 <]2 | o3 [g+8 b8 > e8 < b8]2 |
+C4: o3 [a8 > c8 e8 c8 <]2 | o3 [b-8 > d8 f8 d8 <]2 | o3 [a8 > c8 e8 c8 <]2 | o3 [b-8 > d8 f8 d8 <]2 |
+C4: o3 [a8 > c8 f8 c8 <]2 | o3 [g8 b8 > d8 < b8]2 | o3 [a8 > c8 e8 c8 <]2 | o3 [g+8 b8 > d8 < b8]2 |
+
+# ---------------- C5: pounding bass octaves ----------------
+C5: @synbass v12 p0 q5 E0
+C5: L
+C5: o1 [a8 > a8 <]4 | o2 [f8 > f8 <]4 | o2 [d8 > d8 <]4 | o2 [e8 > e8 <]4 |
+C5: o1 [a8 > a8 <]4 | o2 [f8 > f8 <]4 | o2 [d+8 > d+8 <]4 | o2 [e8 > e8 <]4 |
+C5: o1 [a8 > a8 <]4 | o1 [a8 > a8 <]4 | o1 [a8 > a8 <]4 | o1 [a8 > a8 <]4 |
+C5: o2 [f8 > f8 <]4 | o2 [g8 > g8 <]4 | o1 [a8 > a8 <]4 | o2 [e8 > e8 <]2 e8 f8 f+8 g+8 |
+
+# ---------------- C6: kick / snare / toms ----------------
+C6: @kit v11
+C6: L
+C6: [[k4 s8 k8 k8 k8 s4]7 k8 s8 s8 s8 t8 t8 m8 m8]2 |
+
+# ---------------- C7: hats + ticking rim ----------------
+C7: @kit v7
+C7: L
+C7: [h8 h8 d8 h8 h8 h8 d8 h8]16 |
+
+# ---------------- C8: church bell tolls + timpani ----------------
+C8: @bell v8 p-5 q8 E1
+C8: L
+C8: o4 a1 | r1 | o4 f1 | @timpani v11 E0 o2 e4 r4 e8 e8 e4 @bell v8 E1 |
+C8: o4 a1 | r1 | o4 f+1 | @timpani v11 E0 o2 e8 e8 e8 e8 e4 e4 @bell v8 E1 |
+C8: o4 a1 | r1 | o4 a1 | r1 |
+C8: o4 c1 | o4 d1 | o4 e1 | @timpani v11 E0 o2 e8 e8 e8 e8 e4 e4 @bell v8 E1 |

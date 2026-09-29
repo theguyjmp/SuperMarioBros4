@@ -1,0 +1,26 @@
+name  = GEARWORKS
+node 1 = 7-1
+node 2 = 7-2
+node 3 = 7-3
+node 4 = 7-4
+node 5 = 7-5
+node F = 7-f
+node A = 7-a
+node H = toad:tanooki,hammer,leaf
+node P = spade
+lock L = F
+hbro = 9 8 hammer
+grid
+rrrrrrrrrrrrrrrr
+r,,.r,,.,,r.,,,r
+r.S-1-+-2-+-3.,r
+r,..,.|.,.,.|,.r
+r.,.,.H.~~~.+-Fr
+r,.,.,,.~~~.L,.r
+r.,.,.,.~~~.|,.r
+r,.,r,.,.,..|.,r
+r.,.A-+-5-+-4,.r
+r,.,.,.,.,|,.,.r
+r.,.,r.,.,P.r.,r
+rrrrrrrrrrrrrrrr
+end

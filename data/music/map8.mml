@@ -1,0 +1,68 @@
+# World 8 map - Bowser's Volcano. Dark C minor with a bouncy tuba oom-pah: the "Hop Along" hook IN MINOR
+# (bars 1-2, 5-6: G C . E- . G E- C | A- . G E-~), brass stabs answering, choir, pizzicato heartbeat, woodblock,
+# Phrygian Db, and the Mario cadence Ab - Bb - Cm at the loop end.
+# 16-bar loop:  Cm Ab Fm G7 | Cm Ab Db G | Ab Bb Cm Cm | Fm Db Ab Bb
+tempo 96
+title Magma March
+echo 7 45 32
+swing 58
+
+# ---------------- C1: snappy lead ----------------
+C1: @snaplead v12 p0 q5 E1 V1
+C1: L
+C1: o4 g8 o5 c8 r8 e-8 r8 g8 e-8 c8 | o5 a-4 g8 e-8 ^4 c8 d8 |
+C1: o5 e-8 f8 r8 a-8 r8 o6 c8 o5 a-8 f8 | o5 g4 d8 o4 b8 ^4 r8 o4 g8 |
+C1: o4 g8 o5 c8 r8 e-8 r8 g8 e-8 c8 | o5 a-4 g8 e-8 ^4 c8 d-8 |
+C1: o5 d-8 f8 r8 a-8 r8 o6 d-8 c8 o5 a-8 | o5 b4. a-8 g4 r4 |
+C1: o5 c4 e-8 c8 ^4 o4 a-8 o5 c8 | o5 d4 f8 d8 ^4 o4 b-8 o5 d8 | o5 e-4 g8 e-8 ^4 c8 e-8 | o5 g2 ^8 f8 e-8 d8 |
+C1: o5 c4 f8 a-8 ^4 g8 f8 | o5 f4 a-8 f8 ^4 e-8 d-8 | o5 c8 e-8 a-8 o6 c8 ^4 o5 b-8 a-8 | o5 b-4 f8 d8 ^4 r4 |
+
+# ---------------- C2: brass stabs answering the lead ----------------
+C2: @brass v9 p-4 q3 E1
+C2: L
+C2: r1 | r2 o4 {c e-}8 {c e-}8 r4 | r1 | r2 o4 {d f}8 {d f}8 r4 |
+C2: r1 | r2 o4 {c e-}8 {c e-}8 r4 | r1 | r2. o4 {d f}8 {d f}8 |
+C2: r2 o4 {c e-}8 {c e-}8 r4 | r2 o4 {d f}8 {d f}8 r4 | r2 o4 {e- g}8 {e- g}8 r4 | r2. o4 {c e-}8 {c e-}8 |
+C2: r2 o4 {c f}8 {c f}8 r4 | r2 o4 {d- f}8 {d- f}8 r4 | o4 {c e-}4 r4 {c e-}4 r4 | o4 {d f}4 r4 {d f}8 {d f}8 r4 |
+
+# ---------------- C3: choir pad ----------------
+C3: @choir v6 p3 q8 E1
+C3: L
+C3: o3 {g > c e-}1 | o3 {a- > c e-}1 | o3 {a- > c f}1 | o3 {g b > f}1 |
+C3: o3 {g > c e-}1 | o3 {a- > c e-}1 | o3 {a- > d- f}1 | o3 {g b > d}1 |
+C3: o3 {a- > c e-}1 | o3 {b- > d f}1 | o3 {g > c e-}1 | o3 {g > c e-}1 |
+C3: o3 {a- > c f}1 | o3 {a- > d- f}1 | o3 {a- > c e-}1 | o3 {b- > d f}1 |
+
+# ---------------- C4: pizzicato off-beat "pah" ----------------
+C4: @pizz v8 p5 q3 E1
+C4: L
+C4: o3 [r8 {g > c}8]4 | o3 [r8 {a- > c}8]4 | o3 [r8 {a- > c}8]4 | o3 [r8 {g b}8]4 |
+C4: o3 [r8 {g > c}8]4 | o3 [r8 {a- > c}8]4 | o3 [r8 {a- > d-}8]4 | o3 [r8 {g b}8]4 |
+C4: o3 [r8 {a- > c}8]4 | o3 [r8 {b- > d}8]4 | o3 [r8 {g > c}8]4 | o3 [r8 {g > c}8]4 |
+C4: o3 [r8 {a- > c}8]4 | o3 [r8 {a- > d-}8]4 | o3 [r8 {a- > c}8]4 | o3 [r8 {b- > d}8]4 |
+
+# ---------------- C5: tuba oom-pah ----------------
+C5: @tuba v12 p0 q5 E0
+C5: L
+C5: o2 c4 r4 o1 g4 r4 | o1 a-4 r4 o2 e-4 r4 | o1 f4 r4 o2 c4 r4 | o1 g4 r4 a-4 b4 |
+C5: o2 c4 r4 o1 g4 r4 | o1 a-4 r4 o2 e-4 r4 | o2 d-4 r4 o1 a-4 r4 | o1 g4 r4 f+4 g4 |
+C5: o1 a-4 r4 o2 e-4 r4 | o1 b-4 r4 o2 f4 r4 | o2 c4 r4 o1 g4 r4 | o2 c4 r4 e-4 e4 |
+C5: o2 f4 r4 c4 r4 | o2 d-4 r4 o1 a-4 r4 | o1 a-4 r4 o2 e-4 r4 | o1 b-4 r4 o2 f4 o1 b4 |
+
+# ---------------- C6: booms, kick, snare ----------------
+C6: @kit v11
+C6: L
+C6: [[w4 r4 s4 r8 k8 | k4 r8 k8 s4 r4 |]3 w4 r4 s4 r8 k8 | k8 r8 t8 t8 m8 m8 s8 s8 |]2
+
+# ---------------- C7: shaker + woodblock ----------------
+C7: @kit v8
+C7: L
+C7: c8 j8 i8 j8 j8 j8 i8 j8 | [j8 j8 i8 j8 j8 j8 i8 j8]15 |
+
+# ---------------- C8: timpani ----------------
+C8: @timpani v10 p-3 q8 E0
+C8: L
+C8: o2 c4 r2 c8 c8 | o2 a-4 r2 a-8 a-8 | o2 f4 r2 f8 f8 | o2 g4 r2 g8 g8 |
+C8: o2 c4 r2 c8 c8 | o2 a-4 r2 a-8 a-8 | o2 d-4 r2 d-8 d-8 | o2 g4 r2 g8 g8 |
+C8: o2 a-4 r2 a-8 a-8 | o2 b-4 r2 b-8 b-8 | o2 c4 r2 c8 c8 | o2 c4 r2 c8 c8 |
+C8: o2 f4 r2 f8 f8 | o2 d-4 r2 d-8 d-8 | o2 a-4 r2 a-8 a-8 | o2 b-4 r4 b-8 b-8 b-8 b-8 |

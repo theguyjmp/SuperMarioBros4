@@ -1,0 +1,39 @@
+# Boss defeated (~3 s) - punchy victory HIT, a rising bVI - bVII run (A-flat, B-flat), then "da-da DAAA" on C.
+tempo 150
+title Boss Defeated
+loop 0
+echo 6 45 32
+
+# ---------------- C1: trumpet ----------------
+C1: @trumpet v12 p0 q5 E1 V0
+C1: o6 c8 r8 r4 o5 e-16 a-16 o6 c16 e-16 o5 f16 b-16 o6 d16 f16 | o6 d8. d16 q8 V1 e2 |
+
+# ---------------- C2: brass ----------------
+C2: @brass v10 p-4 q4 E1
+C2: o5 {c e g}8 r8 r4 o4 {a- > c e-}4 {b- > d f}4 | o4 {b- > d f}8. {b- > d f}16 q8 {g > c e}2 |
+
+# ---------------- C3: orchestra hits ----------------
+C3: @orchhit v8 p3 q6 E1
+C3: o4 {c e g}8 r8 r4 r2 | r4 {e g > c}2 |
+
+# ---------------- C4: xylo run, glock sparkle ----------------
+C4: @xylo v5 p5 q5 E1
+C4: o6 {c e g}8 r8 r4 o6 e-16 a-16 o7 c16 e-16 o6 f16 b-16 o7 d16 f16 |
+C4: @glock v7 p5 q8 E1
+C4: o6 r4 c16 e16 g16 o7 c16 ^4 |
+
+# ---------------- C5: tuba ----------------
+C5: @tuba v12 p0 q5 E0
+C5: o2 c8 r8 r4 o1 a-4 b-4 | o1 b-8. b-16 q8 o2 c2 |
+
+# ---------------- C6: boom + snare roll ----------------
+C6: @kit v11
+C6: x8 r8 r4 s16 s16 s16 s16 s16 s16 s16 s16 | s8. s16 x2 |
+
+# ---------------- C7: crash + shaker ----------------
+C7: @kit v9
+C7: v11 c8 r8 r4 v9 j8 j8 i8 i8 | i8. i16 v11 c2 |
+
+# ---------------- C8: timpani ----------------
+C8: @timpani v11 p-2 q8 E1
+C8: o3 c4 r4 o2 a-8 a-8 b-8 [b-32]4 | o2 b-8. b-16 q8 o3 c2 |

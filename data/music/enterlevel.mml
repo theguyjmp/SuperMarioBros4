@@ -1,0 +1,29 @@
+# Enter level (~1.2 s) - quick "let's go" sting: trumpet flick up, brass + crash ta-da on high C.
+tempo 150
+title Here We Go
+loop 0
+echo 5 40 30
+
+C1: @trumpet v12 p0 q5 E1 V0
+C1: o4 g16 o5 c16 e16 g16 r8 e16 g16 q8 o6 c4 |
+
+C2: @brass v10 p-4 q3 E1
+C2: o4 r4 r8 {e g}8 q8 {g > c e}4 |
+
+C3: @strings v5 p4 q8 E1
+C3: o4 {c e g}2 {e g > c}4 |
+
+C4: @xylo v6 p5 q5 E1
+C4: o5 g16 o6 c16 e16 g16 r8 e16 g16 o7 c4 |
+
+C5: @tuba v12 p0 q5 E0
+C5: o2 c4 o1 g8 g8 q8 o2 c4 |
+
+C6: @kit v11
+C6: s16 s16 s16 s16 k8 d8 x4 |
+
+C7: @kit v9
+C7: j8 i8 j8 i8 v11 c4 |
+
+C8: @timpani v11 p-2 q8 E1
+C8: o2 g4 [g32]8 o3 c4 |

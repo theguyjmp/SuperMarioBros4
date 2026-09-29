@@ -1,0 +1,63 @@
+# World 3 map - Coral Coast. Steel-drum calypso on the "Hop Along" motif, marimba roll, xylophone answers.
+# Written in C, sounds in F (K5). 12-bar loop: C | F | G7 | C | C | F | G7 | C | Am | Dm7 G7 | Ab Bb | C
+tempo 118
+title Coral Calypso
+echo 6 50 34
+swing 50
+
+# ---------------- C1: lead (steel drum) ----------------
+C1: @steeldrum v12 p0 q6 E1 K5
+C1: L
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 a4 g8 e8 ^4 c8 d8 |
+C1: o5 d8 f8 ^8 b8 ^8 a8 g8 f8 | o5 e4 g8 c8 ^4 r4 |
+C1: o5 e8 g8 ^8 o6 c8 ^8 d8 c8 o5 g8 | o5 a8 o6 c8 ^8 f8 ^8 e8 d8 c8 |
+C1: o5 b4 a8 g8 f8 g8 b8 o6 d8 | o6 c4 r8 o5 g8 c8 e8 ^4 |
+C1: o5 e8 a8 ^8 o6 c8 ^8 o5 b8 a8 e8 | o5 f8 a8 o6 c8 o5 a8 b8 o6 d8 f8 d8 |
+C1: o6 c8 e-8 ^8 c8 d8 f8 ^8 d8 | o6 e4 c8 o5 g8 ^4 r4 |
+
+# ---------------- C2: marimba rolling broken chords ----------------
+C2: @marimba v8 p-4 q6 E1 K5
+C2: L
+C2: o4 [g8 >c8< e8 >c8<]2 | [a8 >c8< f8 >c8<]2 | [g8 b8 f8 b8]2 | [g8 >c8< e8 >c8<]2 |
+C2: o4 [g8 >c8< e8 >c8<]2 | [a8 >c8< f8 >c8<]2 | [g8 b8 f8 b8]2 | [g8 >c8< e8 >c8<]2 |
+C2: o4 [a8 >c8< e8 >c8<]2 | a8 >c8< f8 >c8< g8 b8 f8 b8 | a-8 >c8< e-8 >c8< b-8 >d8< f8 >d8< | [g8 >c8< e8 >c8<]2 |
+
+# ---------------- C3: pad (quiet) ----------------
+C3: @pad v5 p5 q8 E1 K5
+C3: L
+C3: o4 {c e g}1 | {c f a}1 | o3 {b > d f}1 | o4 {c e g}1 |
+C3: o4 {c e g}1 | {c f a}1 | o3 {b > d f}1 | o4 {c e g}1 |
+C3: o4 {c e a}1 | {d f a}2 o3 {b > d f}2 | o4 {c e- a-}2 {d f b-}2 | {c e g}1 |
+
+# ---------------- C4: guitar calypso strum ----------------
+C4: @guitar v8 p4 q4 E0 K5
+C4: L
+C4: o4 {e g > c}8 {e g > c}8 r8 {e g > c}8 r8 {e g > c}8 {e g > c}8 r8 | {c f a}8 {c f a}8 r8 {c f a}8 r8 {c f a}8 {c f a}8 r8 |
+C4: o4 {d f b}8 {d f b}8 r8 {d f b}8 r8 {d f b}8 {d f b}8 r8 | {e g > c}8 {e g > c}8 r8 {e g > c}8 r8 {e g > c}8 {e g > c}8 r8 |
+C4: o4 {e g > c}8 {e g > c}8 r8 {e g > c}8 r8 {e g > c}8 {e g > c}8 r8 | {c f a}8 {c f a}8 r8 {c f a}8 r8 {c f a}8 {c f a}8 r8 |
+C4: o4 {d f b}8 {d f b}8 r8 {d f b}8 r8 {d f b}8 {d f b}8 r8 | {e g > c}8 {e g > c}8 r8 {e g > c}8 r8 {e g > c}8 {e g > c}8 r8 |
+C4: o4 {c e a}8 {c e a}8 r8 {c e a}8 r8 {c e a}8 {c e a}8 r8 | {c f a}8 {c f a}8 r8 {c f a}8 r8 {d f b}8 {d f b}8 r8 |
+C4: o4 {c e- a-}8 {c e- a-}8 r8 {c e- a-}8 r8 {d f b-}8 {d f b-}8 r8 | {e g > c}8 {e g > c}8 r8 {e g > c}8 r8 {e g > c}8 {e g > c}8 r8 |
+
+# ---------------- C5: calypso bass ----------------
+C5: @bass v12 p0 q6 E0 K5
+C5: L
+C5: o2 c4. c4 e8 g4 | o2 f4. f4 a8 o3 c4 | o2 g4. g4 b8 o3 d4 | o2 c4. c4 e8 g4 |
+C5: o2 c4. c4 e8 g4 | o2 f4. f4 a8 o3 c4 | o2 g4. g4 b8 o3 d4 | o2 c4. c4 e8 g+4 |
+C5: o2 a4. a4 o3 c8 e4 | o2 d4. a8 g4 b4 | o2 a-4. e-8 b-4 o1 b4 | o2 c4. c4 e8 g4 |
+
+# ---------------- C6: kick + rim ----------------
+C6: @kit v10
+C6: L
+C6: [[k4 d8 k8 r8 d8 k8 d8]5 k4 d8 k8 u8 m8 t8 t8]2 |
+
+# ---------------- C7: shaker, congas, cowbell ----------------
+C7: @kit v8
+C7: L
+C7: [j16 j16 f8 a8 j8 j16 j16 f8 g8 f8]12 |
+
+# ---------------- C8: xylophone answers ----------------
+C8: @xylo v8 p6 q5 E1 K5
+C8: L
+C8: r1 | r1 | r1 | r2 o6 g8 e8 c8 r8 | r1 | r1 | r1 | r2 r8 o6 e8 g8 r8 |
+C8: r1 | r1 | r1 | r2 o6 c8 g8 o7 c8 r8 |

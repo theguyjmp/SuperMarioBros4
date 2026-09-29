@@ -1,0 +1,78 @@
+# Airship - bouncy, ominous C minor march (shuffle). Staccato brass lead with a 2-bar hook repeated and developed,
+# trumpet counter (sustained in A, harmony in B), tuba oom-pah with chromatic approaches, pizzicato off-beat "pah",
+# march snare, timpani on root + fifth, Neapolitan Db before the final G7.
+# 1-bar intro (snare + timpani roll), 16-bar loop:  A  Cm Ab Fm G | Cm Eb Ab-Bb G   B  Ab Bb Eb/G Cm | Fm Db G G7
+tempo 120
+title Iron Armada
+echo 6 40 30
+swing 60
+
+# ---------------- C1: brass lead ----------------
+C1: @brass v12 p0 q5 E1 V1
+C1: r1 |
+C1: L
+# A
+C1: o4 g8 g8 o5 c4 e-8 d8 c4 | o5 c8 o4 b-8 a-4 o5 c8 r8 e-8 r8 |
+C1: o5 f4. e-8 d8 c8 o4 a-8 o5 c8 | o4 b4 r8 g8 o5 d4 r4 |
+C1: o4 g8 g8 o5 c4 g8 f8 e-4 | o5 b-4 g8 e-8 b-8 r8 g8 r8 |
+C1: o5 a-4 o6 c8 o5 a-8 b-4 f4 | o5 g4 d8 o4 b8 g4 g8 g8 |
+# B
+C1: o5 c4 e-4 a-4. g8 | o5 f4. e-8 d4 f4 | o5 e-8 f8 g4 b-4 g4 | o5 c2. o4 g8 g8 |
+C1: o5 a-4. g8 f4 c4 | o5 d-4 f4 a-4 o6 d-4 | o5 b2 o6 d4. c8 | o5 b8 b8 b8 b8 o6 d4 o5 f4 |
+
+# ---------------- C2: trumpet counter ----------------
+C2: @trumpet v9 p-4 q6 E1 V1
+C2: r1 |
+C2: L
+C2: o4 e-1 | o4 e-2 c2 | o4 c2 f2 | o4 d1 |
+C2: o4 e-2 g2 | o4 g2 b-2 | o4 e-2 d2 | o4 d2 o3 b4 r4 |
+C2: o4 a-4 o5 c4 c4. o4 b-8 | o5 d4. c8 o4 b-4 o5 d4 | o4 b-8 o5 d8 e-4 g4 e-4 | o4 g2. r4 |
+C2: o5 f4. e-8 c4 o4 a-4 | o4 a-4 o5 d-4 f4 a-4 | o5 d2 f4. e-8 | o5 g8 g8 g8 g8 b4 d4 |
+
+# ---------------- C3: string pad (low) ----------------
+C3: @strings v5 p4 q8 E1
+C3: o3 {g b > d}1 |
+C3: L
+C3: o4 {c e- g}1 | o3 {a- > c e-}1 | o3 {a- > c f}1 | o3 {g b > d}1 |
+C3: o4 {c e- g}1 | o3 {g b- > e-}1 | o3 {a- > c e-}2 {b- > d f}2 | o3 {g b > d}1 |
+C3: o3 {a- > c e-}1 | o3 {b- > d f}1 | o3 {g b- > e-}1 | o4 {c e- g}1 |
+C3: o3 {a- > c f}1 | o3 {a- > d- f}1 | o3 {g b > d}1 | o3 {g b > f}1 |
+
+# ---------------- C4: pizzicato off-beat "pah" ----------------
+C4: @pizz v8 p5 q3 E1
+C4: r1 |
+C4: L
+C4: o4 [r8 {e- g}8]4 | o4 [r8 {c e-}8]4 | o4 [r8 {c f}8]4 | o4 [r8 {d g}8]4 |
+C4: o4 [r8 {e- g}8]4 | o4 [r8 {e- g}8]4 | o4 [r8 {c e-}8]2 [r8 {d f}8]2 | o4 [r8 {d g}8]4 |
+C4: o4 [r8 {c e-}8]4 | o4 [r8 {d f}8]4 | o4 [r8 {e- g}8]4 | o4 [r8 {e- g}8]4 |
+C4: o4 [r8 {c f}8]4 | o4 [r8 {d- f}8]4 | o4 [r8 {d g}8]4 | o4 [r8 {d f}8]4 |
+
+# ---------------- C5: tuba oom-pah ----------------
+C5: @tuba v12 p0 q4 E0
+C5: o1 g4 r4 g4 r4 |
+C5: L
+C5: o2 c4 r4 o1 g4 r4 | o1 a-4 r4 o2 e-4 r4 | o1 f4 r4 o2 c4 r4 | o1 g4 r4 a4 b4 |
+C5: o2 c4 r4 o1 g4 r4 | o2 e-4 r4 o1 b-4 r4 | o1 a-4 r4 b-4 r4 | o1 g4 o2 d4 o1 g8 g8 g4 |
+C5: o1 a-4 r4 o2 e-4 r4 | o1 b-4 r4 o2 f4 r4 | o1 g4 r4 b-4 b4 | o2 c4 r4 o1 g4 e4 |
+C5: o1 f4 r4 o2 c4 r4 | o1 d-4 r4 a-4 r4 | o1 g4 r4 o2 d4 r4 | o1 g8 g8 g8 g8 b4 o2 d4 |
+
+# ---------------- C6: march snare + kick ----------------
+C6: @kit v12
+C6: v8 [s12]3 v9 [s12]3 v11 [s12]3 v13 [s12]3 |
+C6: L v12
+C6: [[k8 r8 s8 s8 k8 r8 s8 s8]7 s12 s12 s12 s12 s12 s12 s8 s8 s4]2 |
+
+# ---------------- C7: hats (one crash per loop) ----------------
+C7: @kit v9
+C7: r1 |
+C7: L
+C7: c4 h8 h8 h4 h8 h8 | [h4 h8 h8 h4 h8 h8]15 |
+
+# ---------------- C8: timpani ----------------
+C8: @timpani v11 p-2 q8 E0
+C8: o2 v8 [g12]6 v10 [g12]3 v12 g4 |
+C8: L v11
+C8: o2 c4 r4 g4 r4 | o2 a-4 r4 e-4 r4 | o2 f4 r4 c4 r4 | o2 g4 r4 g8 g8 g4 |
+C8: o2 c4 r4 g4 r4 | o2 e-4 r4 b-4 r4 | o2 a-4 r4 b-4 r4 | o2 g4 r4 g8 g8 g4 |
+C8: o2 a-4 r4 e-4 r4 | o2 b-4 r4 f4 r4 | o2 g4 r4 e-4 r4 | o2 c4 r4 g4 r4 |
+C8: o2 f4 r4 c4 r4 | o2 d-4 r4 a-4 r4 | o2 g4 r4 d4 r4 | o2 g8 g8 g8 g8 g4 g4 |

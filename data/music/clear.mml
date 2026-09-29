@@ -1,0 +1,40 @@
+# Course clear (~4 s) - the "Hop Along" motif as a snappy trumpet fanfare, then a rising triumphant run over the
+# Mario cadence bVI - bVII - I (A-flat, B-flat, C) with brass stabs, xylo doubling, tuba and a timpani roll.
+tempo 150
+title Course Clear
+loop 0
+echo 6 40 30
+
+# ---------------- C1: trumpet (motif, then rising run) ----------------
+C1: @trumpet v12 p0 q6 E1 V0
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 c16 e-16 a-16 o6 c16 e-8 c8 o5 d16 f16 b-16 o6 d16 f8 d8 | q8 V1 o6 e2 |
+
+# ---------------- C2: brass stabs answering in the motif's gaps ----------------
+C2: @brass v9 p-4 q3 E1
+C2: o4 r4 {g > c e}8 r8 {g > c e}8 r8 r4 | o4 {a- > c e-}8 r8 {a- > c e-}8 r8 {b- > d f}8 r8 {b- > d f}8 r8 | q8 o4 {g > c e}2 |
+
+# ---------------- C3: low strings ----------------
+C3: @strings v5 p4 q8 E1
+C3: o4 {c e g}1 | o4 {c e- a-}2 {d f b-}2 | o4 {e g > c}2 |
+
+# ---------------- C4: xylo doubling an octave up, glock ta-da ----------------
+C4: @xylo v6 p5 q5 E1
+C4: o5 g8 o6 c8 r8 e8 r8 g8 e8 c8 | o6 c16 e-16 a-16 o7 c16 e-8 c8 o6 d16 f16 b-16 o7 d16 f8 d8 |
+C4: @glock v7 p5 q8 E1
+C4: o6 c16 e16 g16 o7 c16 ^4 |
+
+# ---------------- C5: tuba oom-pah ----------------
+C5: @tuba v11 p0 q5 E0
+C5: o2 c4 o1 g4 o2 c4 o1 g4 | o1 a-4 o2 e-4 o1 b-4 o2 f4 | q8 o2 c2 |
+
+# ---------------- C6: kick / rim / snare fill ----------------
+C6: @kit v11
+C6: k4 d4 k8 k8 d4 | k8 s16 s16 s8 s16 s16 k8 s16 s16 s8 s8 | x2 |
+
+# ---------------- C7: shaker + woodblock, one crash ----------------
+C7: @kit v9
+C7: i8 j8 j8 i8 j8 j8 i8 j8 | j8 j8 i8 j8 j8 j8 i8 i8 | v11 c2 |
+
+# ---------------- C8: timpani ----------------
+C8: @timpani v10 p-2 q8 E1
+C8: o3 c4 r4 o2 g4 r4 | o2 a-4 a-8 a-8 b-8 b-8 [b-32]8 | o3 c2 |

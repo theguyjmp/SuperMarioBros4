@@ -1,0 +1,42 @@
+# World clear / king rescued (~6 s) - regal fanfare on the motif: hook + second bar in trumpet over dotted brass
+# calls and timpani, then the Mario cadence bVI - bVII - I (A-flat, B-flat, C) and a ringing ta-da.
+tempo 160
+title World Clear
+loop 0
+echo 8 50 36
+
+# ---------------- C1: trumpet ----------------
+C1: @trumpet v12 p0 q6 E1 V0
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 a4 g8 e8 ^4 c8 d8 |
+C1: o5 e-8 a-8 r8 o6 c8 r8 d8 f8 d8 | q8 V1 o6 e2. |
+
+# ---------------- C2: regal dotted brass calls ----------------
+C2: @brass v9 p-4 q5 E1
+C2: r4 o4 {g > c e}8. {g > c e}16 {g > c e}4 r4 | o4 {a > c f}4 r4 r4 {a > c f}8. {a > c f}16 |
+C2: o4 {a- > c e-}8. {a- > c e-}16 {a- > c e-}4 {b- > d f}8. {b- > d f}16 {b- > d f}4 | q8 o4 {g > c e}2. |
+
+# ---------------- C3: low strings ----------------
+C3: @strings v5 p4 q8 E1
+C3: o4 {c e g}1 | o4 {c f a}1 | o4 {c e- a-}2 {d f b-}2 | o4 {e g > c}2. |
+
+# ---------------- C4: xylo doubling an octave up, glock sparkle ----------------
+C4: @xylo v5 p5 q5 E1
+C4: o5 g8 o6 c8 r8 e8 r8 g8 e8 c8 | o6 a4 g8 e8 ^4 c8 d8 | o6 e-8 a-8 r8 o7 c8 r8 d8 f8 d8 |
+C4: @glock v7 p5 q8 E1
+C4: o6 c16 e16 g16 o7 c16 ^2 |
+
+# ---------------- C5: tuba ----------------
+C5: @tuba v11 p0 q5 E0
+C5: o2 c4 o1 g4 o2 c4 o1 g4 | o2 f4 c4 f4 c4 | o1 a-4 o2 e-4 o1 b-4 o2 f4 | q8 o2 c2. |
+
+# ---------------- C6: march snare ----------------
+C6: @kit v11
+C6: k4 s8. s16 k4 s8. s16 | k4 s8. s16 k4 s8. s16 | k8 s8 k8 s8 s16 s16 s16 s16 [s32]8 | x2. |
+
+# ---------------- C7: shaker / woodblock / crash ----------------
+C7: @kit v9
+C7: j8 j8 i8 j8 j8 j8 i8 j8 | j8 j8 i8 j8 j8 j8 i8 j8 | j8 j8 i8 j8 n8 n8 n8 n8 | v11 c2. |
+
+# ---------------- C8: timpani ----------------
+C8: @timpani v10 p2 q8 E1
+C8: o3 c4 r4 o2 g4 r4 | o2 f4 r4 f4 f8 f8 | o2 a-4 a-8 a-8 b-8 b-8 [b-32]8 | o3 c2. |

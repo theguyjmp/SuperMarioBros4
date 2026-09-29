@@ -1,0 +1,62 @@
+# File select - gentle music-box lullaby version of the "Hop Along" motif. Written in C, sounds in G (K7).
+# C | Am | Dm7 | G7 | C | Am | F G | C | F | Fm | Em7 | A7 | Dm7 | G7 | Ab Bb | C
+tempo 96
+title Pick a Page
+echo 6 45 34
+swing 56
+
+# ---------------- C1: lead (music box) ----------------
+C1: @musicbox v13 p0 q7 E1 K7
+C1: L
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 a4 g8 e8 ^4 c8 d8 | o5 f4. e8 d4 f4 | o5 d2 o4 b4 g4 |
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 a4 g8 e8 ^4 d8 c8 | o5 a4 f4 g4 b4 | o6 c2. r4 |
+C1: o5 a4. g8 f4 c4 | o5 a-4. g8 f4 c4 | o5 g4. f8 e4 d4 | o5 c+4 e4 a4 g4 |
+C1: o5 f4 a4 o6 c4 o5 a4 | o5 g4 f4 d4 o4 b4 | o5 c4 e-4 d4 f4 | o5 e2. r4 |
+
+# ---------------- C2: counter-melody (soft flute) ----------------
+C2: @flute v8 p-4 q7 E1 V2 K7
+C2: L
+C2: r1 | r1 | o4 a2 f2 | o4 g2 f2 |
+C2: r1 | r1 | o4 f2 d2 | o4 e4 g4 o5 c4 e4 |
+C2: o4 f1 | o4 f1 | o4 b1 | o4 g2 e2 |
+C2: o4 a1 | o4 b2 g2 | o4 a-2 b-2 | o4 g1 |
+
+# ---------------- C3: string pad (quiet) ----------------
+C3: @strings v5 p4 q8 E1 K7
+C3: L
+C3: o3 {g > c e}1 | {a > c e}1 | {a > d f}1 | {g b > f}1 |
+C3: o3 {g > c e}1 | {a > c e}1 | {a > c f}2 {g b > d}2 | {g > c e}1 |
+C3: o3 {a > c f}1 | {a- > c f}1 | {g b > e}1 | {g > c+ e}1 |
+C3: o3 {a > d f}1 | {g b > f}1 | {a- > c e-}2 {b- > d f}2 | {g > c e}1 |
+
+# ---------------- C4: harp arpeggios ----------------
+C4: @harp v8 p5 q8 E1 K7
+C4: L
+C4: o4 c8 e8 g8 >c8< g8 e8 g8 e8 | o4 c8 e8 a8 >c8< a8 e8 a8 e8 | o4 d8 f8 a8 >c8< a8 f8 a8 f8 | o3 b8 >d8 f8 g8 f8 d8 f8 d8< |
+C4: o4 c8 e8 g8 >c8< g8 e8 g8 e8 | o4 c8 e8 a8 >c8< a8 e8 a8 e8 | o4 c8 f8 a8 f8 d8 g8 b8 g8 | o4 c8 e8 g8 >c8< g8 e8 g8 e8 |
+C4: o4 c8 f8 a8 >c8< a8 f8 a8 f8 | o4 c8 f8 a-8 >c8< a-8 f8 a-8 f8 | o4 d8 e8 g8 b8 g8 e8 g8 e8 | o4 c+8 e8 g8 a8 g8 e8 g8 e8 |
+C4: o4 d8 f8 a8 >c8< a8 f8 a8 f8 | o3 b8 >d8 f8 g8 f8 d8 f8 d8< | o4 c8 e-8 a-8 e-8 d8 f8 b-8 f8 | o4 c8 e8 g8 >c8< g8 e8 g8 e8 |
+
+# ---------------- C5: soft bass with approach notes ----------------
+C5: @bass v11 p0 q6 E0 K7
+C5: L
+C5: o2 c2 g4 g+4 | o2 a2 e4 c+4 | o2 d2 a4 f+4 | o2 g2 d4 o1 b4 |
+C5: o2 c2 g4 g+4 | o2 a2 e4 e4 | o2 f2 g2 | o2 c2 g4 e4 |
+C5: o2 f2 c4 f4 | o2 f2 c4 d+4 | o2 e2 b4 g+4 | o2 a2 e4 c+4 |
+C5: o2 d2 a4 f+4 | o2 g2 d4 g4 | o2 a-2 b-4 o1 b4 | o2 c2 g4 o1 g4 |
+
+# ---------------- C6: soft kick + woodblock ----------------
+C6: @kit v8
+C6: L
+C6: [[k4. k8 i4 r4]7 k4 i4 k4 i8 i8]2 |
+
+# ---------------- C7: shaker on the off-beats ----------------
+C7: @kit v6
+C7: L
+C7: [r8 j8 r8 j8 r8 j8 r8 j8]16 |
+
+# ---------------- C8: glockenspiel answers ----------------
+C8: @glock v6 p-6 q8 E1 K7
+C8: L
+C8: r1 | r1 | r1 | r2 o6 d8 f8 g4 | r1 | r1 | r1 | r2 o6 e8 g8 o7 c4 |
+C8: r1 | r1 | r1 | r2 o6 c+8 e8 a4 | r1 | r1 | r1 | r2 o6 g8 e8 c8 r8 |

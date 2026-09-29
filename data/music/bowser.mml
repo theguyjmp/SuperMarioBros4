@@ -1,0 +1,100 @@
+# Bowser - final battle, epic G minor but still Mario: a punchy brass riff resolving Eb - F - Gm (bVI-bVII-i),
+# the "Hop Along" hook IN MINOR as the B section (D G . Bb . D Bb G | Eb . D Bb~), trumpet answers and harmony,
+# choir pad, 16th-note string arpeggios, galloping bass + kick, timpani and orchestra hits on the cadences.
+# 2-bar intro, 24-bar loop:  A  Gm Eb F Gm | Gm Eb F D7   B  Gm Eb Cm D | Gm Eb Ab D   C  Eb F Gm Gm | Cm D7 Eb F
+tempo 160
+title Koopa King's Last Stand
+echo 6 45 32
+swing 50
+
+# ---------------- C1: brass lead ----------------
+C1: @brass v12 p0 q5 E1 V1
+C1: r1 | o4 d8 r8 d8 r8 d8 d8 f+8 a8 |
+C1: L
+# A: brass riff
+C1: o4 g8 r8 g8 b-8 r8 o5 d8 c8 o4 b-8 | o5 c8 o4 b-8 g8 e-8 ^4 f8 g8 |
+C1: o4 a8 r8 a8 o5 c8 r8 f8 e-8 c8 | o5 d4 o4 b-8 g8 ^4 r4 |
+C1: o4 g8 r8 g8 b-8 r8 o5 d8 c8 o4 b-8 | o5 e-8 d8 c8 o4 b-8 ^4 o5 c8 d8 |
+C1: o5 c8 r8 c8 f8 r8 a8 g8 f8 | o5 f+4 d8 o4 a8 ^4 f+8 a8 |
+# B: minor motif
+C1: o4 d8 g8 r8 b-8 r8 o5 d8 o4 b-8 g8 | o5 e-4 d8 o4 b-8 ^4 g8 a8 |
+C1: o4 b-8 o5 c8 r8 e-8 r8 g8 f8 e-8 | o5 d4 o4 a8 f+8 ^4 r8 d8 |
+C1: o4 d8 g8 r8 b-8 r8 o5 d8 o4 b-8 g8 | o5 e-4 d8 o4 b-8 ^4 o5 c8 d8 |
+C1: o5 e-8 c8 r8 a-8 r8 o6 c8 o5 b-8 a-8 | o5 a2 ^8 f+8 d8 c8 |
+# C: climax, cadence Eb - F - Gm
+C1: q7 o5 g4. f8 e-4 b-4 | o5 a4. g8 f4 o6 c4 | o6 d2 o5 b-4 g4 | o5 a4 b-4 o6 c4 d4 |
+C1: o6 e-4. d8 c4 o5 g4 | o5 f+4. g8 a4 o6 c4 | o5 b-4 g4 e-4 g4 | o5 a4 o6 c4 f4 e-4 | q5
+
+# ---------------- C2: trumpet answers / harmony ----------------
+C2: @trumpet v9 p-4 q6 E1 V1
+C2: r1 | r1 |
+C2: L
+C2: r1 | r2 o5 g8 f8 e-8 r8 | r1 | r2 o5 d8 f8 g8 b-8 |
+C2: r1 | r2 o5 g8 f8 e-8 r8 | r1 | r2 o5 c8 o4 a8 f+8 d8 |
+C2: q8 o4 b-1 | o4 g1 | o4 g2 e-2 | o4 f+1 |
+C2: o4 b-1 | o4 g1 | o4 a-1 | o4 f+2 a2 | q6
+C2: o5 e-4. d8 o4 b-4 o5 e-4 | o5 f4. e-8 c4 o4 a4 | o5 b-2 g4 d4 | o5 f+4 g4 a4 b-4 |
+C2: o5 c4. o4 b-8 g4 e-4 | o5 d4. e-8 f+4 a4 | o5 g4 e-4 o4 b-4 o5 e-4 | o5 f4 a4 o6 c4 o5 a4 |
+
+# ---------------- C3: choir pad ----------------
+C3: @choir v6 p3 q8 E1
+C3: o3 {g b- > d}1 | o3 {f+ a > d}1 |
+C3: L
+C3: o3 {g b- > d}1 | o3 {g b- > e-}1 | o3 {a > c f}1 | o3 {g b- > d}1 |
+C3: o3 {g b- > d}1 | o3 {g b- > e-}1 | o3 {a > c f}1 | o3 {f+ a > c}1 |
+C3: o3 {g b- > d}1 | o3 {g b- > e-}1 | o3 {g > c e-}1 | o3 {f+ a > d}1 |
+C3: o3 {g b- > d}1 | o3 {g b- > e-}1 | o3 {a- > c e-}1 | o3 {f+ a > d}1 |
+C3: o3 {g b- > e-}1 | o3 {a > c f}1 | o3 {g b- > d}1 | o3 {g b- > d}1 |
+C3: o3 {g > c e-}1 | o3 {f+ a > c}1 | o3 {g b- > e-}1 | o3 {a > c f}1 |
+
+# ---------------- C4: 16th-note string arpeggios ----------------
+C4: @strings v6 p5 q4 E1
+C4: r1 | r1 |
+C4: L
+C4: o4 [g16 b-16 > d16 < b-16]4 | o4 [g16 b-16 > e-16 < b-16]4 | o4 [a16 > c16 f16 c16 <]4 | o4 [g16 b-16 > d16 < b-16]4 |
+C4: o4 [g16 b-16 > d16 < b-16]4 | o4 [g16 b-16 > e-16 < b-16]4 | o4 [a16 > c16 f16 c16 <]4 | o4 [f+16 a16 > c16 < a16]4 |
+C4: o4 [g16 b-16 > d16 < b-16]4 | o4 [g16 b-16 > e-16 < b-16]4 | o4 [g16 > c16 e-16 c16 <]4 | o4 [f+16 a16 > d16 < a16]4 |
+C4: o4 [g16 b-16 > d16 < b-16]4 | o4 [g16 b-16 > e-16 < b-16]4 | o4 [a-16 > c16 e-16 c16 <]4 | o4 [f+16 a16 > d16 < a16]4 |
+C4: o4 [g16 b-16 > e-16 < b-16]4 | o4 [a16 > c16 f16 c16 <]4 | o4 [g16 b-16 > d16 < b-16]4 | o4 [g16 b-16 > d16 < b-16]4 |
+C4: o4 [g16 > c16 e-16 c16 <]4 | o4 [f+16 a16 > c16 < a16]4 | o4 [g16 b-16 > e-16 < b-16]4 | o4 [a16 > c16 f16 c16 <]4 |
+
+# ---------------- C5: galloping bass ----------------
+C5: @synbass v12 p0 q5 E0
+C5: o1 [g8 g16 g16]4 | o2 [d8 d16 d16]4 |
+C5: L
+C5: o1 [g8 g16 g16]4 | o2 [e-8 e-16 e-16]4 | o1 [f8 f16 f16]4 | o1 [g8 g16 g16]4 |
+C5: o1 [g8 g16 g16]4 | o2 [e-8 e-16 e-16]4 | o1 [f8 f16 f16]4 | o2 [d8 d16 d16]4 |
+C5: o1 [g8 g16 g16]4 | o2 [e-8 e-16 e-16]4 | o2 [c8 c16 c16]4 | o2 [d8 d16 d16]4 |
+C5: o1 [g8 g16 g16]4 | o2 [e-8 e-16 e-16]4 | o1 [a-8 a-16 a-16]4 | o2 [d8 d16 d16]4 |
+C5: o2 [e-8 e-16 e-16]4 | o1 [f8 f16 f16]4 | o1 [g8 g16 g16]4 | o1 [g8 g16 g16]4 |
+C5: o2 [c8 c16 c16]4 | o2 [d8 d16 d16]4 | o2 [e-8 e-16 e-16]4 | o1 [f8 f16 f16]2 f8 f+8 f+8 f+8 |
+
+# ---------------- C6: galloping kick / snare ----------------
+C6: @kit v12
+C6: w4 r4 w4 r4 | v10 [s16]8 v12 s8 s8 s8 s8 |
+C6: L v12
+C6: [[k8 k16 k16 s8 k16 k16 k8 k16 k16 s8 s8]7 [s16]8 u8 m8 t8 t8]3 |
+
+# ---------------- C7: hats + crash ----------------
+C7: @kit v9
+C7: c1 | r1 |
+C7: L
+C7: [c8 h8 h8 h8 h8 h8 h8 h8 [h8 h8 h8 h8 h8 h8 h8 n8]7]3 |
+
+# ---------------- C8: timpani + orchestra hits on the cadences ----------------
+C8: @orchhit v10 p-3 q8 E1
+C8: o4 {g b- > d}4 r2. | @timpani v11 E0 o2 v8 [d16]8 v10 [d16]4 v12 [d16]4 |
+C8: L
+C8: @orchhit v10 E1 o4 {g b- > d}4 @timpani v11 E0 o2 r4 g8 g8 r4 |
+C8: @orchhit v10 E1 o4 {g b- > e-}4 @timpani v11 E0 o2 r4 e-8 e-8 r4 |
+C8: @orchhit v10 E1 o4 {a > c f}4 @timpani v11 E0 o2 r4 f8 f8 r4 |
+C8: @orchhit v10 E1 o4 {g b- > d}4 @timpani v11 E0 o2 r4 g8 g8 r4 |
+C8: o2 g4 r4 g8 g8 r4 | o2 e-4 r4 e-8 e-8 r4 | o2 f4 r4 f8 f8 r4 | o2 d8 d8 d8 d8 d4 d4 |
+C8: @orchhit v10 E1 o4 {g b- > d}4 @timpani v11 E0 o2 r4 g8 g8 r4 | o2 e-4 r4 e-8 e-8 r4 | o2 c4 r4 c8 c8 r4 | o2 d4 r4 d8 d8 r4 |
+C8: o2 g4 r4 g8 g8 r4 | o2 e-4 r4 e-8 e-8 r4 | o2 a-4 r4 a-8 a-8 r4 | o2 d8 d8 d8 d8 d4 d4 |
+C8: @orchhit v10 E1 o4 {g b- > e-}4 @timpani v11 E0 o2 r4 e-8 e-8 r4 |
+C8: @orchhit v10 E1 o4 {a > c f}4 @timpani v11 E0 o2 r4 f8 f8 r4 |
+C8: @orchhit v10 E1 o4 {g b- > d}4 @timpani v11 E0 o2 r4 g8 g8 r4 | o2 g4 r4 g8 g8 r4 |
+C8: o2 c4 r4 c8 c8 r4 | o2 d4 r4 d8 d8 r4 |
+C8: @orchhit v10 E1 o4 {g b- > e-}4 @timpani v11 E0 o2 r4 e-8 e-8 r4 |
+C8: @orchhit v10 E1 o4 {a > c f}4 {a > c f}4 @timpani v11 E0 o2 f8 f8 f8 f8 |

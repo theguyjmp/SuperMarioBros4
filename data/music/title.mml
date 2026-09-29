@@ -1,0 +1,75 @@
+# Title screen - grand, jaunty big-band statement of the "Hop Along" motif. Written in C, transposed to F (K5).
+# Intro: Ab - Bb (bVI-bVII) brass hits into the tune. 16-bar loop:
+# C | A7 | Dm7 | G7 | C | A7 | D7 | G7 | F | Fm | C | A7 | Dm7 | G7 | Ab Bb | C
+tempo 160
+title Curtain Call Rag
+echo 4 30 24
+swing 60
+
+# ---------------- C1: lead (solo trumpet, snappy) ----------------
+C1: @trumpet v12 p0 q6 E1 V1 K5
+C1: o5 c8 e-8 a-8 o6 c8 ^4 r4 | o5 d8 f8 b-8 o6 d8 ^4 r4 |
+C1: L
+C1: o4 g8 o5 c8 r8 e8 r8 g8 e8 c8 | o5 a4 g8 e8 ^4 c+8 d8 |
+C1: o5 f8 a8 r8 o6 c8 r8 o5 a8 f8 d8 | o5 g4 b8 o6 d8 ^4 r8 o4 g8 |
+C1: o4 g8 o5 c8 r8 e8 r8 g8 o6 c8 o5 g8 | o5 a4 o6 c+8 e8 ^4 d8 c+8 |
+C1: o6 d8 c8 o5 a8 f+8 ^8 d8 e8 f+8 | o5 g4 r8 d8 f8 g8 a8 b8 |
+C1: o6 c4 o5 a8 f8 ^4 c8 f8 | o5 a-4 o6 c8 o5 a-8 ^4 f8 a-8 |
+C1: o5 g4 e8 c8 ^4 e8 g8 | o5 a8 o6 c+8 e8 c+8 o5 a8 g8 e8 c+8 |
+C1: o5 d4 f8 a8 ^4 f8 a8 | o5 b4 o6 d8 f8 ^4 e8 d8 |
+C1: o6 c4 e-4 d4 f4 | o6 e4 c8 o5 g8 ^4 r4 |
+
+# ---------------- C2: brass section answering the trumpet ----------------
+C2: @brass v9 p-4 q3 E1 K5
+C2: o4 {c e- a-}8 r8 r8 {c e- a-}8 ^4 r4 | o4 {d f b-}8 r8 r8 {d f b-}8 ^4 {d f b}8 r8 |
+C2: L
+C2: r1 | o4 r2 {e g > c+}8 r8 {e g > c+}8 r8 | r1 | o4 r2 {d f b}8 r8 {d f b}8 r8 |
+C2: r1 | o4 r2 {e g > c+}8 r8 {e g > c+}8 r8 | r1 | o4 r2 {d f b}8 r8 {d f b}8 r8 |
+C2: r1 | o4 r2 {c f a-}8 r8 {c f a-}8 r8 | r1 | o4 r2 {e g > c+}8 r8 {e g > c+}8 r8 |
+C2: r1 | o4 r2 {d f b}8 r8 {d f b}8 r8 | o4 {c e- a-}4 r4 {d f b-}4 r4 | o4 r2 {e g > c}8 r8 {e g > c}8 r8 |
+
+# ---------------- C3: string pad (quiet) ----------------
+C3: @strings v5 p4 q8 E1 K5
+C3: o4 {c e- a-}1 | {d f b-}1 |
+C3: L
+C3: o4 {e g > c}1 | {c+ e g}1 | {c f a}1 | {d f b}1 |
+C3: o4 {e g > c}1 | {c+ e g}1 | {c f+ a}1 | {d f b}1 |
+C3: o4 {c f a}1 | {c f a-}1 | {e g > c}1 | {c+ e g}1 |
+C3: o4 {c f a}1 | {d f b}1 | {c e- a-}2 {d f b-}2 | {e g > c}1 |
+
+# ---------------- C4: piano off-beat "pah" ----------------
+C4: @piano v8 p3 q4 E0 K5
+C4: r1 | r1 |
+C4: L
+C4: o4 [r8 {e g > c}8]4 | [r8 {c+ e g}8]4 | [r8 {c f a}8]4 | [r8 {d f b}8]4 |
+C4: o4 [r8 {e g > c}8]4 | [r8 {c+ e g}8]4 | [r8 {c f+ a}8]4 | [r8 {d f b}8]4 |
+C4: o4 [r8 {c f a}8]4 | [r8 {c f a-}8]4 | [r8 {e g > c}8]4 | [r8 {c+ e g}8]4 |
+C4: o4 [r8 {c f a}8]4 | [r8 {d f b}8]4 | [r8 {c e- a-}8]2 [r8 {d f b-}8]2 | [r8 {e g > c}8]4 |
+
+# ---------------- C5: tuba oom-pah with chromatic approach notes ----------------
+C5: @tuba v12 p0 q5 E0 K5
+C5: o2 a-4 r4 a-4 r4 | o2 b-4 r4 b-4 b4 |
+C5: L
+C5: o2 c4 r4 g4 g+4 | o2 a4 r4 e4 c+4 | o2 d4 r4 a4 f+4 | o2 g4 r4 d4 o1 b4 |
+C5: o2 c4 r4 g4 g+4 | o2 a4 r4 e4 c+4 | o2 d4 r4 a4 f+4 | o2 g4 r4 d4 e4 |
+C5: o2 f4 r4 c4 r4 | o2 f4 r4 c4 d+4 | o2 e4 r4 b4 g+4 | o2 a4 r4 e4 c+4 |
+C5: o2 d4 r4 a4 f+4 | o2 g4 r4 d4 g4 | o2 a-4 e-4 b-4 o1 b4 | o2 c4 r4 g4 o1 b4 |
+
+# ---------------- C6: kick / snare ----------------
+C6: @kit v11
+C6: k8 r8 r8 s8 r2 | k4 s8 s8 s8 s8 s16 s16 s8 |
+C6: L
+C6: [[k4 s4 k8 k8 s4]7 k4 s8 s8 u8 m8 t8 s8]2 |
+
+# ---------------- C7: hats + crash ----------------
+C7: @kit v9
+C7: c4 r2. | r2 h8 h8 n4 |
+C7: L
+C7: [c8 h8 h8 h8 h8 h8 h8 n8 [h8 h8 h8 h8 h8 h8 h8 n8]7]2 |
+
+# ---------------- C8: glockenspiel sparkles ----------------
+C8: @glock v7 p6 q8 E1 K5
+C8: r1 | r1 |
+C8: L
+C8: r1 | r1 | r1 | r2 o6 d8 f8 b4 | r1 | r1 | r1 | r2 r8 o6 f8 g8 r8 |
+C8: r1 | r1 | r1 | r2 o6 c+8 e8 a4 | r1 | r1 | r1 | r2 o6 e8 g8 o7 c8 r8 |

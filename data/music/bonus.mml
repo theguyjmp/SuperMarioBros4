@@ -1,0 +1,68 @@
+# Bonus rooms / coin heaven - bright, bubbly G major shuffle. Snappy arpeggio "coin" motif (2 bars, repeated,
+# sequenced, developed) with steel-drum answers in the gaps, off-beat e-piano, bouncing octave slap bass with
+# approach notes, rim + hats, glock coin sparkles. 16-bar loop:
+# A  G Em Am D7 | G E7 Am D7      B  C B7 Em A7 | Am D7 Eb-F G  (bVI-bVII-I)
+tempo 150
+title Coin Cascade
+echo 5 40 30
+swing 58
+
+# ---------------- C1: snappy lead ----------------
+C1: @snaplead v14 p0 q5 E1
+C1: L
+C1: o5 g8 b8 r8 o6 d8 r8 o5 b8 o6 d8 g8 | o6 e8 d8 r8 o5 b8 g4 r4 |
+C1: o5 a8 o6 c8 r8 e8 r8 c8 e8 a8 | o6 f+8 e8 r8 d8 c4 r4 |
+C1: o5 g8 b8 r8 o6 d8 r8 o5 b8 o6 d8 g8 | o6 e8 d8 r8 o5 b8 g+4 r4 |
+C1: o5 a8 o6 c8 r8 e8 d8 c8 o5 b8 a8 | o5 f+4 a8 o6 c8 d4 r4 |
+C1: o6 e4 r8 c8 e8 g8 r4 | o6 d+4 r8 o5 b8 o6 d+8 f+8 r4 |
+C1: o6 e8 r8 o5 b8 r8 g8 r8 e8 g8 | o5 c+8 r8 e8 g8 a8 r8 o6 c+8 r8 |
+C1: o6 c8 r8 o5 a8 r8 e8 a8 o6 c8 e8 | o6 d8 c8 o5 a8 f+8 d4 r4 |
+C1: o5 g8 b-8 r8 o6 e-8 f8 r8 c8 a8 | o6 d8 g8 r8 d8 o5 b8 g8 r4 |
+
+# ---------------- C2: steel-drum answers ----------------
+C2: @steeldrum v10 p-4 q6 E1
+C2: L
+C2: r1 | r2 r4 o5 g8 a8 | r1 | r2 r4 o5 a8 b8 |
+C2: r1 | r2 r4 o5 g+8 b8 | r1 | r2 r4 o5 c8 d8 |
+C2: r2 r4 o5 e8 g8 | r2 r4 o5 f+8 a8 | r1 | r1 |
+C2: r1 | r2 r4 o5 f+8 a8 | r1 | r2 r4 o5 b8 o6 d8 |
+
+# ---------------- C3: quiet choir pad ----------------
+C3: @choir v5 p4 q8 E1
+C3: L
+C3: o4 {d g b}1 | {e g b}1 | {c e a}1 | {c f+ a}1 |
+C3: o4 {d g b}1 | {d g+ b}1 | {c e a}1 | {c f+ a}1 |
+C3: o4 {c e g}1 | {d+ f+ a}1 | {e g b}1 | {c+ e g}1 |
+C3: o4 {c e a}1 | {c f+ a}1 | {e- g b-}2 {c f a}2 | {d g b}1 |
+
+# ---------------- C4: off-beat e-piano chords ----------------
+C4: @epiano v7 p3 q4 E1
+C4: L
+C4: o4 [r8 {g b > d}8]4 | [r8 {g b > e}8]4 | [r8 {a > c e}8]4 | [r8 {f+ a > c}8]4 |
+C4: o4 [r8 {g b > d}8]4 | [r8 {g+ b > d}8]4 | [r8 {a > c e}8]4 | [r8 {f+ a > c}8]4 |
+C4: o4 [r8 {g > c e}8]4 | [r8 {f+ a b}8]4 | [r8 {g b > e}8]4 | [r8 {g a > c+}8]4 |
+C4: o4 [r8 {a > c e}8]4 | [r8 {f+ a > c}8]4 | [r8 {g b- > e-}8]2 [r8 {f a > c}8]2 | [r8 {g b > d}8]4 |
+
+# ---------------- C5: bouncing octave slap bass with approach notes ----------------
+C5: @slapbass v13 p0 q5 E0
+C5: L
+C5: o2 [g8 > g8 <]3 g8 f+8 | [e8 > e8 <]3 e8 g+8 | [a8 > a8 <]3 a8 c+8 | [d8 > d8 <]3 d8 f+8 |
+C5: o2 [g8 > g8 <]3 g8 d+8 | [e8 > e8 <]3 e8 g+8 | [a8 > a8 <]3 a8 c+8 | [d8 > d8 <]3 d8 c+8 |
+C5: o2 [c8 > c8 <]3 c8 a+8 | [b8 > b8 <]3 b8 f+8 | [e8 > e8 <]3 e8 g+8 | [a8 > a8 <]3 a8 g+8 |
+C5: o2 [a8 > a8 <]3 a8 c+8 | [d8 > d8 <]3 d8 d8 | [e-8 > e-8 <]2 f8 > f8 < f8 f+8 | [g8 > g8 <]3 g8 f+8 |
+
+# ---------------- C6: kick / rim ----------------
+C6: @kit v12
+C6: L
+C6: [[k4 d4 k8 k8 d4]7 k4 d8 d8 d16 d16 d16 d16 u8 t8]2 |
+
+# ---------------- C7: hats (one crash per loop) ----------------
+C7: @kit v8
+C7: L
+C7: c8 h8 h8 n8 [h8 h8 h8 n8]31 |
+
+# ---------------- C8: glockenspiel coin sparkles ----------------
+C8: @glock v6 p-6 q8 E1
+C8: L
+C8: r1 | r1 | r1 | r2 r4 o6 f+16 a16 o7 c8 | r1 | r1 | r1 | r2 r4 o6 f+16 a16 o7 d8 |
+C8: r1 | r1 | r1 | r2 r4 o6 g16 a16 o7 c+8 | r1 | r1 | r1 | r2 r4 o6 g16 b16 o7 d8 |

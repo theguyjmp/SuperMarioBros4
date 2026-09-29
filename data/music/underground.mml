@@ -1,0 +1,71 @@
+# Underground - sparse, plucky, bass-led blues shuffle in C. The bouncy slap-bass riff carries the tune; a
+# staccato snap lead drops 2-bar calls with gaps, pizz answers, woodblock ticks, brass only at turnarounds.
+# 16-bar loop:  A  C7 C7 F7 C7 | Ab7 G7 C7 C7(break)    B  F7 F7 C7 A7 | D7 G7 Ab-Bb C  (bVI-bVII-I)
+tempo 140
+title Pipe Dream Blues
+echo 6 42 28
+swing 60
+
+# ---------------- C1: snappy plucked lead ----------------
+C1: @snaplead v14 p0 q4 E1
+C1: L
+C1: r4 o5 g8 r8 e-8 e8 r8 c8 | r8 o5 b-8 r8 g8 r2 |
+C1: r4 o5 a8 r8 a-8 a8 r8 f8 | r8 o5 e-8 r8 c8 r2 |
+C1: r4 o5 a-8 r8 g-8 r8 e-8 c8 | o5 b8 r8 d8 r8 f8 r8 a-8 g8 |
+C1: r4 o5 g8 r8 e-8 e8 r8 c8 | o5 c8 r8 r4 r2 |
+C1: r4 o6 c8 r8 o5 a8 a-8 r8 f8 | r8 o5 e-8 r8 c8 r2 |
+C1: r4 o5 g8 r8 o6 c8 r8 o5 b-8 g8 | r8 o5 c+8 r8 e8 r8 g8 r4 |
+C1: r4 o5 f+8 r8 a8 r8 o6 c8 r8 | o5 b8 r8 a8 r8 g8 r8 f8 r8 |
+C1: o5 a-8 r8 o6 c8 e-8 d8 r8 o5 b-8 o6 d8 | o6 e8 r8 g8 r8 c8 r8 r4 |
+
+# ---------------- C2: pizz answers ----------------
+C2: @pizz v11 p-4 q4 E1
+C2: L
+C2: r1 | r2 o4 b-8 r8 g8 o5 c8 | r1 | r2 o5 c8 r8 o4 b-8 g8 |
+C2: r1 | r1 | r1 | r1 |
+C2: r1 | r2 o5 c8 r8 e-8 c8 | r1 | r2 r8 o5 e8 c+8 r8 |
+C2: r1 | r1 | r1 | r2 r4 o5 g8 o6 c8 |
+
+# ---------------- C3: quiet low pad ----------------
+C3: @pad v6 p4 q8 E1
+C3: L
+C3: o4 {e g b-}1 | {e g b-}1 | {e- f a}1 | {e g b-}1 |
+C3: o4 {c e- g-}1 | o3 {b > d f}1 | o4 {e g b-}1 | {e g b-}1 |
+C3: o4 {e- f a}1 | {e- f a}1 | {e g b-}1 | {c+ e g}1 |
+C3: o4 {c f+ a}1 | o3 {b > d f}1 | o4 {c e- a-}2 {d f b-}2 | {c e g}1 |
+
+# ---------------- C4: brass stabs at the turnarounds ----------------
+C4: @brass v8 p4 q3 E1
+C4: L
+C4: r1 | r1 | r1 | r1 |
+C4: r2 r8 o4 {c e- g-}8 r4 | r2 r8 o3 {b > d f}8 r4 | r1 | r4 o4 {e g b-}8 r8 r2 |
+C4: r1 | r1 | r1 | r1 |
+C4: r1 | r2 r8 o3 {b > d f}8 r4 | o4 {c e- a-}8 r8 r4 {d f b-}8 r8 r4 | {e g > c}8 r8 r4 r2 |
+
+# ---------------- C5: slap-bass riff (the tune) ----------------
+C5: @slapbass v15 p0 q5 E0
+C5: L
+C5: o2 c8 r8 o3 c8 r8 o2 g8 r8 b-8 b8 | o2 c8 r8 e8 g8 b-8 r8 a8 e8 |
+C5: o2 f8 r8 o3 f8 r8 c8 r8 o2 a8 b8 | o2 c8 r8 o3 c8 r8 o2 g8 r8 b-8 g8 |
+C5: o2 a-8 r8 o3 a-8 r8 e-8 r8 c8 o2 a-8 | o2 g8 r8 o3 g8 r8 d8 r8 f8 o2 b8 |
+C5: o2 c8 r8 o3 c8 r8 o2 g8 r8 b-8 b8 | o3 c8 r8 o2 b-8 r8 g8 e-8 e8 e8 |
+C5: o2 f8 r8 o3 f8 r8 c8 r8 e-8 e8 | o2 f8 r8 a8 o3 c8 e-8 r8 d8 c+8 |
+C5: o2 c8 r8 o3 c8 r8 o2 g8 r8 b-8 g+8 | o2 a8 r8 o3 a8 r8 e8 r8 c+8 o2 c+8 |
+C5: o2 d8 r8 o3 d8 r8 o2 a8 r8 o3 c8 o2 f+8 | o2 g8 r8 o3 g8 r8 d8 r8 o2 b8 g8 |
+C5: o2 a-8 r8 o3 e-8 r8 o2 b-8 r8 o3 f8 o2 b8 | o3 c8 r8 o2 g8 r8 c8 r8 g8 b8 |
+
+# ---------------- C6: kick / rim ----------------
+C6: @kit v12
+C6: L
+C6: [k4 d4 r8 k8 d4]7 k4 d4 d8 d8 d4 | [k4 d4 r8 k8 d4]7 k4 d4 k8 d8 d8 d8 |
+
+# ---------------- C7: woodblock + shaker ticks ----------------
+C7: @kit v10
+C7: L
+C7: [r8 j8 i8 j8 r8 j8 i8 j8]16 |
+
+# ---------------- C8: xylophone plinks at phrase ends ----------------
+C8: @xylo v8 p-6 q4 E1
+C8: L
+C8: r1 | r1 | r1 | r2 r4 o6 c16 e-16 g8 | r1 | r1 | r1 | r2 r4 o6 g16 b-16 o7 c8 |
+C8: r1 | r1 | r1 | r2 r4 o6 c+16 e16 g8 | r1 | r1 | r1 | r2 r4 o6 g16 o7 c16 e8 |

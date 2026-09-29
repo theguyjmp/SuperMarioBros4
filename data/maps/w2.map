@@ -1,0 +1,27 @@
+name  = SANDSTONE CANYON
+music = map2
+node 1 = 2-1
+node 2 = 2-2
+node 3 = 2-3
+node 4 = 2-4
+node 5 = 2-5
+node F = 2-f
+node A = 2-a
+node H = toad:flower,leaf,star
+node P = spade
+lock L = F
+hbro = 10 9 cloud
+grid
+rrrr^^rrrrrr^^rr
+rS-1-+-2-+..p.sr
+r.s..|...|.s..sr
+r.p..H...3-+-4.r
+rs..~~.p.....|.r
+r..s~~..s..F-+.r
+r.p.....s..|.s.r
+r..^^..p...L..pr
+rs..k......|...r
+r.A-+-P-5--+.s.r
+r.p.....s..p..sr
+rrrr^^rrrrrr^^rr
+end

@@ -1,0 +1,80 @@
+# Jungle - sunny calypso in C major over congas, bongos, woodblock and cowbell. Steel-drum lead with a
+# syncopated 2-bar hook (repeated, developed), brass stabs answering, 16th marimba ostinato, pushed slap bass.
+# Intro 1 bar (drums), loop 16 bars:
+# A  C A7 Dm-G7 C   A' C A7 Dm-G7 C-C7   B  F Fm Em-A7 Dm-G7   A'' C A7 Dm-G7 Ab-Bb  (bVI-bVII -> C)
+tempo 132
+title Canopy Conga
+echo 4 35 25
+swing 50
+
+# ---------------- C1: steel-drum lead ----------------
+C1: @steeldrum v12 p0 q6 E1
+C1: r1 |
+C1: L
+C1: o5 c8 e8 r8 g8 ^8 a8 g8 e8 | o5 c+8 e8 r8 a8 ^8 g8 e4 |
+C1: o5 f8 a8 r8 d8 g8 b8 r8 f8 | o5 e4 r8 c4 d8 e4 |
+C1: o5 c8 e8 r8 g8 ^8 a8 g8 e8 | o5 c+8 e8 r8 a8 ^8 o6 c+8 e4 |
+C1: o6 d8 c8 r8 o5 a8 g8 f8 r8 d8 | o5 c4 r8 e8 g8 b-8 r4 |
+C1: o5 a4 r8 f8 ^8 a8 o6 c8 r8 | o5 a-4 r8 f8 ^8 a-8 o6 c8 r8 |
+C1: o5 g8 b8 r8 e8 a8 c+8 r8 e8 | o5 f4 a8 d8 g4 f8 d8 |
+C1: o5 c8 e8 r8 g8 ^8 a8 g8 e8 | o5 c+8 e8 r8 a8 ^8 g8 e4 |
+C1: o5 f8 a8 r8 d8 g8 b8 r8 o6 d8 | o6 c8 r8 o5 a-8 e-8 d8 r8 f8 b-8 |
+
+# ---------------- C2: brass stabs answering ----------------
+C2: @brass v8 p-4 q3 E1
+C2: r1 |
+C2: L
+C2: r1 | r2 r4 o4 {c+ e a}8 {c+ e a}8 | r1 | r2 r8 o4 {e g > c}8 r8 {e g > c}8 |
+C2: r1 | r2 r4 o4 {c+ e a}8 {c+ e a}8 | r1 | r2 r8 o4 {e g b-}8 r8 {e g b-}8 |
+C2: o4 r8 {c f a}8 r4 r8 {c f a}8 r4 | r8 {c f a-}8 r4 r8 {c f a-}8 r4 |
+C2: o4 r8 {e g b}8 r4 r8 {e g > c+}8 r4 | r8 {d f a}8 r4 r8 {d f b}8 r4 |
+C2: r1 | r2 r4 o4 {c+ e a}8 {c+ e a}8 | r1 | o4 {c e- a-}8 r8 r4 {d f b-}8 r8 r4 |
+
+# ---------------- C3: quiet pad ----------------
+C3: @pad v5 p4 q8 E1
+C3: r1 |
+C3: L
+C3: o4 {c e g}1 | {c+ e g}1 | {d f a}2 {d f b}2 | {c e g}1 |
+C3: o4 {c e g}1 | {c+ e g}1 | {d f a}2 {d f b}2 | {c e g}2 {e g b-}2 |
+C3: o4 {c f a}1 | {c f a-}1 | {e g b}2 {c+ e g}2 | {d f a}2 {d f b}2 |
+C3: o4 {c e g}1 | {c+ e g}1 | {d f a}2 {d f b}2 | {c e- a-}2 {d f b-}2 |
+
+# ---------------- C4: marimba 16th ostinato (half-bar cells) ----------------
+C4: @marimba v8 p5 q6 E1
+C4: r1 |
+C4: L
+C4: o4 [c16 c16 g8 r8 e8]2 | [c+16 c+16 e8 r8 a8]2 | d16 d16 a8 r8 f8 d16 d16 g8 r8 b8 | [c16 c16 g8 r8 e8]2 |
+C4: o4 [c16 c16 g8 r8 e8]2 | [c+16 c+16 e8 r8 a8]2 | d16 d16 a8 r8 f8 d16 d16 g8 r8 b8 | c16 c16 g8 r8 e8 c16 c16 g8 r8 b-8 |
+C4: o4 [c16 c16 f8 r8 a8]2 | [c16 c16 f8 r8 a-8]2 | e16 e16 b8 r8 g8 c+16 c+16 e8 r8 a8 | d16 d16 a8 r8 f8 d16 d16 g8 r8 b8 |
+C4: o4 [c16 c16 g8 r8 e8]2 | [c+16 c+16 e8 r8 a8]2 | d16 d16 a8 r8 f8 d16 d16 g8 r8 b8 | c16 c16 e-8 r8 a-8 d16 d16 f8 r8 b-8 |
+
+# ---------------- C5: pushed slap bass with approach notes ----------------
+C5: @slapbass v12 p0 q5 E0
+C5: r1 |
+C5: L
+C5: o2 c8 r16 c16 r8 g8 r8 o3 c8 o2 g8 g+8 | o2 a8 r16 a16 r8 o3 e8 r8 a8 e8 o2 c+8 |
+C5: o2 d8 r16 d16 r8 a8 g8 r16 g16 r8 d8 | o2 c8 r16 c16 r8 g8 r8 o3 c8 o2 g8 b8 |
+C5: o2 c8 r16 c16 r8 g8 r8 o3 c8 o2 g8 g+8 | o2 a8 r16 a16 r8 o3 e8 r8 a8 e8 o2 c+8 |
+C5: o2 d8 r16 d16 r8 a8 g8 r16 g16 r8 d8 | o2 c8 r16 c16 r8 g8 c8 r16 c16 r8 e8 |
+C5: o2 f8 r16 f16 r8 o3 c8 r8 f8 c8 o2 f8 | o2 f8 r16 f16 r8 o3 c8 r8 f8 c8 o2 f8 |
+C5: o2 e8 r16 e16 r8 b8 a8 r16 a16 r8 c+8 | o2 d8 r16 d16 r8 a8 g8 r16 g16 r8 d8 |
+C5: o2 c8 r16 c16 r8 g8 r8 o3 c8 o2 g8 g+8 | o2 a8 r16 a16 r8 o3 e8 r8 a8 e8 o2 c+8 |
+C5: o2 d8 r16 d16 r8 a8 g8 r16 g16 r8 a8 | o2 a-8 r16 a-16 r8 o3 e-8 o2 b-8 r16 b-16 r8 b8 |
+
+# ---------------- C6: kick / rim ----------------
+C6: @kit v11
+C6: k8 r16 k16 d8 k8 z16 z16 b16 b16 g8 f8 |
+C6: L
+C6: [[k8 r16 k16 d8 k8 r8 k8 d8 r8]7 k8 r16 k16 d8 k8 z16 z16 b16 b16 g8 f8]2 |
+
+# ---------------- C7: congas / bongos ----------------
+C7: @kit v10
+C7: z16 z16 b8 g8 f16 f16 z16 b16 r8 g8 f8 |
+C7: L
+C7: [z16 z16 b8 g8 f16 f16 z16 b16 r8 g8 f8]16 |
+
+# ---------------- C8: shaker / woodblock / cowbell (one crash per loop) ----------------
+C8: @kit v8
+C8: r1 |
+C8: L
+C8: c8 i8 j16 j16 a8 j16 j16 i8 j8 a8 | [j16 j16 i8 j16 j16 a8 j16 j16 i8 j8 a8]15 |

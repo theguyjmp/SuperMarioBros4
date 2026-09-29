@@ -1,0 +1,107 @@
+# Credits - warm, bouncy full-band finale in F, built on the "Hop Along" motif. Shuffle, oom-pah tuba.
+# 2-bar intro, then a 24-bar loop:
+# A  (whistle states the motif in F, steel drum answers in the gaps, piano off-beats)
+# B  (ocarina sings a new lyrical tune over Bb - A7 - Dm - G7 - Gm7 - C7 - Bbm - C7, brass backbeat stabs)
+# A' (trumpet + xylo take the motif, brass off-beats, bongos) closing Db - Eb, resolving into F as it loops.
+tempo 120
+title Thanks for Playing
+echo 6 40 30
+swing 60
+
+# ---------------- C1: lead (whistle -> ocarina -> trumpet) ----------------
+C1: r1 | r1 |
+C1: L @whistle v11 p0 q5 E1 V1
+# A
+C1: o5 c8 f8 r8 a8 r8 o6 c8 o5 a8 f8 | o6 d4 c8 o5 a8 ^4 f8 g8 |
+C1: o5 b-8 o6 d8 r8 f8 r8 d8 c8 o5 b-8 | o6 c4 o5 g8 a8 ^4 r8 c8 |
+C1: o5 c8 f8 r8 a8 r8 o6 c8 f8 e8 | o6 d4 o5 a8 f8 ^4 d8 e8 |
+C1: o5 f8 g8 b-8 o6 d8 c8 o5 b-8 g8 e8 | o5 f4 r8 c8 f8 r8 r4 |
+# B
+C1: @ocarina v12 p0 q7 E1 V2
+C1: o5 d4 f4 b-4. a8 | o5 g4 e8 c+8 ^4 e8 g8 | o5 f4. e8 d4 a4 | o5 b4 g8 f8 ^4 d8 f8 |
+C1: o5 b-4 a8 g8 f4 d4 | o5 e4 g8 b-8 ^4 o6 c8 d8 | o6 d-4 c8 o5 b-8 ^4 a-8 f8 | o5 g4 e4 c4 r4 |
+# A'
+C1: @trumpet v11 p0 q5 E1 V0
+C1: o5 c8 f8 r8 a8 r8 o6 c8 o5 a8 f8 | o6 d4 c8 o5 a8 ^4 f8 g8 |
+C1: o5 b-8 o6 d8 r8 f8 r8 d8 c8 o5 b-8 | o6 c4 o5 g8 a8 ^4 r8 c8 |
+C1: o5 c8 f8 r8 a8 r8 o6 c8 f8 e8 | o6 d4 o5 a8 f8 ^4 d8 e8 |
+C1: o5 f8 a-8 r8 o6 d-8 r8 o5 a-8 f8 a-8 | o5 g8 b-8 r8 o6 e-8 d8 c8 o5 b-8 g8 |
+
+# ---------------- C2: responses (steel drum -> brass stabs -> steel drum) ----------------
+C2: @steeldrum v8 p-4 q6 E1
+C2: r2 o5 a8 o6 c8 f8 r8 | r2 o5 g8 b-8 o6 e8 r8 |
+C2: L @steeldrum v8 p-4 q6 E1
+C2: r1 | r2 o5 f8 a8 r4 | r1 | r2 o5 e8 g8 r4 |
+C2: r1 | r2 o5 f8 a8 r4 | r1 | r2 r8 o5 a8 o6 c8 f8 |
+C2: @brass v8 p-4 q3 E1
+C2: o4 r4 {d f b-}8 r8 r4 {d f b-}8 r8 | o4 r4 {c+ e g}8 r8 r4 {c+ e g}8 r8 |
+C2: o4 r4 {d f a}8 r8 r4 {d f a}8 r8 | o4 r4 {d f b}8 r8 r4 {d f b}8 r8 |
+C2: o4 r4 {d f b-}8 r8 r4 {d f b-}8 r8 | o4 r4 {e g b-}8 r8 r4 {e g b-}8 r8 |
+C2: o4 r4 {d- f b-}8 r8 r4 {d- f b-}8 r8 | o4 r4 {e g b-}8 r8 r4 {e g b-}8 r8 |
+C2: @steeldrum v8 p-4 q6 E1
+C2: r1 | r2 o5 f8 a8 r4 | r1 | r2 o5 e8 g8 r4 |
+C2: r1 | r2 o5 f8 a8 r4 | r1 | r1 |
+
+# ---------------- C3: low string pad ----------------
+C3: @strings v5 p4 q8 E1
+C3: o4 {c f a}1 | o4 {c e b-}1 |
+C3: L
+C3: o4 {c f a}1 | o4 {d f a}1 | o4 {d f b-}1 | o4 {c e g}1 |
+C3: o4 {c f a}1 | o4 {d f a}1 | o4 {d g b-}2 {c e b-}2 | o4 {c f a}1 |
+C3: o4 {d f b-}1 | o4 {c+ e g}1 | o4 {d f a}1 | o4 {d f b}1 |
+C3: o4 {d g b-}1 | o4 {c e b-}1 | o4 {d- f b-}1 | o4 {c e b-}1 |
+C3: o4 {c f a}1 | o4 {d f a}1 | o4 {d f b-}1 | o4 {c e g}1 |
+C3: o4 {c f a}1 | o4 {d f a}1 | o4 {d- f a-}1 | o4 {e- g b-}1 |
+
+# ---------------- C4: comping (piano off-beats -> brass off-beats) ----------------
+C4: @piano v8 p5 q4 E0
+C4: o4 [r8 {a > c f}8]4 | o4 [r8 {g b- > e}8]4 |
+C4: L @piano v8 p5 q4 E0
+C4: o4 [r8 {a > c f}8]4 | o4 [r8 {a > d f}8]4 | o4 [r8 {b- > d f}8]4 | o4 [r8 {g > c e}8]4 |
+C4: o4 [r8 {a > c f}8]4 | o4 [r8 {a > d f}8]4 | o4 [r8 {g b- > d}8]2 [r8 {g b- > e}8]2 | o4 [r8 {a > c f}8]4 |
+C4: o4 [r8 {b- > d f}8]4 | o4 [r8 {g > c+ e}8]4 | o4 [r8 {a > d f}8]4 | o4 [r8 {g b > f}8]4 |
+C4: o4 [r8 {g b- > f}8]4 | o4 [r8 {g b- > e}8]4 | o4 [r8 {b- > d- f}8]4 | o4 [r8 {g b- > e}8]4 |
+C4: @brass v7 p5 q3 E1
+C4: o4 [r8 {a > c f}8]4 | o4 [r8 {a > d f}8]4 | o4 [r8 {b- > d f}8]4 | o4 [r8 {g > c e}8]4 |
+C4: o4 [r8 {a > c f}8]4 | o4 [r8 {a > d f}8]4 | o4 [r8 {a- > d- f}8]4 | o4 [r8 {b- > e- g}8]4 |
+
+# ---------------- C5: tuba oom-pah with chromatic approaches ----------------
+C5: @tuba v11 p0 q5 E0
+C5: o2 f4 r4 c4 r4 | o2 c4 r4 g4 e4 |
+C5: L
+C5: o2 f4 r4 c4 r4 | o2 d4 r4 a4 r4 | o2 b-4 r4 f4 r4 | o2 c4 r4 g4 e4 |
+C5: o2 f4 r4 c4 r4 | o2 d4 r4 a4 f+4 | o2 g4 d4 c4 e4 | o2 f4 r4 f4 a4 |
+C5: o2 b-4 r4 f4 r4 | o2 a4 r4 e4 c+4 | o2 d4 r4 a4 r4 | o2 g4 r4 d4 o1 b4 |
+C5: o2 g4 r4 d4 r4 | o2 c4 r4 g4 r4 | o2 b-4 r4 f4 r4 | o2 c4 r4 g4 e4 |
+C5: o2 f4 r4 c4 r4 | o2 d4 r4 a4 r4 | o2 b-4 r4 f4 r4 | o2 c4 r4 g4 e4 |
+C5: o2 f4 r4 c4 r4 | o2 d4 r4 a4 r4 | o2 d-4 r4 a-4 r4 | o2 e-4 r4 b-4 e4 |
+
+# ---------------- C6: kick / rim / snare ----------------
+C6: @kit v10
+C6: r1 | r2 r4 v8 d8 d8 |
+C6: L v10
+C6: [k4 d4 k8 k8 d4]7 | k4 d4 k8 d8 d8 d8 |
+C6: [k4 d4 k4 d4]7 | k4 d4 s8 s8 s8 s8 |
+C6: [k4 s4 k8 k8 s4]7 | k8 k8 s8 s8 s8 s8 s8 s8 |
+
+# ---------------- C7: shaker/woodblock -> hats -> bongos ----------------
+C7: @kit v9
+C7: r1 | r1 |
+C7: L v9
+C7: [j8 j8 i8 j8 j8 j8 i8 j8]8 |
+C7: [h8 h8 h8 n8]16 |
+C7: v10 c8 z8 b8 z8 z8 b8 b8 z8 | [z8 z8 b8 z8 z8 b8 b8 z8]7 |
+
+# ---------------- C8: colour (glock sparkles -> xylo doubling the motif) ----------------
+C8: @glock v6 p6 q8 E1
+C8: r2 o6 c8 f8 a8 r8 | r2 o6 e8 g8 b-8 r8 |
+C8: L @glock v6 p6 q8 E1
+C8: r1 | r2 r4 o6 a8 o7 c8 | r1 | r2 r4 o6 g8 o7 c8 |
+C8: r1 | r2 r4 o6 f8 a8 | r1 | r2 r4 o6 a8 o7 c8 |
+C8: r1 | r2 r4 o6 e8 g8 | r1 | r2 r4 o6 f8 b8 |
+C8: r1 | r2 r4 o6 g8 b-8 | r1 | r2 r4 o6 e8 g8 |
+C8: @xylo v5 p6 q5 E1
+C8: o6 c8 f8 r8 a8 r8 o7 c8 o6 a8 f8 | o7 d4 c8 o6 a8 ^4 f8 g8 |
+C8: o6 b-8 o7 d8 r8 f8 r8 d8 c8 o6 b-8 | o7 c4 o6 g8 a8 ^4 r8 c8 |
+C8: o6 c8 f8 r8 a8 r8 o7 c8 f8 e8 | o7 d4 o6 a8 f8 ^4 d8 e8 |
+C8: o6 f8 a-8 r8 o7 d-8 r8 o6 a-8 f8 a-8 | o6 g8 b-8 r8 o7 e-8 d8 c8 o6 b-8 g8 |

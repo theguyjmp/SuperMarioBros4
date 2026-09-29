@@ -1,0 +1,24 @@
+# Hurry up (~2 s) - alarm: four rising 16th-note arpeggios a whole tone apart (C, D, E, F#) over a climbing bass
+# and snare roll, snapping onto a G-major orchestra hit so the level theme can pick straight back up.
+tempo 150
+title Hurry Up
+loop 0
+echo 3 25 20
+
+C1: @snaplead v12 p0 q5 E1
+C1: o5 c16 e16 g16 o6 c16 o5 d16 f+16 a16 o6 d16 o5 e16 g+16 b16 o6 e16 o5 f+16 a+16 o6 c+16 f+16 | o6 g8 r8
+
+C2: @brass v10 p-4 q4 E1
+C2: o4 {c e}4 {d f+}4 {e g+}4 {f+ a+}4 | o4 {g b}4
+
+C3: @orchhit v10 p3 q8 E1
+C3: r1 | o4 {g b > d}4
+
+C5: @synbass v11 p0 q5 E0
+C5: o2 c8 c8 d8 d8 e8 e8 f+8 f+8 | o1 g4
+
+C6: @kit v9
+C6: v9 [s16]4 v10 [s16]4 v11 [s16]4 v12 [s16]4 | v12 x4
+
+C7: @kit v10
+C7: r1 | c4

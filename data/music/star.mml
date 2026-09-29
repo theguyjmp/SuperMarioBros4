@@ -1,0 +1,49 @@
+# Starman / invincibility - very fast, bright 4-bar loop in C: I - IV - bVI - bVII (-> I), the Mario cadence
+# every lap. Staccato snap-lead riff, brass off-beat stabs answering, 16th xylophone arpeggios, octave slap bass
+# with approach notes, tight rim/kick, bongos, shaker + woodblock 16ths. ~5.5 s loop.
+tempo 176
+title Superstar Sprint
+echo 3 30 22
+swing 50
+
+# ---------------- C1: snap-lead riff ----------------
+C1: @snaplead v13 p0 q4 E1
+C1: L
+C1: o6 c8 r8 c8 o5 g8 r8 o6 c8 r8 e8 | o6 f8 r8 f8 c8 r8 f8 a8 g8 |
+C1: o6 e-8 r8 e-8 c8 r8 e-8 r8 a-8 | o6 d8 r8 d8 o5 b-8 o6 d8 f8 r8 d8 |
+
+# ---------------- C2: brass off-beat stabs ----------------
+C2: @brass v8 p-4 q3 E1
+C2: L
+C2: o4 r8 {e g > c}8 r8 r8 {e g > c}8 r8 {e g > c}8 r8 | r8 {f a > c}8 r8 r8 {f a > c}8 r8 {f a > c}8 r8 |
+C2: o4 r8 {e- a- > c}8 r8 r8 {e- a- > c}8 r8 {e- a- > c}8 r8 | r8 {f b- > d}8 r8 r8 {f b- > d}8 r8 {f b- > d}8 r8 |
+
+# ---------------- C3: quiet string pad ----------------
+C3: @strings v5 p4 q8 E1
+C3: L
+C3: o4 {c e g}1 | {c f a}1 | {c e- a-}1 | {d f b-}1 |
+
+# ---------------- C4: 16th xylophone arpeggios ----------------
+C4: @xylo v7 p5 q4 E1
+C4: L
+C4: o5 [c16 e16 g16 > c16 <]4 | [c16 f16 a16 > c16 <]4 | [c16 e-16 a-16 > c16 <]4 | [d16 f16 b-16 > d16 <]4 |
+
+# ---------------- C5: octave slap bass with approach notes ----------------
+C5: @slapbass v12 p0 q5 E0
+C5: L
+C5: o2 [c8 > c8 <]3 c8 e8 | [f8 > f8 <]3 f8 g8 | [a-8 > a-8 <]3 a-8 a8 | [b-8 > b-8 <]3 b-8 b8 |
+
+# ---------------- C6: kick / rim ----------------
+C6: @kit v12
+C6: L
+C6: [k8 r8 d8 k8 r8 k8 d8 r8]3 k8 r8 d8 k8 d16 d16 d16 d16 u16 u16 t16 t16 |
+
+# ---------------- C7: bongos ----------------
+C7: @kit v9
+C7: L
+C7: [z16 z16 b8 z16 z16 b8 g8 f8 z16 z16 b8]4 |
+
+# ---------------- C8: shaker + woodblock 16ths (one crash per lap) ----------------
+C8: @kit v7
+C8: L
+C8: c8 j16 j16 [j16 j16 i16 j16]3 | [j16 j16 i16 j16]12 |

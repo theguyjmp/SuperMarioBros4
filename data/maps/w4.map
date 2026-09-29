@@ -1,0 +1,27 @@
+name  = JUNGLE JAMBOREE
+music = map4
+node 1 = 4-1
+node 2 = 4-2
+node 3 = 4-3
+node 4 = 4-4
+node 5 = 4-5
+node F = 4-f
+node A = 4-a
+node H = toad:mushroom,flower,leaf,tanooki
+node P = spade
+lock L = F
+hbro = 11 8 pwing
+grid
+TTTTTTTTTTTTTTTT
+TT*TTTHT^^TT.TTT
+T.S-1-+--2T.*T^T
+TT.,T.TT.|.PT.TT
+T^^T.T*T.3-+-F.T
+~~~~~~~~~~~~~!~~
+T.TT^T.TT.TT.L.T
+TT.T..T^^T.T*|TT
+T.T.+---5-+--4.T
+TT.T|T.TT^T.TT^T
+~T..A.TT.TT*T.T~
+~~TTTTTTTTTTTT~~
+end

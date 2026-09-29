@@ -1,0 +1,78 @@
+# Desert - bouncy shuffle in D Phrygian dominant (D Eb F# G A Bb C) with the Mario cadence Bb - C - D.
+# Snappy staccato oboe motif (2 bars, repeated, developed), clarinet counter, off-beat guitar over an
+# oom-pah bass with approach notes, rim + bongos, harp scale runs and brass cadence hits.
+# 1-bar intro, 16-bar loop:  A  D D Eb D   A' D D Gm Bb-C   B  Gm Cm Eb D   A'' D D Eb Bb-C
+tempo 144
+title Dune Bazaar
+echo 5 40 30
+swing 58
+
+# ---------------- C1: snappy oboe lead ----------------
+C1: @oboe v11 p0 q5 E1 V1
+C1: r1 |
+C1: L
+C1: o5 d8 r8 e-8 f+8 r8 a8 r8 f+8 | o5 g8 f+8 e-8 r8 d4 r4 |
+C1: o5 e-8 r8 f+8 g8 r8 b-8 r8 g8 | o5 a8 g8 f+8 r8 e-4 d4 |
+C1: o5 d8 r8 e-8 f+8 r8 a8 r8 f+8 | o5 g8 f+8 e-8 r8 d8 f+8 a8 o6 c8 |
+C1: o6 d4 r8 c8 o5 b-8 r8 g8 r8 | o5 f8 r8 d8 f8 g8 r8 e8 g8 |
+C1: o5 b-4 a8 b-8 r8 g8 d8 r8 | o6 c4 o5 b-8 o6 c8 r8 o5 g8 e-8 r8 |
+C1: o5 b-8 o6 c8 d8 e-8 r8 d8 c8 o5 b-8 | o5 a4 f+8 e-8 d4 r4 |
+C1: o5 d8 r8 e-8 f+8 r8 a8 r8 f+8 | o5 g8 f+8 e-8 r8 d4 r4 |
+C1: o5 e-8 r8 f+8 g8 r8 b-8 o6 c8 r8 | o6 d8 r8 o5 b-8 f8 o6 e8 r8 c8 o5 a8 |
+
+# ---------------- C2: clarinet counter ----------------
+C2: @clarinet v8 p-4 q8 E1
+C2: r1 |
+C2: L
+C2: o4 a1 | o4 f+2 a2 | o4 g1 | o4 f+2 a2 |
+C2: o4 a1 | o4 f+2 a2 | o4 b-1 | o4 b-2 o5 c2 |
+C2: o5 d2 o4 b-2 | o5 e-2 c2 | o5 g2 e-2 | o4 a2 f+2 |
+C2: o4 a1 | o4 f+2 a2 | o4 g2 b-2 | o5 d2 e2 |
+
+# ---------------- C3: quiet string pad ----------------
+C3: @strings v5 p4 q8 E1
+C3: r1 |
+C3: L
+C3: o4 {d f+ a}1 | {d f+ a}1 | {e- g b-}1 | {d f+ a}1 |
+C3: o4 {d f+ a}1 | {d f+ a}1 | {d g b-}1 | {d f b-}2 {e g > c}2 |
+C3: o4 {d g b-}1 | {c e- g}1 | {e- g b-}1 | {d f+ a}1 |
+C3: o4 {d f+ a}1 | {d f+ a}1 | {e- g b-}1 | {d f b-}2 {e g > c}2 |
+
+# ---------------- C4: off-beat guitar chops ----------------
+C4: @guitar v7 p4 q4 E0
+C4: o4 [r8 {f+ a}8]4 |
+C4: L
+C4: o4 [r8 {f+ a}8]4 | [r8 {f+ a}8]4 | [r8 {g b-}8]4 | [r8 {f+ a}8]4 |
+C4: o4 [r8 {f+ a}8]4 | [r8 {f+ a}8]4 | [r8 {b- > d}8]4 | [r8 {f b-}8]2 [r8 {e g}8]2 |
+C4: o4 [r8 {b- > d}8]4 | [r8 {e- g}8]4 | [r8 {g b-}8]4 | [r8 {f+ a}8]4 |
+C4: o4 [r8 {f+ a}8]4 | [r8 {f+ a}8]4 | [r8 {g b-}8]4 | [r8 {f b-}8]2 [r8 {e g}8]2 |
+
+# ---------------- C5: oom-pah bass with approach notes ----------------
+C5: @bass v11 p0 q6 E0
+C5: o2 d4. d8 a4 r8 c+8 |
+C5: L
+C5: o2 d4. d8 a4 r8 c+8 | o2 d4. d8 a4 r8 d8 | o2 e-4. e-8 b-4 r8 e-8 | o2 d4. d8 a4 r8 c+8 |
+C5: o2 d4. d8 a4 r8 c+8 | o2 d4. d8 a4 r8 f+8 | o2 g4. g8 o3 d4 r8 o2 a8 | o2 b-4 f4 o3 c4 o2 c+4 |
+C5: o2 g4. g8 o3 d4 r8 o2 b8 | o3 c4. c8 o2 g4 r8 d8 | o2 e-4. e-8 b-4 r8 e-8 | o2 d4. d8 a4 r8 c+8 |
+C5: o2 d4. d8 a4 r8 c+8 | o2 d4. d8 a4 r8 d8 | o2 e-4. e-8 b-4 r8 a8 | o2 b-4 f4 o3 c4 o2 c+4 |
+
+# ---------------- C6: kick / rim (light calypso) ----------------
+C6: @kit v10
+C6: k8 r8 d8 k8 u8 m8 t8 t8 |
+C6: L
+C6: [[k8 r8 d8 k8 r8 k8 d8 r8]7 k8 r8 d8 k8 u8 m8 t8 t8]2 |
+
+# ---------------- C7: bongos + shaker ----------------
+C7: @kit v9
+C7: r2 z8 b8 z8 b8 |
+C7: L
+C7: c8 b8 j8 z8 b8 z8 j8 b8 | [z8 b8 j8 z8 b8 z8 j8 b8]15 |
+
+# ---------------- C8: harp scale runs + brass cadence hits ----------------
+C8: @harp v7 p6 q8 E1
+C8: r1 |
+C8: L
+C8: @harp v7 q8 r1 | r1 | r1 | r2 o5 d8 e-8 f+8 a8 |
+C8: r1 | r1 | r1 | @brass v8 q3 o4 {d f b-}8 r8 r4 {e g > c}8 r8 r4 |
+C8: @harp v7 q8 r1 | r1 | r1 | r2 o5 a8 f+8 e-8 d8 |
+C8: r1 | r1 | r1 | @brass v8 q3 o4 {d f b-}8 r8 r4 {e g > c}8 r8 r4 |

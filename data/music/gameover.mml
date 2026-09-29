@@ -1,0 +1,23 @@
+# Game over (~5 s) - slow, sad C minor: Cm - Fm | G7 - Cm, oboe sigh over clarinet, choir, harp and low bass.
+tempo 96
+title Game Over
+loop 0
+echo 6 45 32
+
+C1: @oboe v12 p0 q7 E1 V2
+C1: o5 g4 e-8 c8 a-4 f4 | o5 f4 d8 o4 b8 o5 c2 |
+
+C2: @clarinet v9 p-4 q8 E1
+C2: o4 e-4 d4 c2 | o4 d2 e-2 |
+
+C3: @choir v7 p4 q8 E1
+C3: o3 {g > c e-}2 {a- > c f}2 | o3 {g b > f}2 {g > c e-}2 |
+
+C4: @harp v7 p5 q8 E1
+C4: o4 c8 e-8 g8 e-8 o3 a-8 o4 c8 f8 c8 | o3 g8 b8 o4 d8 f8 {c e- g}2 |
+
+C5: @bass v11 p0 q8 E0
+C5: o2 c2 o1 f2 | o1 g2 o2 c2 |
+
+C8: @timpani v10 p-2 q8 E0
+C8: o2 c4 r2. | o2 g4 r4 c2 |

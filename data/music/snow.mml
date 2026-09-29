@@ -1,0 +1,69 @@
+# Snow / ice - glittery, bell-like G major in a gentle shuffle. Staccato music-box motif (2 bars, repeated,
+# developed), marimba answers in the gaps, vibes off-beat chops, walking bass with approach notes,
+# rim + sleigh shaker, glock twinkles in the bridge. 16-bar loop:
+# A  G Em Am D7   A' G E7 Am D7   B  C Cm Bm Am-D7   A'' G E7 Am-D7 Eb-F  (bVI-bVII -> G)
+tempo 120
+title Sparkle Drift
+echo 6 45 35
+swing 60
+
+# ---------------- C1: music-box lead ----------------
+C1: @musicbox v13 p0 q5 E1
+C1: L
+C1: o5 d8 r8 g8 b8 r8 o6 d8 r8 o5 b8 | o6 c8 o5 b8 r8 g8 e4 r4 |
+C1: o5 c8 r8 e8 a8 r8 o6 c8 r8 o5 a8 | o5 b8 a8 r8 f+8 d4 r4 |
+C1: o5 d8 r8 g8 b8 r8 o6 d8 r8 o5 b8 | o6 d8 o5 b8 r8 g+8 e4 r4 |
+C1: o5 c8 r8 e8 a8 r8 o6 c8 e8 c8 | o6 d4 c8 o5 a8 f+4 r4 |
+C1: o5 e4. g8 o6 c4 e4 | o6 e-4. d8 c4 o5 g4 |
+C1: o5 f+4. a8 b4 o6 d4 | o6 c4 o5 a4 f+4 a4 |
+C1: o5 d8 r8 g8 b8 r8 o6 d8 r8 o5 b8 | o6 d8 o5 b8 r8 g+8 e4 r4 |
+C1: o5 c8 e8 a8 o6 c8 r8 o5 a8 f+8 d8 | o5 e-8 r8 g8 b-8 r8 o6 c8 r8 o5 a8 |
+
+# ---------------- C2: marimba answers ----------------
+C2: @marimba v9 p-4 q6 E1
+C2: L
+C2: r1 | r2 r4 o5 g8 a8 | r1 | r2 r4 o5 f+8 g8 |
+C2: r1 | r2 r4 o5 g+8 a8 | r1 | r2 r4 o5 a8 b8 |
+C2: o5 c4. e8 g4 o6 c4 | o5 g4. g8 e-4 c4 | o5 d4. f+8 f+4 b4 | o5 a4 e4 d4 f+4 |
+C2: r1 | r2 r4 o5 g+8 a8 | r1 | r2 o5 f8 r8 a8 r8 |
+
+# ---------------- C3: quiet choir pad ----------------
+C3: @choir v5 p4 q8 E1
+C3: L
+C3: o4 {d g b}1 | {e g b}1 | {c e a}1 | {c f+ a}1 |
+C3: o4 {d g b}1 | {d g+ b}1 | {c e a}1 | {c f+ a}1 |
+C3: o4 {c e g}1 | {c e- g}1 | {d f+ b}1 | {c e a}2 {c f+ a}2 |
+C3: o4 {d g b}1 | {d g+ b}1 | {c e a}2 {c f+ a}2 | {e- g b-}2 {c f a}2 |
+
+# ---------------- C4: vibes off-beat chops ----------------
+C4: @vibes v6 p4 q4 E1
+C4: L
+C4: o4 [r8 {b > d}8]4 | [r8 {g b}8]4 | [r8 {e a}8]4 | [r8 {f+ > c}8]4 |
+C4: o4 [r8 {b > d}8]4 | [r8 {g+ > d}8]4 | [r8 {e a}8]4 | [r8 {f+ > c}8]4 |
+C4: o4 [r8 {e g}8]4 | [r8 {e- g}8]4 | [r8 {f+ b}8]4 | [r8 {e a}8]2 [r8 {f+ > c}8]2 |
+C4: o4 [r8 {b > d}8]4 | [r8 {g+ > d}8]4 | [r8 {e a}8]2 [r8 {f+ > c}8]2 | [r8 {g b-}8]2 [r8 {a > c}8]2 |
+
+# ---------------- C5: walking bass ----------------
+C5: @bass v12 p0 q6 E0
+C5: L
+C5: o2 g4 b4 o3 d4 o2 d+4 | o2 e4 g4 b4 g+4 | o2 a4 o3 c4 e4 c+4 | o3 d4 c4 o2 a4 f+4 |
+C5: o2 g4 b4 o3 d4 d+4 | o3 e4 d4 o2 b4 g+4 | o2 a4 o3 c4 e4 c+4 | o3 d4 o2 a4 f+4 b4 |
+C5: o3 c4 o2 g4 e4 g4 | o3 c4 o2 g4 e-4 b-4 | o2 b4 f+4 d4 g+4 | o2 a4 e4 d4 f+4 |
+C5: o2 g4 b4 o3 d4 d+4 | o3 e4 d4 o2 b4 g+4 | o2 a4 e4 d4 d4 | o2 e-4 b-4 f4 f+4 |
+
+# ---------------- C6: kick / rim ----------------
+C6: @kit v10
+C6: L
+C6: [[k4 d4 r8 k8 d4]7 k4 d4 k8 d8 d8 d8]2 |
+
+# ---------------- C7: sleigh shaker (one crash per loop) ----------------
+C7: @kit v8
+C7: L
+C7: c8 j8 j8 j8 j8 j8 j8 j8 | [j8 j8 j8 j8 j8 j8 j8 j8]15 |
+
+# ---------------- C8: glockenspiel twinkles ----------------
+C8: @glock v6 p-6 q8 E1
+C8: L
+C8: [r1]8 |
+C8: r8 o7 e8 r4 r8 o6 g8 r4 | r8 o7 e-8 r4 r8 o6 g8 r4 | r8 o7 d8 r4 r8 o6 b8 r4 | r8 o7 c8 r4 r8 o6 a8 r4 |
+C8: r1 | r1 | r1 | r2 r4 o6 a8 o7 c8 |

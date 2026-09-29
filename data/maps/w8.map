@@ -1,0 +1,23 @@
+name  = BOWSER'S VOLCANO
+node 1 = 8-1
+node 2 = 8-2
+node 3 = 8-3
+node 4 = 8-4
+node F = 8-f
+node B = 8-c
+node H = toad:pwing,hammer,tanooki
+lock L = F
+grid
+vvvvvvvvvvvvvvvv
+vk..r..k..r..k.v
+v.S-1-+-2..rF..v
+v.k.r.|.|.k.|..v
+vr....H.+-3-+.kv
+v.k...k...r.L..v
+vr..k....k..|.rv
+v.vvv.vvv.k.|..v
+vvvB-+===+--4.kv
+v.vvv.vvv..r...v
+vk...k...k...r.v
+vvvvvvvvvvvvvvvv
+end

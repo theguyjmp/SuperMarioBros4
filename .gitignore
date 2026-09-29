@@ -1,0 +1,12 @@
+# private per-agent/dev builds
+.agentbin/
+snes/build/
+snes/build-*/
+# third-party toolchain (downloaded by snes/tools/setup.ps1)
+snes/tools/mesen/
+snes/tools/cc65/
+snes/tools/*.zip
+# editor / OS
+.vscode/
+Thumbs.db
+*.tmp

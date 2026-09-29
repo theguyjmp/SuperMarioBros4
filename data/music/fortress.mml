@@ -1,0 +1,84 @@
+# Fortress - tense, driving D minor. The "Hop Along" hook quoted IN MINOR (bars 1-2, 5-6: A D . F . A F D | Bb . A F~),
+# snappy staccato lead with brass stabs answering, pounding synth-bass octaves, pizzicato ostinato, a chromatic
+# tritone section over a D pedal (Dm / Eb/D), then the Mario cadence Bb - C - Dm into A7.
+# 2-bar intro, 16-bar loop:  Dm Bb Gm A7 | Dm Bb Eb A | Dm Eb/D Dm Eb/D | Bb C Dm A7
+tempo 152
+title Dungeon Drive
+echo 4 35 25
+swing 50
+
+# ---------------- C1: snappy lead ----------------
+C1: @snaplead v12 p0 q5 E1 V1
+C1: r1 | r2 r8 o4 a8 b-8 o5 c+8 |
+C1: L
+# A: minor motif + answer
+C1: o4 a8 o5 d8 r8 f8 r8 a8 f8 d8 | o5 b-4 a8 f8 ^4 d8 e8 |
+C1: o5 g8 b-8 r8 o6 d8 r8 o5 b-8 a8 g8 | o5 a4 e8 c+8 ^4 r8 o4 a8 |
+C1: o4 a8 o5 d8 r8 f8 r8 a8 f8 d8 | o5 b-4 a8 f8 ^4 d8 e8 |
+C1: o5 e-8 g8 r8 b-8 r8 o6 e-8 d8 c8 | o6 c+4 o5 a8 e8 ^4 r4 |
+# B: chromatic tension over the D pedal
+C1: o5 d8 r8 c+8 d8 e-8 d8 c+8 d8 | o5 g4. f+8 g4 b-4 | o5 a8 r8 g+8 a8 b-8 a8 g+8 a8 | o6 d4. c+8 c4 o5 b4 |
+# cadence Bb - C - Dm - A7
+C1: o5 b-8 r8 b-8 o6 d8 f8 r8 d8 o5 b-8 | o6 c8 r8 c8 e8 g8 r8 e8 c8 | o6 d4 o5 a4 f4 d4 | o5 c+8 e8 g8 b-8 ^8 a8 g8 e8 |
+
+# ---------------- C2: brass stabs (answers) + tritone counter-line ----------------
+C2: @brass v9 p-4 q3 E1
+C2: r1 | r1 |
+C2: L
+C2: o4 r4 {d f}8 r8 r4 {d f}8 {d f}8 | o4 r4 {d f}8 r8 r4 {d f}8 {d f}8 |
+C2: o4 r4 {d g}8 r8 r4 {d g}8 {d g}8 | o4 r4 {c+ g}8 r8 r4 {c+ g}8 {c+ g}8 |
+C2: o4 r4 {d f}8 r8 r4 {d f}8 {d f}8 | o4 r4 {d f}8 r8 r4 {d f}8 {d f}8 |
+C2: o4 r4 {e- g}8 r8 r4 {e- g}8 {e- g}8 | o4 r4 {c+ e}8 r8 r4 {c+ e}8 {c+ e}8 |
+C2: q7 o4 a2 g+2 | o4 b-2 a2 | o4 f2 e2 | o4 g2 f+2 | q3
+C2: o4 r4 {d f}8 r8 r4 {d f}8 {d f}8 | o4 r4 {e g}8 r8 r4 {e g}8 {e g}8 |
+C2: o4 r4 {d f}8 r8 r4 {d f}8 {d f}8 | o4 r4 {c+ g}8 r8 r4 {c+ g}8 {c+ g}8 |
+
+# ---------------- C3: string pad (low in the mix) ----------------
+C3: @strings v5 p4 q8 E1
+C3: r1 | o3 {a > c+ g}1 |
+C3: L
+C3: o4 {d f a}1 | o3 {b- > d f}1 | o3 {b- > d g}1 | o3 {a > c+ g}1 |
+C3: o4 {d f a}1 | o3 {b- > d f}1 | o3 {b- > e- g}1 | o3 {a > c+ e}1 |
+C3: o4 {d f a}1 | o3 {b- > e- g}1 | o4 {d f a}1 | o3 {b- > e- g}1 |
+C3: o3 {b- > d f}1 | o3 {g > c e}1 | o4 {d f a}1 | o3 {a > c+ g}1 |
+
+# ---------------- C4: pizzicato ostinato ----------------
+C4: @pizz v8 p5 q4 E1
+C4: r1 | r1 |
+C4: L
+C4: o4 [d8 f8 a8 f8]2 | o4 [d8 f8 b-8 f8]2 | o4 [d8 g8 b-8 g8]2 | o4 [c+8 e8 g8 e8]2 |
+C4: o4 [d8 f8 a8 f8]2 | o4 [d8 f8 b-8 f8]2 | o4 [e-8 g8 b-8 g8]2 | o4 [c+8 e8 a8 e8]2 |
+C4: o4 [d8 f8 a8 f8]2 | o4 [d8 e-8 g8 e-8]2 | o4 [d8 f8 a8 f8]2 | o4 [d8 e-8 g8 e-8]2 |
+C4: o4 [d8 f8 b-8 f8]2 | o4 [c8 e8 g8 e8]2 | o4 [d8 f8 a8 f8]2 | o4 [c+8 e8 g8 e8]2 |
+
+# ---------------- C5: pounding synth-bass octaves ----------------
+C5: @synbass v12 p0 q5 E0
+C5: o2 [d8 > d8 <]4 | o1 [a8 > a8 <]4 |
+C5: L
+C5: o2 [d8 > d8 <]4 | o1 [b-8 > b-8 <]4 | o1 [g8 > g8 <]4 | o1 [a8 > a8 <]4 |
+C5: o2 [d8 > d8 <]4 | o1 [b-8 > b-8 <]4 | o2 [e-8 > e-8 <]4 | o1 [a8 > a8 <]4 |
+C5: o2 [d8 > d8 <]4 | o2 [d8 > d8 <]4 | o2 [d8 > d8 <]4 | o2 [d8 > d8 <]4 |
+C5: o1 [b-8 > b-8 <]4 | o2 [c8 > c8 <]4 | o2 [d8 > d8 <]4 | o1 [a8 > a8 <]2 a8 b-8 b8 o2 c+8 |
+
+# ---------------- C6: kick / snare / toms ----------------
+C6: @kit v12
+C6: k4 k4 k4 k4 | v9 [s16]8 v11 [s16]4 v13 s16 s16 s8 |
+C6: L v12
+C6: [[k4 s4 k8 k8 s4]7 k8 s8 s8 s8 s16 s16 s16 s16 t8 t8]2 |
+
+# ---------------- C7: hats (one crash per loop) ----------------
+C7: @kit v9
+C7: r1 | r1 |
+C7: L
+C7: c8 h8 h8 h8 h8 h8 h8 n8 | [h8 h8 h8 h8 h8 h8 h8 n8]15 |
+
+# ---------------- C8: timpani, orchestra hits on the A chord ----------------
+C8: @timpani v11 p2 q8 E0
+C8: o2 d4 r2. | o2 a4 r4 a8 a8 a8 a8 |
+C8: L
+C8: o2 d4 r2 d8 d8 | o2 b-4 r2 b-8 b-8 | o2 g4 r2 g8 g8 | o2 a4 r2 a8 a8 |
+C8: o2 d4 r2 d8 d8 | o2 b-4 r2 b-8 b-8 | o2 e-4 r2 e-8 e-8 |
+C8: @orchhit v10 E1 o4 {a > c+ e}8 r8 r4 {a > c+ e}8 r8 r4 @timpani v11 E0 |
+C8: o2 d4 r2 d8 d8 | o2 d4 r2 e-8 e-8 | o2 d4 r2 d8 d8 | o2 d4 r2 e-8 e-8 |
+C8: o2 b-4 r2 b-8 b-8 | o2 c4 r2 c8 c8 | o2 d4 r2 d8 d8 |
+C8: @orchhit v10 E1 o4 {a > c+ g}8 r8 r4 {a > c+ g}8 r8 r4 @timpani v11 E0 |
