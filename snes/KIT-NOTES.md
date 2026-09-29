@@ -249,3 +249,10 @@ Files: `snes/src/scr_*.s` (+ `scr.inc`), converter `src/Tools/Snes/SnesScreens.c
   between the poke and the next game frame), so other agents' level tests keep working from the screens title.
 * Measure the NMI: an exec callback on the NMI's final `rtl` reading `emu.getState()["ppu.scanline"]` showed the
   screens NMI ending at line 256-259 of 261 with a 3.5 KB budget → budget cut to 3 KB.
+
+## Lead lessons (bugs that reached the owner)
+* `ply`/`plx`/`pla` set N/Z from the pulled value — never branch on a routine's result (`bmi`, `beq`) after restoring
+  registers; re-test A first (`cmp #$8000` / `cmp #0`). This let Mario walk off the world map.
+* Shared scratch variables (`mp_tmp`) across helper calls silently clobber callers' state — give lookups private
+  scratch. Reproduce owner bugs with a headless Lua script that prints the relevant RAM, then fix.
+* "Special" player states (goal auto-walk) must still run animation; check every state in anim/draw code.
