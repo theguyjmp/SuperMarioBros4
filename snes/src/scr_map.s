@@ -937,7 +937,8 @@ try_move:
     jsr node_at
     ply
     plx
-    bmi @nonode
+    cmp #$8000                  ; re-test A: ply/plx overwrote the flags from node_at
+    bcs @nonode
     jsr closed_lock
     bcs @no
     bra @ok
@@ -1061,7 +1062,8 @@ passable:
     jsr node_at
     ply
     plx
-    bmi @nn
+    cmp #$8000                  ; re-test A: ply/plx overwrote the flags from node_at
+    bcs @nn
     jsr closed_lock
     bcs @no
     sec
