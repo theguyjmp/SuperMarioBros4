@@ -13,6 +13,7 @@
 .export spr_nmi, spr_begin, spr_meta, spr_player, spr_level_load, spr_end, spr_area, spr_meta_size
 .export spr_arg_id, spr_arg_x, spr_arg_y, spr_arg_flags, spr_pbase, spr_pslot
 .import spr_level_tab, spr_chr_tab, spr_ppool_tab, spr_pform_tab, spr_ppal_tab
+.import g_coop
 
 STAT77 = $213E
 OAMADDH = $2103
@@ -869,6 +870,11 @@ spr_level_load:
     php
     AXY16
     and #$00FF
+    ldx g_coop                  ; co-op: the level's set with 6 enemy palettes (15 = Luigi)
+    beq :+
+    clc
+    adc #SPR_NLEVELS
+:
     sta spr_t0
     asl
     adc spr_t0

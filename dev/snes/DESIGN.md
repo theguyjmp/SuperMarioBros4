@@ -270,7 +270,7 @@ ROM; the exe will essentially be an emulator." So:
   segment `SRAMBSS` at $F00000. Header ROM size = $0C.
 * Bank ownership: CODE1-3 engine · CODE4 sprites · CODE5 backgrounds · CODE6 sound · CODE7 + CODE11-12 screens ·
   CODE8 enemies-A · CODE9 enemies-B · CODE10 bosses · CODE13 engine spill · CODE14-15 spare (ask).
-  Data: BANK16-27 sound · BANK32-44 sprites/levels (existing) · BANK52-63 backgrounds · BANK64-79 screens/maps ·
+  Data: BANK16-27 sound · BANK28-39 sprites (28-31 added for the co-op level sets) · BANK40-51 levels · BANK52-63 backgrounds · BANK64-79 screens/maps ·
   BANK80-95 engine/levels spill · BANK96-127 spare (ask).
 
 ## Entities (plug-in contract — one file per entity type, no shared dispatch edits)

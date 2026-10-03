@@ -25,9 +25,9 @@ namespace SMB4.Tools
     static class SnesSprites
     {
         // sprites own BANK32..BANK39 (declared in snes/DESIGN.md API requests); filled from 39 downwards
-        const int FirstBank = 32, LastBank = 39, BankSize = 0x8000;
+        const int FirstBank = 28, LastBank = 39, BankSize = 0x8000;
         const int MaxCells = 112;      // 16x16 cells in OBJ tiles 32-479 (14 row pairs x 8); 480-511 = player 2 frame
-        const int NBins = 6;           // OBJ palettes 9-14 (15 = player 2 in co-op)
+        static int NBins = 7;          // OBJ palettes 9-15 (1P); co-op sets use 6 (9-14, 15 = Luigi)
 
         // ------------------------------------------------------------------ catalog
         sealed class Entry { public string Id, Img, Pal; public int Index; public bool Themed; }
@@ -660,8 +660,11 @@ namespace SMB4.Tools
             {
                 var def = LevelLoader.Load(lid);
                 if (def == null) { Console.WriteLine("  sprites: cannot load level " + lid); return 1; }
-                sets.Add(BuildLevel(lid, def));
+                NBins = 7; sets.Add(BuildLevel(lid, def));
             }
+            int nLevels = sets.Count;   // co-op copies (6 enemy palettes, 15 = Luigi) follow the 1P sets: index + nLevels
+            foreach (var lid in ids) { NBins = 6; sets.Add(BuildLevel(lid, LevelLoader.Load(lid))); }
+            NBins = 7;
 
             // level set blobs
             int li = 0;
@@ -675,7 +678,7 @@ namespace SMB4.Tools
                 a.AppendLine("    .byte " + ls.Combos.Count + ", " + ls.NAreas + ", " + ls.StartArea);
                 int size = 13;
                 a.AppendLine(L + "_pal:");
-                for (int bn = 0; bn < NBins; bn++) { a.AppendLine("    .word " + string.Join(",", ls.Bins[bn].Select(x => "$" + x.ToString("X4")))); size += 32; }
+                for (int bn = 0; bn < 7; bn++) { a.AppendLine("    .word " + (bn < ls.Bins.Length ? string.Join(",", ls.Bins[bn].Select(x => "$" + x.ToString("X4"))) : "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")); size += 32; }
                 a.AppendLine(L + "_lut:");
                 foreach (var g in ls.Groups) { a.AppendLine("    .byte " + string.Join(",", g.Lut.Select(x => x.ToString())) + "   ; " + g.Name + " -> pal " + (9 + g.Bin)); size += 16; }
                 a.AppendLine(L + "_load:   ; src tile, n16, n8, cell0, single0, lut");
@@ -985,8 +988,8 @@ namespace SMB4.Tools
             for (int v = 0; v < PalVariants.Length; v++) inc.AppendLine("PPAL_" + PalVariants[v] + " = " + v);
             inc.AppendLine("SPR_NPPAL = " + PalVariants.Length);
             inc.AppendLine("; level index for spr_level_load = LVL_* of gen/levels.inc (engine order); extra levels (hb) follow");
-            inc.AppendLine("SPR_NLEVELS = " + sets.Count);
-            for (int i = 0; i < sets.Count; i++) inc.AppendLine("SPR_LEVEL_" + sets[i].Id.Replace('-', '_').ToUpperInvariant() + " = " + i);
+            inc.AppendLine("SPR_NLEVELS = " + nLevels);
+            for (int i = 0; i < nLevels; i++) inc.AppendLine("SPR_LEVEL_" + sets[i].Id.Replace('-', '_').ToUpperInvariant() + " = " + i);
             inc.AppendLine("SPR_NCHRCHUNKS = " + chrChunks.Count);
             File.WriteAllText(Path.Combine(outDir, "spr_ids.inc"), inc.ToString());
             File.WriteAllText(Path.Combine(outDir, "spr_report.txt"), log.ToString());
@@ -997,7 +1000,7 @@ namespace SMB4.Tools
             if (!string.IsNullOrEmpty(refDir))
             {
                 Directory.CreateDirectory(refDir);
-                foreach (var ls in sets) { RefSheet(ls, refDir, true); RefSheet(ls, refDir, false); }
+                foreach (var ls in sets.Take(nLevels)) { RefSheet(ls, refDir, true); RefSheet(ls, refDir, false); }
             }
 
             Console.WriteLine(string.Format("  sprites: {0} ids + {1} themed, {2} levels, {3} CHR tiles, player {4} frames / {5} pieces (max {6}/frame), {7} banks",
