@@ -261,7 +261,7 @@ actors:
     sec
     sbc ti_gx
     jsl scr_abs
-    cmp #40
+    cmp #79                     ; 26 air ticks x 3 px closing = feet meet the head on the way down
     bcs @nojump
     lda ti_mx
     cmp ti_gx
@@ -292,7 +292,7 @@ actors:
     stz ti_my
     stz ti_mvy
 @stomp:
-    ; |mx - gx| < 12 && my < -64 && vy > 0 -> stomp
+    ; |mx - gx| < 12 && falling && feet (184 + my/16) at the Goomba head (~170) -> stomp
     lda ti_mx
     sec
     sbc ti_gx
@@ -300,8 +300,8 @@ actors:
     cmp #12
     bcs @r
     lda ti_my
-    cmp #.loword(-64)
-    bpl @r
+    cmp #.loword(-240)
+    bmi @r
     lda ti_mvy
     beq @r
     bmi @r

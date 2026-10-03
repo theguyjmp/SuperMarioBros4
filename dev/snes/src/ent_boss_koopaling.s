@@ -48,7 +48,7 @@ kl_init:
     sta ent_v0,x
     lda #10
     sta ent_v1,x
-    lda #60
+    lda #90
     sta ent_v2,x
     ; variant = clamp(world, 1, 7) (C# EntityFactory.WorldNumber)
     lda lvl_world
@@ -104,9 +104,9 @@ kl_update:
     dec ent_v3,x
     lda ent_facing,x
     bmi :+
-    lda #$30
+    lda #$20                    ; slower spin than C# $30 (readable)
     bra :++
-:   lda #$10000-$30
+:   lda #$10000-$20
 :   sta ent_xvel,x
     lda #0
     ldy #1
@@ -195,7 +195,7 @@ kl_update:
     adc ent_v6,x
     asl a
     sta es0
-    lda #110
+    lda #130                    ; C# 110: slower casts give stomp windows
     sec
     sbc es0
     sta ent_v2,x
@@ -244,7 +244,16 @@ kl_update:
 kl_touch:
     ENT_ENTER
     lda ent_v3,x
-    bne @hurt
+    beq @live
+    ; shell spin after a stomp (fairness tune): harmless for its first 40 ticks; later a stomp only bounces
+    cmp #41
+    bcs @r
+    jsl ent_can_stomp
+    bcc @hurt
+    lda #$10000-$30
+    jsl pl_bounce
+@r: rtl
+@live:
     jsl ent_can_stomp
     bcc @hurt
     lda #$10000-$40
@@ -255,6 +264,8 @@ kl_touch:
     bmi @def
     lda #80
     sta ent_v3,x
+    lda #40                     ; flash while harmless
+    sta ent_v5,x
     rtl
 @def:
     jsr defeat

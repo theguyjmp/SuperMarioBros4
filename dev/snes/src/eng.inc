@@ -85,7 +85,7 @@ MAX_ENTS = 24
 .global p_throwpose, p_kickpose, p_jumpbuffer, p_transform, p_transformkind, p_deathtimer, p_pipetimer, p_pipedir
 .global p_pipetarea, p_pipetid, p_pipeexiting, p_swimming, p_climbing, p_swimanim, p_climbanim, p_carrying, p_pwing
 .global p_noteride, p_notesuper, p_nolowgrav, p_onslope, p_conveyor, p_pipeexitticks, p_stun, p_invisible
-.global p_animtick, p_animframe, p_skidding, p_pjumppose, p_somersault, p_inwater, p_swimfc, p_leapt, p_transfrom
+.global p_animtick, p_animframe, p_skidding, p_pjumppose, p_somersault, p_inwater, p_swimfc, p_leapt, p_transfrom, p_behind
 
 ; routines
 .global eng_tile_at_px, eng_tile_at, eng_set_tile, eng_hide_tile, eng_show_tile, eng_link_at
@@ -158,3 +158,4 @@ MAX_ENTS = 24
 .global bonus_lives, snd_status
 .global g_player, g_pwing, g_star, g_result, g_allowexit, eng_level_start, w_boss_clear, w_clear_res
 .global eng_save_load, eng_save_store, eng_save_erase, eng_save_valid, eng_save_buf
+.global g_coop, g_form2, co_blk, co_swap, co_cur, co_st, co_hide   ; 2-player co-op (eng_coop.s, eng_player.s)

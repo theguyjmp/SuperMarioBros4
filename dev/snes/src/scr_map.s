@@ -1654,32 +1654,9 @@ map_nspade_done:
     plp
     rtl
 
-; ------------------------------------------------------------------ 2 players (C# NextTurn) / continue
+; ------------------------------------------------------------------ 2 players: simultaneous co-op, no turns / continue
 next_turn:
-    lda sv_two
-    and #$00FF
-    beq @r
-    lda ss_player
-    eor #1
-    sta mp_tmp
-    beq :+
-    lda #PP_SIZE_
-:   tax
-    lda pp_over,x
-    and #$00FF
-    bne @r
-    lda mp_tmp
-    jsl sv_set_player
-    jsr msg_reset
-    lda ss_player
-    bne :+
-    jsr msg_mario
-    bra :++
-:   jsr msg_luigi
-:   jsr msg_turn
-    lda #120
-    sta mp_msgt
-@r: rts
+    rts
 
 ; map_continue: C# Continue — 4 lives, score 0, cards lost, this world's panels (not fortresses/locks) back,
 ; Toad houses refilled, back to START
@@ -1703,6 +1680,7 @@ map_continue:
     stz pp_ncards,x
     stz pp_over,x
     stz pp_form,x
+    stz pp_form+PP_SIZE         ; Luigi (co-op) starts small too
     rep #$20
     .a16
     ; keep only fortress + lock bits of this world
@@ -2259,12 +2237,19 @@ draw:
     lda #1
 :   ora #$20
     sta spr_fl
-    lda mp_tmp
-    beq :+
-    lda #SP_WALK2
-    bra :++
-:   lda #SP_WALK1
-:   jsl scr_obj_put
+    ; the walker wears the current form (map inventory power-ups show at once)
+    ldx ss_cur
+    lda pp_form,x
+    and #$00FF
+    asl a
+    clc
+    adc mp_tmp
+    adc #SP_WALK1_SMALL
+    pha
+    ldx ss_player
+    jsl scr_obj_pal
+    pla
+    jsl scr_obj_put
     jsr hud_cards
     ; popup sprites
     lda mp_pop

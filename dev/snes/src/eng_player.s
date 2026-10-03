@@ -71,6 +71,9 @@ p_somersault: .res 2
 p_inwater: .res 2
 p_swimfc: .res 2
 p_leapt: .res 2
+p_vinecool: .res 2            ; ticks before a vine can be grabbed again (after jumping off)
+p_whitetime: .res 2           ; ticks Down held on a white block
+p_behind: .res 2              ; 1 = dropped behind the scenery (white block)
 ; ---- locals
 c_apressed: .res 2
 c_lowclear: .res 2
@@ -107,10 +110,43 @@ w_psound: .res 2
 w_hurrywait: .res 2
 w_tallydone: .res 2
 w_tallyend: .res 2
+; ---- simultaneous 2-player co-op: the player NOT being simulated lives in co_blk (swapped in/out with co_swap)
+CO_PSIZE = p_behind - p_x + 2
+
+.export CO_X = p_x - p_x, CO_Y = p_y - p_x, CO_XVEL = p_xvel - p_x, CO_YVEL = p_yvel - p_x, CO_INAIR = p_inair - p_x
+.export CO_STATE = p_state - p_x, CO_FORM = p_form - p_x, CO_CARRY = p_carrying - p_x, CO_HURTINV = p_hurtinv - p_x
+.export CO_DUCK = p_ducking - p_x, CO_INVIS = p_invisible - p_x, CO_CLIMB = p_climbing - p_x, CO_PWING = p_pwing - p_x
+.export CO_DEATHT = p_deathtimer - p_x, CO_FACING = p_facing - p_x, CO_PAD = p_behind - p_x + 2
+co_cur: .res 2                  ; player in the p_* slot: 0 Mario, 1 Luigi
+.segment "HIBSS"
+co_blk: .res CO_PSIZE + 8       ; other player's p_x..p_behind + pad_held/pressed/released/prev
 
 .segment "CODE2"
 .a16
 .i16
+
+; co_swap: exchange the simulated player (p_*, pad_*) with co_blk; co_cur ^= 1. JSL, A16 XY16, keeps X Y.
+co_swap:
+    phy
+.repeat CO_PSIZE/2, I
+    lda f:co_blk+I*2
+    tay
+    lda p_x+I*2
+    sta f:co_blk+I*2
+    sty p_x+I*2
+.endrepeat
+.repeat 4, I
+    lda f:co_blk+CO_PSIZE+I*2
+    tay
+    lda pad_held+I*2
+    sta f:co_blk+CO_PSIZE+I*2
+    sty pad_held+I*2
+.endrepeat
+    lda co_cur
+    eor #1
+    sta co_cur
+    ply
+    rtl
 
 tile_props: .byte TILE_PROPS
 
@@ -220,7 +256,7 @@ pl_init:
 @c: sta p_x,x
     inx
     inx
-    cpx #(p_leapt - p_x + 2)
+    cpx #(p_behind - p_x + 2)
     bcc @c
     pla
     sta p_form
@@ -245,15 +281,41 @@ pl_control:
     beq @go
     rtl
 @go:
+    lda p_vinecool
+    beq :+
+    dec p_vinecool
+:   jsr white_block_tick
     ; ---- note block ride
     lda p_noteride
-    beq @nonote
+    jeq @nonote
     lda pad_pressed
     and #BTN_A
     beq :+
     lda #1
     sta p_notesuper
 :   dec p_noteride
+    ; keep momentum + air-style L/R control while the block bounces (no X lock)
+    stz c_dir
+    lda pad_held
+    and #BTN_LEFT
+    beq :+
+    lda #$FFFF
+    sta c_dir
+    bra :++
+:   lda pad_held
+    and #BTN_RIGHT
+    beq :+
+    lda #1
+    sta c_dir
+:   lda c_dir
+    beq :+
+    sta p_facing
+:   lda p_xvel
+    jsr sign16
+    sta c_movedir
+    lda #1
+    sta p_inair
+    jsr ground_hcontrol
     lda p_x
     clc
     adc p_xvel
@@ -1365,19 +1427,62 @@ frog_land:
 
 ; ------------------------------------------------------------------ vines
 ; carry set = grabbed
+; White-block secret (SMB3): hold Down on a white big block for 5 s -> drop behind the scenery (drawn behind the
+; blocks, big blocks are no floor) until the level ends or the player dies (pl_init clears p_behind).
+white_block_tick:
+    lda p_behind
+    bne @r
+    lda p_inair
+    bne @reset
+    lda pad_held
+    and #BTN_DOWN
+    beq @reset
+    jsr get_py
+    clc
+    adc #32
+    tay
+    jsr get_px
+    clc
+    adc #8
+    jsl eng_tile_at_px
+    cmp #T_BIGBLOCK
+    bne @reset
+    lda f:lvl_var,x
+    and #$00FF
+    cmp #4                      ; white
+    bne @reset
+    inc p_whitetime
+    lda p_whitetime
+    cmp #300
+    bcc @r
+    lda #1
+    sta p_behind
+    sta p_inair
+    stz p_yvel
+    stz p_ducking
+    stz p_whitetime
+    SFX "PIPE"
+@r: rts
+@reset:
+    stz p_whitetime
+    rts
+
 try_grab_vine:
     lda p_carrying
     ora p_statue
-    bne @no
+    jne @no
     lda pad_held
     and #BTN_UP
     bne @want
     lda p_inair
-    beq @no
+    jeq @no
     lda pad_held
     and #BTN_DOWN
-    beq @no
+    jeq @no
 @want:
+    lda p_vinecool
+    bne @no
+    ; generous grab box: x = px+1 / px+8 / px+15, y = body and body-12 (any overlap with the vine)
     jsr small_box
     tax
     lda #16
@@ -1385,16 +1490,38 @@ try_grab_vine:
     beq :+
     lda #24
 :   sta e_t0
+    lda #1
+    sta e_t2                    ; x offset
+@gx:
     jsr get_py
     clc
     adc e_t0
     tay
     jsr get_px
     clc
-    adc #8
+    adc e_t2
+    sta e_t3
     jsl eng_tile_at_px
     cmp #T_VINE
-    bne @no
+    beq @grab
+    jsr get_py
+    clc
+    adc e_t0
+    sec
+    sbc #12
+    tay
+    lda e_t3
+    jsl eng_tile_at_px
+    cmp #T_VINE
+    beq @grab
+    lda e_t2
+    clc
+    adc #7
+    sta e_t2
+    cmp #16
+    bcc @gx
+    bra @no
+@grab:
     lda #PS_VINE
     sta p_state
     lda #1
@@ -1404,9 +1531,7 @@ try_grab_vine:
     stz p_flytime
     stz p_wagcount
     stz p_ducking
-    jsr get_px
-    clc
-    adc #8
+    lda e_t3                    ; snap onto the vine column that was touched
     and #$FFF0
     asl a
     asl a
@@ -1442,7 +1567,7 @@ climb_control:
     lda #24
 :   sta e_t6                    ; body offset
     lda c_apressed
-    beq :+
+    beq @vx
     lda #PS_NORMAL
     sta p_state
     stz p_climbing
@@ -1450,9 +1575,28 @@ climb_control:
     sta p_yvel
     lda #1
     sta p_inair
-    SFX "JUMP"
+    lda #16                     ; no instant re-grab while Up is held
+    sta p_vinecool
+    ; jump off sideways with L/R (else straight up)
+    stz p_xvel
+    lda pad_held
+    and #BTN_LEFT
+    beq :+
+    lda #$10000-$18
+    sta p_xvel
+    lda #$FFFF
+    sta p_facing
+    bra :++
+:   lda pad_held
+    and #BTN_RIGHT
+    beq :+
+    lda #$18
+    sta p_xvel
+    lda #1
+    sta p_facing
+:   SFX "JUMP"
     rts
-:   ; vx
+@vx: ; vx
     stz e_t4
     lda pad_held
     and #BTN_LEFT
@@ -1561,16 +1705,14 @@ floor_below:
     adc #4
     ldy e_t0
     jsl eng_tile_at_px
-    PROPS
-    and #TP_FLOOR
+    jsr floor_of
     bne @r
     jsr get_px
     clc
     adc #11
     ldy e_t0
     jsl eng_tile_at_px
-    PROPS
-    and #TP_FLOOR
+    jsr floor_of
 @r: rts
 
 ; ================================================================== PowerUpdate (P-meter)
@@ -1783,20 +1925,35 @@ pl_detect_solids:
     adc #11
     jsl eng_tile_at_px
     sta d_f2
-    PROPS
-    and #TP_FLOOR
+    jsr floor_of
     sta e_t5
     lda d_f1
-    PROPS
-    and #TP_FLOOR
+    jsr floor_of
     sta e_t4                    ; floor(f1)
     ora e_t5
     jeq @nofloor
     lda d_fy
     and #15
-    cmp #6
+    ldx p_inair
+    beq :+
+    cmp #10                     ; in the air: corners entered from the side (feet 6-9 px deep) still land
     jcs @deep
-    ; land / stand
+    bra :++
+:   cmp #6
+    jcs @deep
+:   cmp #3
+    bcc :+
+    lda d_fy                    ; deep: snap to the tile top
+    and #$FFF0
+    sec
+    sbc #32
+    asl a
+    asl a
+    asl a
+    asl a
+    sta p_y
+    bra @lnd
+:   ; land / stand
     cmp #1
     bne :+
     lda p_y
@@ -2022,8 +2179,13 @@ detect_sloped:
     lda #8
 :   NEG16
     sta e_t3                    ; -above
+    ; below = slope ? 12 : (InAir ? 10 : 6) -- 10 in the air so a corner entered from the side between the
+    ; wall probes (feet 6-9 px under the top) is landed on instead of falling into the solid column
     lda #6
-    ldx e_t4
+    ldx p_inair
+    beq :+
+    lda #10
+:   ldx e_t4
     beq :+
     lda #12
 :   sta e_t2                    ; below
@@ -2042,6 +2204,8 @@ detect_sloped:
     lda e_t5
     beq @snap
     bmi @snap
+    cmp #3
+    bcs @snap                   ; deep corner landing: snap to the top
     cmp #1
     bne :+
     lda p_y
@@ -2190,8 +2354,8 @@ find_surface:
     adc e_t2
     bra @have
 @notslope:
-    lda e_t1
-    and #TP_FLOOR
+    lda e_t0
+    jsr floor_of
     beq @next
     lda d_k
     beq @next
@@ -2229,6 +2393,18 @@ find_surface:
     sec
     rts
 @nf: clc
+    rts
+
+; A = tile -> A = its TP_FLOOR bits (Z set if none); big blocks are no floor while behind the scenery
+floor_of:
+    cmp #T_BIGBLOCK
+    bne :+
+    ldx p_behind
+    beq :+
+    lda #0
+    rts
+:   PROPS
+    and #TP_FLOOR
     rts
 
 on_land:

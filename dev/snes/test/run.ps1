@@ -6,7 +6,7 @@ $Rom = (Resolve-Path $Rom).Path; $Lua = (Resolve-Path $Lua).Path
 New-Item -ItemType Directory -Force $OutDir | Out-Null; $OutDir = (Resolve-Path $OutDir).Path
 $combined = Join-Path $env:TEMP ("snesrun_" + [guid]::NewGuid().ToString('N') + ".lua")
 (Get-Content "$here/prelude.lua" -Raw) + "`n" + $(if (Test-Path "$PSScriptRoot/sym.lua") { Get-Content "$PSScriptRoot/sym.lua" -Raw } else { "" }) + "`n" + (Get-Content $Lua -Raw) | Set-Content $combined -Encoding ascii
-$job = Start-Job { param($m, $r, $l) & $m --testrunner $r $l --snes.port1.type=SnesController 2>&1 | Out-String; "EXITCODE:$LASTEXITCODE" } -ArgumentList "$here/mesen/Mesen.exe", $Rom, $combined
+$job = Start-Job { param($m, $r, $l) & $m --testrunner $r $l --snes.port1.type=SnesController --snes.port2.type=SnesController 2>&1 | Out-String; "EXITCODE:$LASTEXITCODE" } -ArgumentList "$here/mesen/Mesen.exe", $Rom, $combined
 if (-not (Wait-Job $job -Timeout $TimeoutSec)) { Get-Process Mesen -ErrorAction SilentlyContinue | Stop-Process -Force; Write-Host "TIMEOUT"; Remove-Item $combined; exit 124 }
 $out = Receive-Job $job; Remove-Item $combined
 $code = 0

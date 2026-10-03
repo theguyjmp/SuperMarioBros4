@@ -11,7 +11,7 @@
 .include "spr_ids.inc"
 
 .export spr_nmi, spr_begin, spr_meta, spr_player, spr_level_load, spr_end, spr_area, spr_meta_size
-.export spr_arg_id, spr_arg_x, spr_arg_y, spr_arg_flags, spr_pbase
+.export spr_arg_id, spr_arg_x, spr_arg_y, spr_arg_flags, spr_pbase, spr_pslot
 .import spr_level_tab, spr_chr_tab, spr_ppool_tab, spr_pform_tab, spr_ppal_tab
 
 STAT77 = $213E
@@ -57,6 +57,8 @@ spr_pf_bank:   .res 16      ; per piece: source bank (words)
 spr_pp_cur:    .res 2       ; palette 8 source address (in spr_ppal_tab's bank) last queued
 spr_pp_pend:   .res 2
 spr_pp_src:    .res 2
+spr_pf2_blk:   .res 44      ; co-op player 2: same layout as spr_pf_rec..spr_pp_src (swapped in by spr_player)
+spr_pslot:     .res 2       ; player slot of the next spr_player call: 0 = tiles 0-31 + palette 8, 1 = tiles 480-511 + palette 15
 ; level load
 spr_g01:       .res 32      ; per native slot: plane 0/1 bits (word), from the group LUT
 spr_g23:       .res 32
@@ -147,6 +149,84 @@ spr_end:
     plp
     rtl
 
+; NMI upload of one player frame queue (A8 XY16 in and out)
+.macro PL_UPLOAD q_n, q_base, q_src, q_bank, q_pend, q_ppsrc, cg
+.local pc, nochr, nopal
+    ldy q_n
+    beq nochr
+    lda #$80
+    sta VMAIN
+    lda #$01
+    sta DMAP0
+    lda #<VMDATAL
+    sta BBAD0
+    AXY16
+    ldx #0
+    lda q_base
+    asl
+    asl
+    asl
+    asl
+    clc
+    adc #OBJ_VRAM
+    sta spr_t0
+pc:
+    lda spr_t0
+    sta VMADDL
+    lda q_src,x
+    sta A1T0L
+    lda q_bank,x
+    sta A1B0
+    lda #64
+    sta DAS0L
+    A8
+    lda #$01
+    sta MDMAEN
+    A16
+    lda spr_t0
+    clc
+    adc #256
+    sta VMADDL
+    lda q_src,x
+    clc
+    adc #64
+    sta A1T0L
+    lda #64
+    sta DAS0L
+    A8
+    lda #$01
+    sta MDMAEN
+    A16
+    lda spr_t0
+    clc
+    adc #32
+    sta spr_t0
+    inx
+    inx
+    dey
+    bne pc
+    stz q_n
+    A8
+nochr:
+    lda q_pend
+    beq nopal
+    stz q_pend
+    lda #cg
+    sta CGADD
+    stz DMAP0
+    lda #<CGDATA
+    sta BBAD0
+    ldx q_ppsrc
+    stx A1T0L
+    lda #^spr_ppal_tab
+    sta A1B0
+    ldx #32
+    stx DAS0L
+    lda #$01
+    sta MDMAEN
+nopal:
+.endmacro
+
 ; ------------------------------------------------------------------------------------------------ NMI
 spr_nmi:
     php
@@ -171,81 +251,9 @@ spr_nmi:
     stx DAS0L
     lda #$01
     sta MDMAEN
-    ; player CHR pieces: tiles 2k,2k+1 (top) and 2k+16,2k+17 (bottom)
-    ldy spr_pf_n
-    beq @nochr
-    lda #$80
-    sta VMAIN
-    lda #$01
-    sta DMAP0
-    lda #<VMDATAL
-    sta BBAD0
-    AXY16
-    ldx #0
-    lda spr_pf_base
-    asl
-    asl
-    asl
-    asl
-    clc
-    adc #OBJ_VRAM
-    sta spr_t0
-@pc:
-    lda spr_t0
-    sta VMADDL
-    lda spr_pf_src,x
-    sta A1T0L
-    lda spr_pf_bank,x
-    sta A1B0                ; (also writes $4305 = low byte of bank word; set DAS next)
-    lda #64
-    sta DAS0L
-    A8
-    lda #$01
-    sta MDMAEN
-    A16
-    lda spr_t0
-    clc
-    adc #256
-    sta VMADDL
-    lda spr_pf_src,x
-    clc
-    adc #64
-    sta A1T0L
-    lda #64
-    sta DAS0L
-    A8
-    lda #$01
-    sta MDMAEN
-    A16
-    lda spr_t0
-    clc
-    adc #32
-    sta spr_t0
-    inx
-    inx
-    dey
-    bne @pc
-    stz spr_pf_n
-    A8
-@nochr:
-    ; palette 8
-    lda spr_pp_pend
-    beq @nopal
-    stz spr_pp_pend
-    lda #128
-    sta CGADD
-    stz DMAP0
-    lda #<CGDATA
-    sta BBAD0
-    ldx spr_pp_src
-    stx A1T0L
-    lda #^spr_ppal_tab
-    sta A1B0
-    ldx #32
-    stx DAS0L
-    lda #$01
-    sta MDMAEN
-@nopal:
+    ; player CHR pieces: tiles 2k,2k+1 (top) and 2k+16,2k+17 (bottom); palette 8. Co-op player 2: own queue, palette 15
+    PL_UPLOAD spr_pf_n, spr_pf_base, spr_pf_src, spr_pf_bank, spr_pp_pend, spr_pp_src, 128
+    PL_UPLOAD spr_pf2_blk+2, spr_pf2_blk+4, spr_pf2_blk+6, spr_pf2_blk+22, spr_pf2_blk+40, spr_pf2_blk+42, 240
     plp
     rtl
 
@@ -498,6 +506,13 @@ spr_player:
     phb
     php
     AXY16
+    pha
+    lda spr_pslot
+    beq :+
+    phx
+    jsr pslot_swap
+    plx
+:   pla
     and #$00FF
     stx spr_t1              ; pose
     ; index = ((form * NPOSES + pose) * 4 + tail) * 2
@@ -678,6 +693,10 @@ spr_player:
     sta spr_arg_flags
     lda spr_aor
     and #$00FE              ; palette 0 = OBJ 8
+    ldy spr_pslot
+    beq :+
+    ora #$000E              ; co-op player 2: palette 7 = OBJ 15
+:
     sta spr_aor
     lda spr_pbase
     xba
@@ -777,7 +796,31 @@ spr_player:
 @pdone:
     plp
     plb
+    php
+    AXY16
+    lda spr_pslot
+    beq :+
+    jsr pslot_swap
+:   plp
     rtl
+
+; co-op player 2 (spr_pslot != 0): its own upload queue (spr_pf2_blk), frame area at OBJ tile 480, palette 15
+pslot_swap:
+    ldx #0
+:   lda spr_pf_rec,x
+    tay
+    lda spr_pf2_blk,x
+    sta spr_pf_rec,x
+    tya
+    sta spr_pf2_blk,x
+    inx
+    inx
+    cpx #44
+    bcc :-
+    lda spr_pbase
+    eor #480
+    sta spr_pbase
+    rts
 
 ; ------------------------------------------------------------------------------------------------ level load
 ; spr_area: A = area index of the current level -> theme-colored ids (SPR_BUMP_*, SPR_SPLASH_*, ...) use its theme.
@@ -991,6 +1034,8 @@ spr_level_load:
     ; start area theme, force a player CHR/palette re-upload
     stz spr_pf_rec
     stz spr_pp_cur
+    stz spr_pf2_blk
+    stz spr_pf2_blk+38
     ldx spr_set
     lda a:12,x
     and #$00FF

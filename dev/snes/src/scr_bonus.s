@@ -38,6 +38,8 @@ ns_perfect: .res 2
 ns_donet: .res 2
 ns_msgt: .res 2
 ns_msgid: .res 2
+ns_rev: .res 2                 ; end reveal: next card to check (18 = done)
+ns_revt: .res 2
 ns_line: .res 2                ; bottom line shown (-1 = redraw)
 
 .segment "CODE12"
@@ -789,7 +791,13 @@ nspade_tick:
     jsr ns_bottom
 :   lda ns_done
     beq @play
-    inc ns_donet
+    ; end of the game: turn the remaining cards over one at a time, then wait for a key
+    jsr ns_reveal_step
+    lda ns_rev
+    cmp #18
+    bcs :+
+    jmp @draw
+:   inc ns_donet
     lda ns_donet
     cmp #201
     bcs @leave
@@ -834,6 +842,15 @@ nspade_tick:
     jsr ns_finish
     bra @res
 @nomatch:
+    inc ns_miss
+    lda ns_miss
+    cmp #2
+    bcc :+
+    lda #0                      ; last miss: this pair stays face up (no flip-back flicker before the reveal)
+    jsr ns_finish
+    bra @res
+:   ldx ns_first
+    ldy ns_second
     sep #$20
     .a8
     lda #0
@@ -845,14 +862,7 @@ nspade_tick:
     jsr ns_block
     lda ns_second
     jsr ns_block
-    inc ns_miss
-    lda ns_miss
-    cmp #2
-    bcc :+
-    lda #0
-    jsr ns_finish
-    bra @res
-:   SFX SFX_ERROR
+    SFX SFX_ERROR
     lda #6
     sta ns_msgid
     lda #90
@@ -1026,24 +1036,9 @@ ns_finish:
     sta ns_done
     stz ns_donet
     stz ns_msgt
-    ldx #0
-@r: sep #$20
-    .a8
-    lda ns_up,x
-    bne :+
-    lda #1
-    sta ns_up,x
-    rep #$20
-    .a16
-    phx
-    txa
-    jsr ns_block
-    plx
-:   rep #$20
-    .a16
-    inx
-    cpx #18
-    bcc @r
+    stz ns_rev                  ; face-down cards turn over one by one (ns_reveal_step)
+    lda #30
+    sta ns_revt
     lda ns_perfect
     beq :+
     lda #SONG_BONUS1UP
@@ -1054,6 +1049,49 @@ ns_finish:
 :   jsl sv_save
     jsr ns_bottom
     rts
+
+; one step of the end reveal: every 6 ticks the next face-down card (reading order) turns over
+ns_reveal_step:
+    lda ns_rev
+    cmp #18
+    bcs @d
+    dec ns_revt
+    bne @d
+    lda #6
+    sta ns_revt
+    ldx ns_rev
+@f: cpx #18
+    bcs @end
+    lda ns_up,x
+    and #$00FF
+    beq @turn
+    inx
+    bra @f
+@turn:
+    sep #$20
+    .a8
+    lda #1
+    sta ns_up,x
+    rep #$20
+    .a16
+    inx
+    stx ns_rev
+    dex
+    txa
+    jsr ns_block
+    SFX SFX_CARDSTOP
+    ldx ns_rev                  ; nothing left face down -> done now
+:   cpx #18
+    bcs @end
+    lda ns_up,x
+    and #$00FF
+    beq @d
+    inx
+    bra :-
+@end:
+    lda #18
+    sta ns_rev
+@d: rts
 
 ; the bottom line (y = 180)
 ns_bottom:

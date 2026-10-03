@@ -10,7 +10,7 @@
 .include "snes.inc"
 .include "ent.inc"
 
-.import ent_vtables, ent_spawn_map
+.import ent_vtables, ent_spawn_map, eng_tlog_reset
 .global spr_meta, spr_arg_x, spr_arg_y, spr_arg_flags, spr_arg_id
 .global pl_hitbox, w_bump_above_l, w_break_brick, w_hit_block
 
@@ -96,6 +96,14 @@ rng_seed: .res 2
 col_i: .res 2
 col_j: .res 2
 w_battlewon: .res 2
+col_plonly: .res 2          ; co-op: collisions for the second player only (no shell pass)
+pl_near2: .res 2            ; co-op: the other player is near the platform being updated
+pl_wason2: .res 2
+
+.segment "HIBSS"
+ent_pon2: .res 2*N          ; co-op: Luigi stands on this platform (F_PON is Mario's)
+
+.import CO_X, CO_Y, CO_CARRY, CO_STATE, CO_INAIR
 
 .segment "EXBSS"
 spawned: .res 512           ; per spawn index (byte)
@@ -224,7 +232,9 @@ alloc_slot:
     bcc @f
     clc
     rts
-@got: lda ea_type
+@got: lda #0
+    sta f:ent_pon2,x
+    lda ea_type
     sta ent_type,x
     ; C# Entity defaults
     lda #EC_ENEMY
@@ -517,9 +527,10 @@ killed_index:
     rts
 
 ; ================================================================== spawning (World.SpawnInitial / Spawner / TrySpawn)
-.export ent_area_reset, ent_level_reset
+.export ent_area_reset, ent_level_reset, ent_coop_collide, ent_pon_any
 ent_level_reset:
     stz w_battlewon
+    jsl eng_tlog_reset          ; new level visit: forget collected tiles
     ldx #0
     lda #0
 @c: sta f:killed,x
@@ -969,6 +980,19 @@ ent_tick:
     lda ent_fl,x
     and #F_REMOVE
     bne :+
+    lda g_coop
+    beq @upd
+    txa                         ; co-op: an object the other player carries updates with that player in the slot
+    inc a
+    inc a
+    cmp f:co_blk+CO_CARRY
+    bne @upd
+    jsl co_swap
+    ldy #VT_UPDATE
+    jsr cb_call
+    jsl co_swap
+    bra :+
+@upd:
     ldy #VT_UPDATE
     jsr cb_call
 :   ply
@@ -1089,7 +1113,23 @@ is_carried:
     inc a
     inc a
     cmp p_carrying
+    beq @r
+    pha
+    lda g_coop                  ; co-op: also carried by the other player
+    beq @no
+    pla
+    cmp f:co_blk+CO_CARRY
     rts
+@no: pla                        ; nonzero -> Z clear
+@r: rts
+
+; ent_coop_collide: co-op, player-vs-entity collisions for the second player (in the p_* slot). JSL.
+ent_coop_collide:
+    lda #1
+    sta col_plonly
+    jsr collisions
+    stz col_plonly
+    rtl
 
 collisions:
     lda p_state
@@ -1196,11 +1236,27 @@ collisions:
     bra @next
 @touch:
     jsr touch
+    ; level-placed items collected by touch stay collected for this level visit (re-entering a room)
+    ldx ent_cur
+    lda ent_class,x
+    cmp #EC_ITEM
+    bne @next
+    lda ent_fl,x
+    and #F_REMOVE
+    beq @next
+    lda ent_spawnidx,x
+    bmi @next
+    lda ent_fl,x
+    ora #F_KILLED
+    sta ent_fl,x
 @next:
     inc col_i
     jmp @l
 @shells:
-    ; moving shells and the carried object vs other enemies
+    lda col_plonly
+    beq :+
+    rts
+:   ; moving shells and the carried object vs other enemies
     stz col_i
 @s: lda col_i
     cmp ent_n
@@ -1685,22 +1741,23 @@ ent_remove_carried:
 tail_hit_x:
     stz col_j
 @l: ; bx = Facing > 0 ? Px - 10 : Px + 17 ; by = Py + 16 ; rect 10x15 (re-set each time: callbacks may use tt_*)
+    ; SMB3-like reach: 18x20 box from the body edge (was 10x15 at Py+16)
     jsr ppx
     ldy p_facing
     bmi :+
     sec
-    sbc #10
+    sbc #17
     bra :++
 :   clc
-    adc #17
+    adc #15
 :   sta tt_x
     jsr ppy
     clc
-    adc #16
+    adc #12
     sta tt_y
-    lda #10
+    lda #18
     sta tt_w
-    lda #15
+    lda #20
     sta tt_h
     lda col_j
     cmp ent_n
@@ -1830,8 +1887,7 @@ ent_platform_support:
     lda ent_class,x
     cmp #EC_PLATFORM
     bne @n
-    lda ent_fl,x
-    and #F_PON
+    jsr pon_get
     beq @n
     sec
     rtl
@@ -2940,13 +2996,111 @@ ent_plat_begin:
     sta pl_prevy
     ; wasOn = playerOn && p.State == Normal && !p.InAir
     stz pl_wason
-    lda ent_fl,x
-    and #F_PON
+    jsr pon_get
     beq :+
     lda p_state
     ora p_inair
     bne :+
     inc pl_wason
+:   stz pl_near2
+    lda g_coop
+    beq @r
+    ; co-op: the other player (co_blk) -- same test, only when it is on or near this platform
+    stz pl_wason2
+    jsr pon_other
+    beq @near
+    inc pl_near2
+    lda f:co_blk+CO_STATE
+    ora f:co_blk+CO_INAIR
+    bne @r
+    inc pl_wason2
+@r: rtl
+@near:
+    lda co_hide
+    bne @r
+    lda f:co_blk+CO_STATE
+    bne @r
+    ; |other.Px + 8 - (ent.Px + Wd/2)| < Wd/2 + 24 and other.Py + 32 within ent.Py -40..+24
+    lda f:co_blk+CO_X
+    lsr a
+    lsr a
+    lsr a
+    lsr a
+    clc
+    adc #8
+    sta o_tmp
+    lda ent_wd,x
+    lsr a
+    sta pl_feet
+    jsl ent_px
+    clc
+    adc pl_feet
+    sec
+    sbc o_tmp
+    bpl :+
+    NEG16
+:   sec
+    sbc pl_feet
+    cmp #24
+    bpl @r
+    lda f:co_blk+CO_Y
+    ASR4
+    clc
+    adc #32
+    sta o_tmp
+    jsl ent_py
+    sec
+    sbc o_tmp
+    clc
+    adc #24
+    cmp #64
+    bcs @r
+    inc pl_near2
+    rtl
+
+; slot player's / other player's "stands on platform X" flag (Mario: F_PON in ent_fl, Luigi: ent_pon2) -> Z
+pon_get:
+    lda co_cur
+    bne :+
+    lda ent_fl,x
+    and #F_PON
+    rts
+:   lda f:ent_pon2,x
+    rts
+pon_other:
+    lda co_cur
+    beq :+
+    lda ent_fl,x
+    and #F_PON
+    rts
+:   lda f:ent_pon2,x
+    rts
+pon_clr:
+    lda co_cur
+    bne :+
+    lda ent_fl,x
+    and #$FFFF^F_PON
+    sta ent_fl,x
+    rts
+:   lda #0
+    sta f:ent_pon2,x
+    rts
+pon_set:
+    lda co_cur
+    bne :+
+    lda ent_fl,x
+    ora #F_PON
+    sta ent_fl,x
+    rts
+:   lda #1
+    sta f:ent_pon2,x
+    rts
+; ent_pon_any: X = platform -> A nonzero (Z clear) if any player stands on it. JSL.
+ent_pon_any:
+    lda f:ent_pon2,x
+    bne :+
+    lda ent_fl,x
+    and #F_PON
 :   rtl
 
 ; ent_plat_end: call after moving the platform: carries the player by (dx, dy), handles landing, sets F_PON.
@@ -2960,6 +3114,22 @@ ent_plat_end:
     sec
     sbc pl_prevy
     sta pl_dy
+    lda pl_near2
+    beq @one
+    jsl co_swap                 ; co-op: the other player first
+    lda pl_wason
+    pha
+    lda pl_wason2
+    sta pl_wason
+    jsr plat_core
+    pla
+    sta pl_wason
+    jsl co_swap
+@one:
+    jsr plat_core
+    rtl
+
+plat_core:
     lda pl_wason
     beq @land
     lda p_x
@@ -3004,9 +3174,7 @@ ent_plat_end:
     stz p_yvel
 @land:
     ; landing on the platform
-    lda ent_fl,x
-    and #$FFFF^F_PON
-    sta ent_fl,x
+    jsr pon_clr
     lda p_state
     jne @no
     lda p_yvel
@@ -3065,13 +3233,11 @@ ent_plat_end:
     stz p_inair
     stz p_killtally
 :   stz p_yvel
-    lda ent_fl,x
-    ora #F_PON
-    sta ent_fl,x
+    jsr pon_set
     sec
-    rtl
+    rts
 @no: clc
-    rtl
+    rts
 
 ; ------------------------------------------------------------------ math
 ; ent_sin: A = binary angle (0-255 = one turn; high byte ignored), Y = amplitude (-128..127)

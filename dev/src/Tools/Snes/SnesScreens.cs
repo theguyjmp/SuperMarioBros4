@@ -893,13 +893,26 @@ namespace SMB4.Tools
                         string ov = null;
                         switch (def.Grid[x, y])
                         {
-                            case 'T': ov = "m.tree"; break; case '^': ov = "m.hill"; break; case 'r': ov = "m.rock"; break;
-                            case '*': ov = "m.flower"; break; case 'p': ov = "m.palm"; break; case 'k': ov = "m.skull"; break;
+                            // scenery idles: the second water frame shows the bob frame (gentle 1-px sway, SMB3-style)
+                            case 'T': ov = waterFrame == 0 ? "m.tree" : "m.tree2"; break;
+                            case '^': ov = world == 2 ? (waterFrame == 0 ? "m.bush" : "m.bush2") : (waterFrame == 0 ? "m.hill" : "m.hill2"); break;
+                            case 'r': ov = "m.rock"; break;
+                            case '*': ov = waterFrame == 0 ? "m.flower" : "m.flower2"; break;
+                            case 'p': ov = null; break; // tall palms: own pass below
+                            case 'k': ov = "m.skull"; break;
                             case '-': ov = "m.path.h"; break; case '|': ov = "m.path.v"; break;
                             case '=': ov = "m.bridge.h"; break; case '!': ov = "m.bridge.v"; break;
                         }
                         if (ov != null) p.Tile(Art.Get(ov), x * 16, y * 16, mapPal(ov));
                     }
+                // palms are 24x32: bottom-centred on their cell, crown reaching into the cell above
+                for (int y = 0; y < def.H; y++)
+                    for (int x = 0; x < def.W; x++)
+                        if (def.Grid[x, y] == 'p')
+                        {
+                            string pi = waterFrame == 0 ? "m.palm.big" : "m.palm.big2";
+                            p.Tile(Art.Get(pi), x * 16 - 4, y * 16 - 16, mapPal(pi));
+                        }
                 if (!withNodes) return;
                 foreach (var n in def.Nodes)
                 {
@@ -1002,6 +1015,7 @@ namespace SMB4.Tools
             HudSprites(s);
             // soft shadow under the walker (the C# darkens the ground: a dark translucent-looking ellipse)
             AddSpr(s, "SHADOW", 0, Spr((p, x, y) => { int[] half = { 4, 6, 4 }; for (int r = 0; r < 3; r++) p.FillRect(x + 8 - half[r], y + r, half[r] * 2, 1, Hud.Mix(0xF0C078, 0x000010, 96)); }));
+            PlayerWalk(s);   // map walker wears the current form (scr_map: SP_WALK1_SMALL + form*2)
             return s;
         }
 

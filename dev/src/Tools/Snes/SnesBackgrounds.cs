@@ -177,7 +177,45 @@ namespace SMB4.Tools
                     img = w;
                 }
                 int extraY = Art.HasPal(name + ".y") ? Art.Pal(name + ".y")[1] : 0;
-                var ly = new BgLayer { Name = name, Img = img, Rgb = BgPalRgb(name), Num = L, Base = 192 - img.H + extraY, Wet = wet };
+                list.Add(new BgLayer { Name = name, Img = new Img(256, img.H, (byte[])img.P.Clone()), Rgb = BgPalRgb(name), Num = L, Base = 192 - img.H + extraY, Wet = wet });
+            }
+            // Bake the farther layers' silhouettes into the transparent pixels of each nearer layer (floor-camera
+            // alignment). The ROM shows one layer per scanline, so a near layer's band used to cut the far layer's
+            // tree tops / hills off flat. Far content inside a near band now scrolls at the near layer's rate.
+            for (int i = 1; i < list.Count; i++)
+            {
+                var N = list[i]; int used = 1;
+                foreach (var b in N.Img.P) if (b + 1 > used) used = b + 1;
+                for (int y = 0; y < N.Img.H; y++)
+                {
+                    int sy = N.Base + y;
+                    for (int x = 0; x < 256; x++)
+                    {
+                        if (N.Img.P[y * 256 + x] != 0) continue;
+                        int c = -1;
+                        for (int j = i - 1; j >= 0 && c < 0; j--)
+                        {
+                            var F = list[j]; int fy = sy - F.Base;
+                            if (fy < 0 || fy >= F.Img.H) continue;
+                            int fp = F.Img.P[fy * 256 + x];
+                            if (fp != 0) c = F.Rgb[fp];
+                        }
+                        if (c < 0) continue;
+                        int slot = -1;
+                        for (int s = 1; s < used; s++) if (N.Rgb[s] == c) { slot = s; break; }
+                        if (slot < 0 && used < 16) { slot = used++; N.Rgb[slot] = c; }
+                        if (slot < 0)
+                        {
+                            double bd = double.MaxValue;
+                            for (int s = 1; s < used; s++) { double d = ColDist(N.Rgb[s], c); if (d < bd) { bd = d; slot = s; } }
+                        }
+                        N.Img.P[y * 256 + x] = (byte)slot;
+                    }
+                }
+            }
+            foreach (var ly in list)
+            {
+                var img = ly.Img;
                 ly.Cov = new double[img.H];
                 ly.SlotCount = new long[16];
                 for (int y = 0; y < img.H; y++)
@@ -189,7 +227,6 @@ namespace SMB4.Tools
                 ly.RowWeight = new double[img.H]; ly.Owned = new bool[img.H]; ly.Fill = new int[img.H];
                 ly.Pix = new int[256 * img.H];
                 for (int i = 0; i < ly.Pix.Length; i++) ly.Pix[i] = img.P[i] == 0 ? -1 : ly.Rgb[img.P[i]];
-                list.Add(ly);
             }
             return list;
         }

@@ -26,8 +26,8 @@ namespace SMB4.Tools
     {
         // sprites own BANK32..BANK39 (declared in snes/DESIGN.md API requests); filled from 39 downwards
         const int FirstBank = 32, LastBank = 39, BankSize = 0x8000;
-        const int MaxCells = 120;      // 16x16 cells in OBJ tiles 32-511 (15 row pairs x 8)
-        const int NBins = 7;           // OBJ palettes 9-15
+        const int MaxCells = 112;      // 16x16 cells in OBJ tiles 32-479 (14 row pairs x 8); 480-511 = player 2 frame
+        const int NBins = 6;           // OBJ palettes 9-14 (15 = player 2 in co-op)
 
         // ------------------------------------------------------------------ catalog
         sealed class Entry { public string Id, Img, Pal; public int Index; public bool Themed; }

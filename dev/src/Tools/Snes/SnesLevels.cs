@@ -539,7 +539,7 @@ namespace SMB4.Tools
                 {
                     Layer tl = t == T.Ground && x * 16 >= goalPx ? L("goal.floor", "goal") : TileLayer(a, t, x, y);
                     if (tl != null) s.Layers.Add(tl);
-                    s.Prio = TileInfo.Solid(t);
+                    s.Prio = TileInfo.Solid(t) || t == T.BigBlock || t == T.BigBlockBody;   // big blocks cover "behind" sprites (white-block secret)
                 }
                 s.Layers.RemoveAll(l => !l.Black && !Art.Has(l.Img));
                 if (s.Layers.Count == 0) s.Prio = false;

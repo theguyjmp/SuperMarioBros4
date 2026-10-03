@@ -10,18 +10,18 @@ node A = 5-a
 node H = toad:leaf,tanooki,pwing
 node P = spade
 lock L = F
-hbro = 12 5 star
+hbro = 7 7 star
 grid
 ~~cc~~cccccc~~cc
 cccccccccccccccc
-cccccF--+-L-4ccc
-cc~ccccc|ccc|ccc
-cccccccc3ccc+Pc~
-c~cccccc|ccc|ccc
-cccccccc+ccc5cc~
-cccc^^c.|^cc|ccc
-T..^^...|...+-A.
-..T..H..|....T..
-.S-1-+--2......T
+cccA--4---+-5-Pc
+ccccccccccLccccc
+c~cccccccc|cccc~
+cccccccc.cFccccc
+cccc^^c...|.cccc
+T..^^3----+.....
+.....|....|..T..
+..T..|....|....T
+.S-1-+--2-+-H...
 ~~~..T..~~~~~~~~
 end

@@ -21,6 +21,7 @@ SCR_HOOKS = 1
 .export g_player, g_pwing, g_star, g_result, g_allowexit, eng_dbg_level
 .export eng_px, eng_py, eng_pxvel, eng_pyvel, eng_cam_x, eng_cam_y
 .importzp pad1, pad2, frame_count
+.import CO_PAD, co_level_start, co_level_end, spr_pslot
 .import eng_nmi_level, eng_anim_reset, eng_find_link, eng_font
 .import ent_area_reset, ent_level_reset, ent_draw_effects
 .import spr_begin, spr_end, spr_level_load, bg_update, bg_cam_x, bg_cam_y
@@ -216,11 +217,24 @@ zero_word: .word 0
 game_frame:
     rep #$30
     ; C# PadState from the SNES pad: B/A = jump (Btn.A), Y/X = run (Btn.B). Player 2 (Luigi) plays with pad 1 | pad 2.
+    ; co-op: the slot player's pad (Mario = pad 1, Luigi = pad 2); the other one goes to co_blk below
     lda pad1
-    ldx g_player
-    beq :+
+    ldx g_coop
+    beq @nc
+    ldx co_cur
+    beq @pc
+    lda pad2
+    bra @pc
+@nc: ldx g_player
+    beq @pc
     ora pad2
-:   sta e_t0
+@pc: jsr pad_conv
+    tax
+    jmp pad_edges
+
+; A = SNES pad bits -> A = C# Btn bits
+pad_conv:
+    sta e_t0
     lda #0
     bit e_t0
     bpl :+
@@ -276,7 +290,11 @@ game_frame:
     txa
     ora #BTN_SELECT
     tax
-:   stx pad_held
+:   txa
+    rts
+
+pad_edges:
+    stx pad_held
     lda pad_prev
     eor #$FFFF
     and pad_held
@@ -287,6 +305,26 @@ game_frame:
     sta pad_released
     lda pad_held
     sta pad_prev
+    lda g_coop
+    beq @nop2
+    lda pad2
+    ldx co_cur
+    beq :+
+    lda pad1
+:   jsr pad_conv
+    sta e_t1
+    lda f:co_blk+CO_PAD+6       ; prev
+    eor #$FFFF
+    and e_t1
+    sta f:co_blk+CO_PAD+2       ; pressed
+    lda e_t1
+    eor #$FFFF
+    and f:co_blk+CO_PAD+6
+    sta f:co_blk+CO_PAD+4       ; released
+    lda e_t1
+    sta f:co_blk+CO_PAD
+    sta f:co_blk+CO_PAD+6
+@nop2:
     ; test hook: eng_dbg_level = LVL_*+1 starts that level with a fresh session (any mode)
     lda eng_dbg_level
     beq :+
@@ -647,6 +685,7 @@ start_level:
     stz g_banner
     stz bonus_lives
     stz g_result
+    stz co_cur                  ; Mario in the p_* slot
     lda g_form
     jsl pl_init
     ; World ctor: P-wing (Raccoon at full power, endless flight) / star from the map inventory
@@ -689,6 +728,10 @@ start_level:
     sta p_y
     lda #1
     sta p_inair
+    lda g_coop
+    beq :+
+    jsl co_level_start          ; 2-player co-op: Luigi joins
+:
     jsl eng_center_camera
     jsl ent_spawn_initial
     jsr show_area
@@ -774,6 +817,12 @@ play_frame:
     ; ---- pause menu (LevelScreen: Start while the level runs normally; CONTINUE / EXIT LEVEL)
     lda g_paused
     jeq @notp
+    lda g_coop
+    beq :+
+    lda pad_pressed
+    ora f:co_blk+CO_PAD+2
+    sta pad_pressed
+:
     lda pad_pressed
     and #(BTN_UP|BTN_DOWN|BTN_SELECT)
     beq @nomove
@@ -812,7 +861,11 @@ play_frame:
     jmp @draw
 @notp:
     lda pad_pressed
-    and #BTN_START
+    ldx g_coop                  ; co-op: either pad pauses
+    beq :+
+    lda f:co_blk+CO_PAD+2
+    ora pad_pressed
+:   and #BTN_START
     beq @tick
     lda w_result
     ora w_endtimer
@@ -894,6 +947,10 @@ level_result:
     ; C# LevelScreen: done(result); the form carries over unless the player died (P-wing -> Raccoon)
     sta g_result
     stz g_paused
+    lda g_coop
+    beq :+
+    jsl co_level_end            ; co-op: Mario back in the slot, g_form2 = Luigi's form
+:
 .ifdef SFX_PMETER
     sep #$20
     lda #SFX_STOP|SFX_PMETER
@@ -953,8 +1010,26 @@ draw_sprites:
     cmp #PS_DYING
     bne :+
     jsr pl_draw
-:   jsl spr_end_l
+:   jsr draw2
+    jsl spr_end_l
     rts
+
+; co-op: the other player (co_blk), drawn in front; not while hidden (riding a pipe/door) or out of lives
+draw2:
+    lda g_coop
+    beq @r
+    lda co_hide
+    bne @r
+    lda co_cur
+    eor #1
+    asl a
+    tax
+    lda co_st,x
+    bne @r
+    jsl co_swap
+    jsr pl_draw
+    jsl co_swap
+@r: rts
 
 spr_begin_l:
     sep #$20
@@ -1076,16 +1151,22 @@ pl_draw:
     sta spr_arg_y
     stz spr_arg_flags
     lda g_player
+    ldx g_coop
+    beq :+
+    lda co_cur                  ; co-op: the player in the slot (1 = Luigi)
+:   cmp #0
     beq :+
     lda #$4000                  ; SPR_LUIGI
     sta spr_arg_flags
 :   lda p_facing
     bpl :+
     inc spr_arg_flags
-:   lda p_state
-    cmp #PS_PIPE
+:   lda p_behind                ; white-block secret: drawn behind the scenery
     bne :+
-    lda spr_arg_flags
+    lda p_state
+    cmp #PS_PIPE
+    bne :++
+:   lda spr_arg_flags
     ora #4
     sta spr_arg_flags
 :   ; palette flashes
@@ -1199,10 +1280,16 @@ pl_draw:
     lda f:pose_ids,x
     bmi @r
     tax
+    lda #0
+    ldy g_coop
+    beq :+
+    lda co_cur                  ; co-op: Luigi has his own frame area + palette
+:   sta spr_pslot
     sep #$20
     lda e_t0
     jsl spr_player
     rep #$30
+    stz spr_pslot
 @r: rts
 
 ; PlayerDraw.Frame -> e_t0 = form to draw, e_t1 = pose index
@@ -1826,7 +1913,7 @@ pause_text:
     ldx #11
     ldy #0
     jsr print_str
-    .byte "EXIT LEVEL", 0
+    .byte "QUIT LEVEL", 0
 pause_cursor:
     lda pause_sel
     bne :+

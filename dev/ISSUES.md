@@ -1,0 +1,24 @@
+# SMB4 issues & improvements (owner list, 2026-10-02)
+
+- [x] Characters don't change outfits if power is applied at map level
+- [x] Arms too small when doing super leaf spins
+- [x] W1-3: corner on ground above the 3-note-block ledge gets you stuck
+- [x] Quit level option in the options menu
+- [x] Leaf tail hitbox too small
+- [x] Real simultaneous co-op multiplayer (both players in level, head-bouncing like SMB3 battle)
+- [x] Map background objects (trees, bushes) missing animations
+- [x] Level background parallax broken, cuts off layer tops (tree tops)
+- [x] Title demo: Mario doesn't contact the enemy's head on stomp
+- [x] Note blocks lock X motion; make them natural
+- [x] White blocks: hold down to drop behind the level; secret items/chest rooms
+- [x] Hidden stalk/vine hard to grab and jump off
+- [x] Rooms/items need memory (no repeat free stuff)
+- [x] Multiplayer doesn't count lives down properly (shared lives; every death counts, tested by coop.ps1 -Mode lives)
+- [~] First airship boss too hard (tuned, needs playtest)
+- [x] Airship wrench moles need a peek tell before popping up
+- [x] Maps more complex, not linear
+- [x] World 2 bush colouring wrong
+- [x] Items spawn beneath blocks instead of out of the hit side
+- [x] Mario/Luigi front-facing pipe sprite looks like a pig nose
+- [x] World 2 palm trees are tiny
+- [x] Card matching game jank when revealing cards at the end

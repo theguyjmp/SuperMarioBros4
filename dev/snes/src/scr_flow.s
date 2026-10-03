@@ -223,7 +223,7 @@ level_enter:
     rep #$30
     jsl scr_level_ppu
     jsl sv_to_engine
-    lda lsel_active
+    lda #1                      ; QUIT LEVEL is always offered (map: back to the map, no life lost)
     sta g_allowexit
     lda #$FFFF                  ; the engine plays its own music now
     sta scr_music_cur
@@ -296,26 +296,7 @@ gover_tick:
     jsl scr_go
     bra @draw
 @end:
-    ; END: the other player takes over in a 2-player game, else save and back to the title
-    lda sv_two
-    and #$00FF
-    beq @title
-    lda ss_player
-    eor #1
-    sta fl_tmp
-    beq :+
-    lda #PP_SIZE
-:   tax
-    lda pp_over,x
-    and #$00FF
-    bne @title
-    lda fl_tmp
-    jsl sv_set_player
-    jsl sv_save
-    lda #SC_MAP
-    jsl scr_go
-    bra @draw
-@title:
+    ; END: save and back to the title (2-player games are co-op: both players are out together)
     jsl sv_save
     lda #SC_TITLE
     jsl scr_go

@@ -21,10 +21,10 @@ the same (same SMB3 per-frame integer physics, same levels, same rules). Port lo
 * **VRAM (word addresses):** BG1 CHR `$0000-$2FFF` (768 tiles) · BG2 CHR `$3000-$3FFF` (256 tiles) · BG1 map `$4000` (64x32)
   · BG2 map `$4800` (32x64, same 2048 words) · BG3 CHR `$5000-$53FF` (2bpp, 128 tiles) · BG3 map `$5400` (32x32) · OBJ CHR `$6000-$7FFF`
   (`OBSEL`: base $6000, sizes 8x8/16x16 → `OBSEL=$03`; name table 2 at $7000). OBJ tiles 0-31 (first 2 tile rows) are the
-  **player's dynamic frame area** (uploaded per frame); the rest are loaded per level (items/effects/enemies/boss).
+  **player's dynamic frame area** (uploaded per frame); tiles 480-511 = co-op player 2's frame area; the rest are loaded per level (items/effects/enemies/boss).
 * **CGRAM:** 0-31 = BG3 HUD palettes (8 x 4 colors); color 0 = backdrop (sky gradient HDMA rewrites it per line).
   BG palettes 2-5 = level foreground (BG1), 6-7 = parallax (BG2). OBJ palettes: 8 = player, 9 = items/effects/common,
-  10-15 = enemies/boss for the current level (converter merges/quantizes to fit).
+  10-14 = enemies/boss for the current level (converter merges/quantizes to fit), 15 = co-op player 2 (Luigi).
 * **DMA channels:** 0-1 general (NMI uploads, owned by whoever runs inside NMI, sequentially), 5-7 HDMA (backgrounds module
   owns 5-7: 5 = HUD window (hides OBJ below line 192), 6 = BG2 scroll table, 7 = color-0 gradient).
 * **RAM:** allocate with ca65 segments (`ZEROPAGE`, `BSS` = $0100-$1DFF, `HIBSS` = $7E2000+, `EXBSS` = $7F0000+) — the

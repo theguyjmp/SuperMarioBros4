@@ -7,6 +7,7 @@
 local jobs = {}
 local frame = 0
 local held = {}
+local held2 = {}
 function save(name)
   local png = emu.takeScreenshot()
   local t = {}
@@ -14,12 +15,13 @@ function save(name)
   print("PNG:" .. name .. ":" .. table.concat(t))
 end
 function pad(b) held = b or {} end
+function pad2(b) held2 = b or {} end   -- controller 2 (needs --snes.port2.type, set by the runners)
 function at(f, fn) jobs[#jobs + 1] = { f = f, fn = fn } end
 function finish(code) emu.stop(code or 0) end
 function readb(a) return emu.read(a, emu.memType.snesMemory, false) end
 function readw(a) return emu.read16(a, emu.memType.snesMemory, false) end
 function curframe() return frame end
-emu.addEventCallback(function() emu.setInput(held, 0) end, emu.eventType.inputPolled)
+emu.addEventCallback(function() emu.setInput(held, 0) emu.setInput(held2, 0, 1) end, emu.eventType.inputPolled)   -- (input, 0, 1) = controller 2 in this Mesen2 build
 emu.addEventCallback(function()
   frame = frame + 1
   for _, j in ipairs(jobs) do if j.f == frame then j.fn() end end

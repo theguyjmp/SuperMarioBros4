@@ -82,6 +82,7 @@ GM_SCREEN = 4
 
 ; ---------------------------------------------------------------- engine (game.s)
 .global g_mode, g_level, g_lives, g_score, g_coins, g_cards, g_ncards, g_form, g_result, g_player, g_pwing, g_star
+.global g_coop, g_form2      ; engine: simultaneous 2-player level (Luigi's form in g_form2)
 .global eng_level_start, g_allowexit
 .global snd_music, snd_sfx, snd_fade, bg_hdma_off, snd_cur
 

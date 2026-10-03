@@ -223,13 +223,10 @@ pp_default:
 .a16
 
 ; C# Session ctor: PlayerIndex = TwoPlayer ? Turn : 0
+; 2-player games are simultaneous co-op now: Mario's record holds the shared progress (lives, score, coins, cards,
+; items), Luigi's record only his form.
 session:
-    lda sv_two
-    and #$00FF
-    beq :+
-    lda sv_turn
-    and #$00FF
-:   sta ss_player
+    stz ss_player
     jsr cur_index
     stz ss_pwing
     stz ss_star
@@ -319,7 +316,15 @@ sv_to_engine:
     sta g_cards+4
     lda ss_player
     sta g_player
-    lda ss_pwing
+    stz g_coop
+    lda sv_two
+    and #$00FF
+    beq :+
+    sta g_coop                  ; both players in the level (co-op)
+    lda pp_form+PP_SIZE
+    and #$00FF
+    sta g_form2
+:   lda ss_pwing
     sta g_pwing
     lda ss_star
     sta g_star
@@ -356,7 +361,16 @@ sv_from_engine:
     sta pp_score,x
     lda g_score+2
     sta pp_score+2,x
-    plp
+    lda sv_two
+    and #$00FF
+    beq :+
+    sep #$20
+    .a8
+    lda g_form2
+    sta pp_form+PP_SIZE
+    rep #$20
+    .a16
+:   plp
     rtl
 
 ; C# Session.AddLife (not with the infinite-lives assist)

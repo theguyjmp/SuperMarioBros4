@@ -58,7 +58,14 @@ get_py:
     rts
 
 ; ================================================================== World.Tick
+.import co_tick, co_other_alive
+.import CO_X, CO_Y, CO_STATE
+.export w_tick1, w_step2
 w_tick:
+    lda g_coop
+    beq w_tick1
+    jml co_tick                 ; 2-player co-op (eng_coop.s) wraps the single-player tick
+w_tick1:
     inc w_frame
     lda w_endtimer
     beq :+
@@ -152,6 +159,46 @@ w_tick:
     beq :+
     dec w_shake
 :   rtl
+
+; w_step2: co-op, the second player's share of World.Tick (control, transitions, physics, timers, animation,
+; pit death) without camera / entities / level timers. The player in the p_* slot is the second player.
+w_step2:
+    lda p_state
+    cmp #PS_AUTOWALK
+    bne :+
+    jsr autowalk_tick
+    bra @pw
+:   jsl pl_control
+    jsr check_transitions
+    lda p_state
+    cmp #PS_PIPE
+    beq @r
+    cmp #PS_DOOR
+    beq @r
+@pw:
+    jsl pl_power_update
+    jsl pl_detect_solids
+    jsr clamp_player
+    jsl pl_timers
+    jsl pl_animate
+    lda p_state
+    bne @r
+    lda area_h
+    asl a
+    asl a
+    asl a
+    asl a
+    clc
+    adc #16
+    sta e_t0
+    jsr get_py
+    sec
+    sbc e_t0
+    bmi @r
+    beq @r
+    lda #1
+    jsl pl_die
+@r: rtl
 
 ; P-meter whistle loops while running at full P on the ground
 p_sound:
@@ -1096,7 +1143,13 @@ w_star_started:
     rtl
 
 w_on_player_dying:
-    MUSIC "DEATH"
+    lda g_coop
+    beq @m
+    jsl co_other_alive          ; co-op: the other player plays on -> no death music
+    bcc @m
+    SFX "POOF"
+    rtl
+@m: MUSIC "DEATH"
     rtl
 
 ; ================================================================== timers (level time)

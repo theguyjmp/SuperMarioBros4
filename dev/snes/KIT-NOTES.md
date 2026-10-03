@@ -256,3 +256,11 @@ Files: `snes/src/scr_*.s` (+ `scr.inc`), converter `src/Tools/Snes/SnesScreens.c
 * Shared scratch variables (`mp_tmp`) across helper calls silently clobber callers' state — give lookups private
   scratch. Reproduce owner bugs with a headless Lua script that prints the relevant RAM, then fix.
 * "Special" player states (goal auto-walk) must still run animation; check every state in anim/draw code.
+
+## Co-op lessons (simultaneous 2 players, 2026-10-03)
+* Port a 1-player engine to 2 players without rewriting it: keep the player state in one contiguous block and **swap the
+  other player in** (unrolled word swap, ~1.6k cycles) for its physics, its entity collisions and its draw. Everything
+  that reads `p_*` just works; only per-entity player flags (platform "stands on") need a second copy.
+* The slot player is the camera leader; hand the slot over on death, on pipe/door/goal entry and when the partner
+  leads by 24 px, and let the camera glide (6 px/tick) instead of jumping.
+* Second player sprite = own OBJ frame area (tiles 480-511) + own palette (15): reserve both in the converter.

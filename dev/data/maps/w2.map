@@ -10,18 +10,18 @@ node A = 2-a
 node H = toad:flower,leaf,star
 node P = spade
 lock L = F
-hbro = 10 9 cloud
+hbro = 8 7 cloud
 grid
 rrrr^^rrrrrr^^rr
-rS-1-+-2-+..p.sr
-r.s..|...|.s..sr
-r.p..H...3-+-4.r
-rs..~~.p.....|.r
-r..s~~..s..F-+.r
-r.p.....s..|.s.r
-r..^^..p...L..pr
-rs..k......|...r
-r.A-+-P-5--+.s.r
-r.p.....s..p..sr
+r.s.p...s..p..sr
+rS-1-+---2-+...r
+r..s.|.....|.s.r
+r.p..|.~~..3..pr
+rH-+-+.~~..|...r
+r..|...s...+-F.r
+rs.4-+-----+.|.r
+r....|.^^....L.r
+r.^^.P...p...|.r
+rp..s..A---5-+.r
 rrrr^^rrrrrr^^rr
 end

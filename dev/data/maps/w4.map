@@ -10,18 +10,18 @@ node A = 4-a
 node H = toad:mushroom,flower,leaf,tanooki
 node P = spade
 lock L = F
-hbro = 11 8 pwing
+hbro = 8 10 pwing
 grid
 TTTTTTTTTTTTTTTT
-TT*TTTHT^^TT.TTT
-T.S-1-+--2T.*T^T
-TT.,T.TT.|.PT.TT
-T^^T.T*T.3-+-F.T
-~~~~~~~~~~~~~!~~
-T.TT^T.TT.TT.L.T
-TT.T..T^^T.T*|TT
-T.T.+---5-+--4.T
-TT.T|T.TT^T.TT^T
-~T..A.TT.TT*T.T~
+TT*T.TT^^TT.TTTT
+T.S-1-+-2-+.*T^T
+TT.,T.|TT.|T.TTT
+T^^TH-+.T.3-+.TT
+~~~~~~!~~~~~!~~~
+T.TT^T+-4---F.TT
+TT.T..T^^T.TL.*T
+T.T.+---5---+-PT
+TT.T|T.TT^T.|T^T
+~T..A-------+T.~
 ~~TTTTTTTTTTTT~~
 end

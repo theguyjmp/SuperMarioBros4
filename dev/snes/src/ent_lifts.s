@@ -8,6 +8,7 @@
 .macpack longbranch
 .include "snes.inc"
 .include "ent.inc"
+.import ent_pon_any
 
 .segment "CODE13"
 ENT_VTABLE LIFT, lift_init, lift_update, lift_draw, ent_cb_none, ent_cb_none, ent_cb_none
@@ -102,8 +103,7 @@ donut_update:
     ENT_ENTER
     jsl ent_plat_begin
     ; if playerOn stoodFor++ else if fall == 0 stoodFor = max(0, stoodFor - 1)
-    lda ent_fl,x
-    and #F_PON
+    jsl ent_pon_any             ; either player (co-op)
     beq :+
     inc ent_v0,x
     bra @dn2

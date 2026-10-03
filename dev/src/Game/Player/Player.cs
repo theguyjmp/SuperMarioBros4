@@ -528,9 +528,9 @@ namespace SMB4.Game
                 if (floor)
                 {
                     int depth = fy & 15;
-                    if (depth < 6)
+                    if (depth < (InAir ? 10 : 6)) // in the air: corners entered from the side (6-9 px deep) still land (ROM W1-3 fix)
                     {
-                        if (depth == 1) Y -= 16; else if (depth >= 2) Y -= 32;
+                        if (depth >= 3) Y = ((fy & ~15) - 32) << 4; else if (depth == 1) Y -= 16; else if (depth == 2) Y -= 32;
                         if (InAir) OnLand();
                         InAir = false;
                         YVel = 0;
@@ -584,10 +584,10 @@ namespace SMB4.Game
             {
                 int depth = fy - surf;
                 bool slope = TileInfo.Slope(ft);
-                int above = !InAir ? 8 : 0, below = slope ? 12 : 6;
+                int above = !InAir ? 8 : 0, below = slope ? 12 : (InAir ? 10 : 6);
                 if (depth >= -above && depth < below)
                 {
-                    if (slope || OnSlope != 0 || depth <= 0) Y = (surf - 32) << 4;
+                    if (slope || OnSlope != 0 || depth <= 0 || depth >= 3) Y = (surf - 32) << 4;
                     else if (depth == 1) Y -= 16; else if (depth >= 2) Y -= 32;
                     if (InAir) OnLand();
                     InAir = false; YVel = 0; KillTally = 0;

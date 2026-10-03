@@ -5,6 +5,7 @@
 ;@entity ROCKY_WRENCH codes=w
 .p816
 .smart
+.macpack longbranch
 .include "snes.inc"
 .include "ent.inc"
 
@@ -52,11 +53,15 @@ rocky_update:
     rtl
 :   inc ent_t,x
     lda ent_state,x
-    beq @hidden
+    jeq @hidden
     cmp #1
-    beq @up
+    jeq @up
     cmp #2
-    beq @throw
+    jeq @throw
+    cmp #4
+    bne :+
+    jmp @peek
+:
     ; phase 3: Y += 16; Py >= homeY -> phase 0
     lda ent_y,x
     clc
@@ -73,17 +78,39 @@ rocky_update:
     ; t > 90 && |p.CenterX - Cx| < 120
     lda ent_t,x
     cmp #91
-    bcc @hurts
+    jcc @hurts
     jsl ent_player_dx
     bpl :+
     eor #$FFFF
     inc a
 :   cmp #120
-    bcs @hurts
+    jcs @hurts
+    lda #4                      ; SMB3 tell: peek first (head just above the hatch)
+    sta ent_state,x
+    stz ent_t,x
+    jmp @hurts
+@peek:
+    ; rise 0.5 px/tick to homeY - 5, hold until t = 56, then pop up fully
+    lda ent_v0,x
+    sec
+    sbc #5
+    sta es0
+    jsl ent_py
+    sec
+    sbc es0
+    beq :+
+    bmi :+
+    lda ent_y,x
+    sec
+    sbc #8
+    sta ent_y,x
+:   lda ent_t,x
+    cmp #56
+    bcc :+
     lda #1
     sta ent_state,x
     stz ent_t,x
-    bra @hurts
+:   jmp @hurts
 @up:
     lda ent_y,x
     sec
@@ -98,11 +125,11 @@ rocky_update:
     sec
     sbc es0
     beq :+
-    bpl @hurts
+    jpl @hurts
 :   lda #2
     sta ent_state,x
     stz ent_t,x
-    bra @hurts
+    jmp @hurts
 @throw:
     jsl ent_face_player
     sta ent_facing,x
@@ -121,7 +148,7 @@ rocky_update:
     jsl ent_spawn
 :   lda ent_t,x
     cmp #61
-    bcc @hurts
+    jcc @hurts
     lda #3
     sta ent_state,x
     stz ent_t,x
@@ -142,9 +169,9 @@ rocky_touch:
     ENT_ENTER
     lda ent_fl,x
     and #F_HURTS
-    beq @r
+    jeq @r
     jsl ent_can_stomp
-    bcc @hurt
+    jcc @hurt
     jsl ent_stomp_bounce
     lda ent_fl,x
     ora #(F_DYING|F_KILLED)
@@ -164,13 +191,13 @@ rocky_draw:
     ENT_ENTER
     lda ent_fl,x
     and #F_DYING
-    bne @dying
+    jne @dying
     lda ent_state,x
-    beq @r
+    jeq @r
     jsl ent_draw_face
     lda ent_state,x
     cmp #2
-    beq @f2
+    jeq @f2
     ENT_DRAW SPR_ROCKY_1
 @r: rtl
 @f2: ENT_DRAW SPR_ROCKY_2
@@ -181,6 +208,6 @@ rocky_draw:
     jsl ent_draw_knocked
     lda ent_state,x
     cmp #2
-    beq @f2
+    jeq @f2
     ENT_DRAW SPR_ROCKY_1
     rtl

@@ -62,6 +62,19 @@ emerging:
 :   sec
     rts
 
+; in_bump: carry set while a rising item is still inside a block whose bump is animating (the cell is
+; blanked and drawn as a sprite for 8 ticks -> the item would show under/through it). After that the block's
+; high-priority BG1 tile is back and masks the item (F_BEHIND), so it visibly rises out of the top only.
+in_bump:
+    lda ent_fl,x
+    and #F_BEHIND
+    beq :+
+    lda ent_v1,x
+    cmp #12
+    rts
+:   clc
+    rts
+
 ; touch helper: rise > 8 -> carry set (not collectable yet)
 too_deep:
     lda ent_v1,x
@@ -139,6 +152,10 @@ mushroom_bump:
 
 mushroom_draw:
     ENT_ENTER
+    jsr in_bump
+    bcc :+
+    rtl
+:
     lda ent_v0,x
     bne :+
     ENT_DRAW SPR_MUSHROOM
@@ -164,6 +181,10 @@ flower_touch:
     rtl
 flower_draw:
     ENT_ENTER
+    jsr in_bump
+    bcc :+
+    rtl
+:
     lda w_frame
     and #4
     beq :+
@@ -294,6 +315,10 @@ star_bump:
     rtl
 star_draw:
     ENT_ENTER
+    jsr in_bump
+    bcc :+
+    rtl
+:
     lda w_frame
     lsr a
     and #3

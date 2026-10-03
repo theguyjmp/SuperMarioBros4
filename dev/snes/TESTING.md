@@ -59,3 +59,10 @@ All of them start levels through the **test hook `eng_dbg_level`** (poke `LVL_*+
 that level with a fresh session next frame), so they don't depend on the title/level-select/screens code.
 Results 2026-09-29: parity suite 17/17 (1-1 full route 1925 ticks; others until the script ends or Mario dies at
 the same tick in both); QA 55/55 levels (no crash/hang).
+
+## 2-player co-op (2026-10-03)
+`snes\test\coop.ps1 [-Level 1-1] -Mode run|lives|heads|pipe [-Ticks 600] [-Shots 60,300]` starts a level with `g_coop = 1`
+(Mario pad 1, Luigi pad 2; the runners now plug a controller into port 2 too, `pad2{...}` in Lua) and logs both players,
+`co_cur` (who is in the `p_*` slot), shared `g_lives` and `co_st` (out flags). `lives` walks Luigi into the enemies:
+4 -> 3 -> 2 -> 1 -> 0 (out), then Mario's death ends the level (the map takes that last life). Mesen2 quirk: controller 2
+is `emu.setInput(t, 0, 1)` in this build, not `(t, 1)`.

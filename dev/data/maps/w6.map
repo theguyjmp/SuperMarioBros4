@@ -10,18 +10,18 @@ node A = 6-a
 node H = toad:flower,tanooki,hammer
 node P = spade
 lock L = F
-hbro = 11 2 hammer
+hbro = 7 4 hammer
 grid
 ^^^ww^^^wwTww^^^
 ^^wwwTww^^www^^w
-^wwwwwwwA-+--5^w
-^^wTwww^^r^ww|^^
-^wwww^^wwFwwP+Tw
-wwTwwwwww|wwr|wT
-wwwwww^3-+-L-4ww
-wTww^^w|w^^wTww^
-wwwwwH-+wwwwww~~
-wwwTwww|www~~~~~
-wS-1-+-2w~~~~~~~
+^wwwTwwwwPwww^ww
+^^wTwww^^|^ww^^^
+^ww^w+---+-Fwwww
+wwTww|www|w|wwrT
+wwwww2www|wLwwww
+wTww^|w^^|^|wTw^
+wwwH-+www|w+-4ww
+wwwTw|www|w|w|~~
+wS-1-+-3-+w5-+A~
 ~~~wwTw~~~~~~~~~
 end

@@ -10,7 +10,7 @@
 .import eng_lvl_dir, eng_ts_dir
 .import bg_load, bg_set_water, spr_level_load, spr_area, bg_hdma_off, bg_flat_color, bg_area_h
 .export spr_loaded
-.export eng_nmi_level, cur_ts
+.export eng_nmi_level, cur_ts, eng_tlog_reset
 
 BG1_MAP = $4000
 
@@ -92,6 +92,7 @@ hidden_t: .res 2*8          ; bumped (hidden) cells: timer, x, y
 hidden_x: .res 2*8
 hidden_y: .res 2*8
 redraw_n: .res 2
+tlog_n: .res 2               ; bytes used in tlog (6 per entry)
 ps_end: .res 2
 
 .segment "HIBSS"
@@ -105,6 +106,8 @@ lvl_gfx: .res 8192
 lvl_cont: .res 8192
 lvl_var: .res 8192
 lvl_psw: .res 8192           ; P-switch swap marks (1 brick->coin, 2 coin->brick, 3 muncher->coin)
+TLOG_MAX = 400
+tlog: .res 6*TLOG_MAX         ; level-visit tile memory: (area_idx lo, T, x16, y16) of every eng_set_tile
 
 .segment "CODE1"
 .a16
@@ -390,6 +393,42 @@ eng_load_area:
     inx
     cpx #256
     bcc @ro
+    ; replay this level visit's tile changes in this area (collected coins, used blocks stay used)
+    ldx #0
+@rp: cpx tlog_n
+    bcs @rpd
+    lda f:tlog,x
+    and #$00FF
+    sta e_t0
+    lda area_idx
+    and #$00FF
+    cmp e_t0
+    bne @rn
+    phx
+    lda f:tlog+2,x
+    sta e_tx
+    lda f:tlog+4,x
+    sta e_ty
+    lda f:tlog,x
+    xba
+    and #$00FF
+    pha
+    lda e_ty
+    asl a
+    tax
+    lda rowoff,x
+    clc
+    adc e_tx
+    tax
+    pla
+    jsr set_tile_quiet
+    plx
+@rn: txa
+    clc
+    adc #6
+    tax
+    bra @rp
+@rpd:
     jsr load_tileset
     ; backgrounds: water line = WaterRow*16 + (WaterRow > 0 ? 16 : 0), flat color, area height, then bg_load
     lda area_water
@@ -801,6 +840,9 @@ eng_set_tile:
     lda e_t2
     sta f:lvl_tiles,x
     rep #$20
+    phx
+    jsr log_tile
+    plx
     jsr dyn_metatile            ; A = metatile or $FFFF (unchanged)
     bmi @nochg
     sep #$20
@@ -825,6 +867,56 @@ eng_set_tile:
     dec e_ty
 @out:
     rtl
+
+; eng_tlog_reset: forget the tile memory (new level visit)
+eng_tlog_reset:
+    stz tlog_n
+    rtl
+
+; log_tile: e_tx, e_ty, e_t2 = T -> remember the change for this level visit (last write per cell wins)
+log_tile:
+    ldx #0
+@s: cpx tlog_n
+    bcs @add
+    lda f:tlog,x
+    and #$00FF
+    sta e_t3
+    lda area_idx
+    and #$00FF
+    cmp e_t3
+    bne @nx
+    lda f:tlog+2,x
+    cmp e_tx
+    bne @nx
+    lda f:tlog+4,x
+    cmp e_ty
+    beq @put
+@nx: txa
+    clc
+    adc #6
+    tax
+    bra @s
+@add:
+    cpx #TLOG_MAX*6
+    bcs @r
+    txa
+    clc
+    adc #6
+    sta tlog_n
+    lda e_tx
+    sta f:tlog+2,x
+    lda e_ty
+    sta f:tlog+4,x
+@put:
+    lda e_t2
+    xba
+    and #$FF00
+    sta e_t3
+    lda area_idx
+    and #$00FF
+    ora e_t3
+    sta f:tlog,x
+@r: rts
 
 ; X = grid index of (e_tx,e_ty), e_t2 = T -> A = runtime metatile for dynamic tile types, else $FFFF
 dyn_metatile:
