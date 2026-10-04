@@ -101,16 +101,13 @@ spr_begin:
 @s: sta spr_next
     lda #128
     sta spr_left
-    lda #$E000              ; x = 0, y = 224 (off screen)
-    ldx #0
-@hide:
-    sta spr_oam,x
-    inx
-    inx
-    inx
-    inx
-    cpx #512
-    bne @hide
+    lda #$E000              ; x = 0, y = 224 (off screen); unrolled (was ~3.7k cycles per frame)
+.repeat 128, I
+    sta spr_oam+I*4
+.endrepeat
+.repeat 64, I
+    stz spr_hi+I*2
+.endrepeat
     ldx #0
 @hi:
     stz spr_hi,x
@@ -126,27 +123,19 @@ spr_end:
     php
     A8
     XY16
-    ldx #0
-    ldy #0
-@pack:
-    lda spr_hi+3,x
+.repeat 32, I                ; unrolled pack of the high table
+    lda spr_hi+I*4+3
     asl
     asl
-    ora spr_hi+2,x
+    ora spr_hi+I*4+2
     asl
     asl
-    ora spr_hi+1,x
+    ora spr_hi+I*4+1
     asl
     asl
-    ora spr_hi,x
-    sta spr_oam+512,y
-    inx
-    inx
-    inx
-    inx
-    iny
-    cpy #32
-    bne @pack
+    ora spr_hi+I*4
+    sta spr_oam+512+I
+.endrepeat
     plp
     rtl
 

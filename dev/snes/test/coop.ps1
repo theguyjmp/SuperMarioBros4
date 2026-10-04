@@ -6,7 +6,7 @@
 #   pipe   (1-1) Mario is put on the first pipe and goes down; Luigi rides along hidden and reappears with him
 # Usage: powershell -ExecutionPolicy Bypass -File snes\test\coop.ps1 [-Out snes\build] [-Level 1-1] [-Mode run] [-Ticks 600] [-Shots 60,300]
 param([string]$Out = 'snes\build', [string]$Level = '1-1', [string]$Mode = 'run', [int]$Ticks = 600, [string]$Shots = '60,300',
-      [int]$Form2 = 0, [string]$Runner = '', [int]$Coop = 1)
+      [int]$Form2 = 0, [string]$Runner = '', [int]$Coop = 1, [string]$Inject = '')
 $ErrorActionPreference = 'Stop'
 if ($Runner -eq '') { $Runner = Join-Path (Split-Path $PSScriptRoot -Parent) 'tools\snesrun.ps1' }
 $Out = (Resolve-Path $Out).Path
@@ -16,6 +16,7 @@ $inc = Get-Content (Join-Path $Out 'gen\levels.inc') -Raw
 if ($inc -notmatch ("(?m)^LVL_" + $Level.ToUpper().Replace('-', '_') + " = (\d+)")) { throw "unknown level $Level" }
 $lnum = $Matches[1]
 $px = Sym 'p_x'
+$injectLua = if ($Inject) { [Text.Encoding]::ASCII.GetString([Convert]::FromBase64String($Inject)) } else { "" }
 $lua = @"
 local MODE=$(Sym 'g_mode') local DBG=$(Sym 'eng_dbg_level') local FR=$(Sym 'w_frame') local COOP=$(Sym 'g_coop')
 local FORM2=$(Sym 'g_form2') local LIVES=$(Sym 'g_lives') local CUR=$(Sym 'co_cur') local CST=$(Sym 'co_st') local BLK=$(Sym 'co_blk')
@@ -31,6 +32,7 @@ local function s16(v) if v >= 32768 then return v - 65536 end return v end
 local function base(id) if readw(CUR) == id then return PX end return BLK end
 local function st(id) local b=base(id) return string.format('x=%d y=%d st=%d yv=%d air=%d', readw(b)//16, s16(readw(b+OY))//16, readw(b+OST), s16(readw(b+OYV)), readw(b+OIA)) end
 local function log(n) print(string.format('t=%d cur=%d lives=%d out=%d/%d hide=%d cam=%d | M %s | L %s', n, readw(CUR), readw(LIVES), readw(CST), readw(CST+2), readw(HIDE), readw(CAM), st(0), st(1))) end
+$injectLua
 emu.addEventCallback(function()
   local f = curframe()
   local mode = readw(MODE)
@@ -65,7 +67,7 @@ emu.addEventCallback(function()
     lastn = n
     if want[n] then save('coop_$Mode'..'_'..n) end
     if (TEST == 'heads' and n >= 38 and n <= 260 and n % 4 == 0) or n % 60 == 0 then log(n) end
-    if n >= LAST then log(n) print("lag frames "..lag.." avg-end-scanline "..(sl_n>0 and sl_sum//sl_n or 0).." max "..sl_max) finish(0) end
+    if n >= LAST then log(n) if profdump then profdump() end print("lag frames "..lag.." avg-end-scanline "..(sl_n>0 and sl_sum//sl_n or 0).." max "..sl_max) finish(0) end
   end
   if f > 60*150 then print('timeout at tick '..n); finish(6) end
 end, emu.eventType.endFrame)

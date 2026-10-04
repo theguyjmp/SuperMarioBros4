@@ -191,7 +191,7 @@ co_tick:
     jsr warp_other              ; rides along with the leader
     rtl
 
-; the leader takes the slot (camera): further right by 24+ px (vertical areas: higher by 32+ px)
+; the leader takes the slot (camera): further right by 40+ px (vertical areas: higher by 32+ px)
 leader:
     lda co_hide
     bne @r
@@ -218,12 +218,12 @@ leader:
     sec
     sbc p_x
     bcc @r
-    cmp #24*16
+    cmp #40*16
     bcc @r
     jsl co_swap
     rts
 
-; after a change of leader the camera glides (max 6 px per tick) instead of jumping
+; after a change of leader the camera glides (max 5 px per tick) instead of jumping
 cam_smooth:
     lda area_idx
     cmp co_area
@@ -232,19 +232,19 @@ cam_smooth:
     sec
     sbc co_camx
     bmi @neg
-    cmp #7
+    cmp #6
     bcc @r
     lda co_camx
     clc
-    adc #6
+    adc #5
     sta cam_x
 @r: rts
 @neg:
-    cmp #$10000-6
+    cmp #$10000-5
     bcs @r
     lda co_camx
     sec
-    sbc #6
+    sbc #5
     sta cam_x
     rts
 

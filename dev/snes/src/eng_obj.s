@@ -23,6 +23,12 @@ es2: .res 2
 es3: .res 2
 e_vt: .res 3                ; vtable pointer of the type being dispatched
 e_fn: .res 3                ; callback being invoked (JML [e_fn] reads bank 0 = this zero page)
+dl_c: .res 10               ; ent_draw: per-pass counts -> ends (bytes)
+dl_t: .res 2
+dl_i: .res 2
+dl_e: .res 2
+dl_built: .res 2
+dl_list: .res 2*MAX_ENTS     ; drawable entities sorted by pass
 
 .segment "BSS"
 ent_type: .res 2*N
@@ -102,6 +108,7 @@ pl_wason2: .res 2
 
 .segment "HIBSS"
 ent_pon2: .res 2*N          ; co-op: Luigi stands on this platform (F_PON is Mario's)
+dl_pass: .res 2*N           ; ent_draw: pass*2 per list position
 
 .import CO_X, CO_Y, CO_CARRY, CO_STATE, CO_INAIR
 
@@ -3447,16 +3454,139 @@ ent_draw_offset:
     rtl
 
 ; C# WorldRender order: behind-BG objects, platforms, normal objects, specials | player | carried, effects
+; Entity draw order (C# painter's order): pass 0 behind, 1 platforms, 2 normal, 3 specials, then the player, then
+; 4 effects. One classification sweep + counting sort into dl_list instead of 5 sweeps over all entities.
 ent_draw:
+    stz dl_c
+    stz dl_c+2
+    stz dl_c+4
+    stz dl_c+6
+    stz dl_c+8
+    stz o_i
+@c: lda o_i
+    cmp ent_n
+    beq @cd
+    asl a
+    tay
+    lda ent_order,y
+    tax
+    jsr dl_class                ; A = pass*2, 10 = not drawn in a pass
+    tyx
+    sta f:dl_pass,x
+    cmp #10
+    beq :+
+    tax
+    inc dl_c,x
+    inc dl_c,x
+:   inc o_i
+    bra @c
+@cd:
+    ; counts -> start offsets
     lda #0
-    jsr draw_pass
+    ldx dl_c
+    sta dl_c
+    stx dl_t
+    clc
+    adc dl_t
+    ldx dl_c+2
+    sta dl_c+2
+    stx dl_t
+    clc
+    adc dl_t
+    ldx dl_c+4
+    sta dl_c+4
+    stx dl_t
+    clc
+    adc dl_t
+    ldx dl_c+6
+    sta dl_c+6
+    stx dl_t
+    clc
+    adc dl_t
+    sta dl_c+8
+    ; fill (stable: list order inside each pass)
+    stz o_i
+@f: lda o_i
+    cmp ent_n
+    beq @fd
+    asl a
+    tay
+    tyx
+    lda f:dl_pass,x
+    cmp #10
+    beq @fn
+    tax
+    lda dl_c,x
+    inc dl_c,x
+    inc dl_c,x
+    pha
+    lda ent_order,y
+    plx
+    sta dl_list,x
+@fn: inc o_i
+    bra @f
+@fd:
+    ; now dl_c+2*p = end of pass p: draw passes 0-3, keep pass 4 for ent_draw_effects
+    stz dl_i
+    lda dl_c+6
+    sta dl_e
+    jsr dl_draw
     lda #1
-    jsr draw_pass
-    lda #2
-    jsr draw_pass
-    lda #3
-    jsr draw_pass
+    sta dl_built
     rtl
+
+dl_class:
+    lda ent_fl,x
+    bit #F_REMOVE
+    bne @skip
+    bit #F_BEHIND
+    beq @nb
+    jsr is_carried
+    beq @skip
+    lda #0
+    rts
+@nb: lda ent_class,x
+    cmp #EC_PLATFORM
+    bne :+
+    lda #2
+    rts
+:   cmp #EC_SPECIAL
+    bne :+
+    lda #6
+    rts
+:   cmp #EC_EFFECT
+    bne :+
+    lda #8
+    rts
+:   jsr is_carried
+    beq @skip
+    lda #4
+    rts
+@skip:
+    lda #10
+    rts
+
+dl_draw:
+@l: lda dl_i
+    cmp dl_e
+    bcs @r
+    tax
+    lda dl_list,x
+    tax
+    lda dl_i
+    pha
+    lda dl_e
+    pha
+    jsr draw_one
+    pla
+    sta dl_e
+    pla
+    sta dl_i
+    inc dl_i
+    inc dl_i
+    bra @l
+@r: rts
+
 .export ent_draw_effects
 ent_draw_effects:
     lda p_carrying
@@ -3465,7 +3595,25 @@ ent_draw_effects:
     dec a
     tax
     jsr draw_one
-:   lda #4
+:   lda g_coop                  ; co-op: the partner's carried object
+    beq :+
+    lda f:co_blk+CO_CARRY
+    beq :+
+    dec a
+    dec a
+    tax
+    jsr draw_one
+:   lda dl_built
+    beq @old
+    stz dl_built
+    lda dl_c+6
+    sta dl_i
+    lda dl_c+8
+    sta dl_e
+    jsr dl_draw
+    rtl
+@old:
+    lda #4
     jsr draw_pass
     rtl
 

@@ -69,3 +69,6 @@ is `emu.setInput(t, 0, 1)` in this build, not `(t, 1)`.
 `snes\test\menuflow.ps1 -Players 1|2` plays the real path from power-on (title -> 1/2 PLAYER GAME -> file 1 -> map -> first
 level) and prints lag frames; `coop.ps1 -Coop 0|1` also prints lag frames and the average scanline where the frame's work
 ended (CPU headroom). 2026-10-03: 1P identical to d455e7a (1-3: 5 lag / 600 ticks, avg line 83); 2P 1-3: 29 lag, avg 145.
+Sprite-draw speedup (2026-10-03): unrolled OAM clear/pack, one-sweep entity draw order. `prof.ps1` splits the frame by
+routine entry (cycles). 1-3 run, 600 ticks: 1P 5 lag / avg end line 70 (d455e7a: 5 / 83); 2P 13 / 132. Menu path
+(`menuflow.ps1 -Levels 1-1,1-3,4-1 -Ticks 500`, mostly load/transition stalls): d455e7a 41/25/34, now 1P 41/26/35, 2P 41/25/34.
