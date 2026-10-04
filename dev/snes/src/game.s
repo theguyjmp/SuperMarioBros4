@@ -17,7 +17,7 @@ SCR_HOOKS = 1
 .import scr_init, scr_frame, scr_nmi
 .endif
 
-.export game_init, game_frame, eng_nmi, eng_level_start
+.export game_init, game_frame, eng_nmi, eng_level_start, pl_draw_cache, pc_id
 .export g_player, g_pwing, g_star, g_result, g_allowexit, eng_dbg_level
 .export eng_px, eng_py, eng_pxvel, eng_pyvel, eng_cam_x, eng_cam_y
 .importzp pad1, pad2, frame_count
@@ -67,6 +67,13 @@ g_result: .res 2            ; RES_* of the last level (screens read it in GM_SCR
 g_allowexit: .res 2         ; pause menu offers EXIT LEVEL (C# AllowExit / TestMode)
 eng_dbg_level: .res 2       ; test hook: poke LVL_*+1 -> that level starts next frame (any mode)
 pause_sel: .res 2
+pd_cache: .res 2            ; co-op: pl_draw stores the sprite (pc_*) instead of drawing it
+pc_id: .res 2
+pc_pose: .res 2
+pc_form: .res 2
+pc_x: .res 2
+pc_y: .res 2
+pc_fl: .res 2
 
 .segment "HIBSS"
 hud_buf: .res 256           ; BG3 rows 24-27 (4 x 32 words)
@@ -1022,13 +1029,32 @@ draw2:
     bne @r
     lda co_cur
     eor #1
+    sta e_t2
     asl a
     tax
     lda co_st,x
     bne @r
-    jsl co_swap
-    jsr pl_draw
-    jsl co_swap
+    lda pc_id                   ; sprite computed by pl_draw_cache while the partner was simulated
+    cmp e_t2
+    bne @r
+    lda pc_x
+    sec
+    sbc cam_x
+    sta spr_arg_x
+    lda pc_y
+    sec
+    sbc cam_y
+    sta spr_arg_y
+    lda pc_fl
+    sta spr_arg_flags
+    lda pc_id
+    sta spr_pslot
+    ldx pc_pose
+    sep #$20
+    lda pc_form
+    jsl spr_player
+    rep #$30
+    stz spr_pslot
 @r: rts
 
 spr_begin_l:
@@ -1280,6 +1306,8 @@ pl_draw:
     lda f:pose_ids,x
     bmi @r
     tax
+    lda pd_cache                ; co-op partner: remember the sprite, drawn later by draw2
+    jne @store
     lda #0
     ldy g_coop
     beq :+
@@ -1291,6 +1319,33 @@ pl_draw:
     rep #$30
     stz spr_pslot
 @r: rts
+@store:
+    stx pc_pose
+    lda e_t0
+    sta pc_form
+    lda spr_arg_x
+    clc
+    adc cam_x
+    sta pc_x
+    lda spr_arg_y
+    clc
+    adc cam_y
+    sta pc_y
+    lda spr_arg_flags
+    sta pc_fl
+    lda co_cur
+    sta pc_id
+    rts
+
+; pl_draw_cache: co-op, the partner is in the slot: compute its sprite into pc_* (no OAM). JSL.
+pl_draw_cache:
+    lda #$FFFF
+    sta pc_id                   ; stays $FFFF when not drawn this frame (invisible / blink)
+    lda #1
+    sta pd_cache
+    jsr pl_draw
+    stz pd_cache
+    rtl
 
 ; PlayerDraw.Frame -> e_t0 = form to draw, e_t1 = pose index
 pl_frame:

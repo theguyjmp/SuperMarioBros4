@@ -128,13 +128,21 @@ co_blk: .res CO_PSIZE + 8       ; other player's p_x..p_behind + pad_held/presse
 ; co_swap: exchange the simulated player (p_*, pad_*) with co_blk; co_cur ^= 1. JSL, A16 XY16, keeps X Y.
 co_swap:
     phy
+    phd                         ; D = p_x, DB = $7E (co_blk): 4 fast accesses per word
+    phb
+    pea p_x
+    pld
+    pea $7E7E
+    plb
+    plb
 .repeat CO_PSIZE/2, I
-    lda f:co_blk+I*2
-    tay
-    lda p_x+I*2
-    sta f:co_blk+I*2
-    sty p_x+I*2
+    lda z:I*2
+    ldy a:.loword(co_blk)+I*2
+    sta a:.loword(co_blk)+I*2
+    sty z:I*2
 .endrepeat
+    plb
+    pld
 .repeat 4, I
     lda f:co_blk+CO_PSIZE+I*2
     tay

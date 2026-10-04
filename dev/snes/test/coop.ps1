@@ -6,7 +6,7 @@
 #   pipe   (1-1) Mario is put on the first pipe and goes down; Luigi rides along hidden and reappears with him
 # Usage: powershell -ExecutionPolicy Bypass -File snes\test\coop.ps1 [-Out snes\build] [-Level 1-1] [-Mode run] [-Ticks 600] [-Shots 60,300]
 param([string]$Out = 'snes\build', [string]$Level = '1-1', [string]$Mode = 'run', [int]$Ticks = 600, [string]$Shots = '60,300',
-      [int]$Form2 = 0, [string]$Runner = '')
+      [int]$Form2 = 0, [string]$Runner = '', [int]$Coop = 1)
 $ErrorActionPreference = 'Stop'
 if ($Runner -eq '') { $Runner = Join-Path (Split-Path $PSScriptRoot -Parent) 'tools\snesrun.ps1' }
 $Out = (Resolve-Path $Out).Path
@@ -23,7 +23,8 @@ local PX=$px local OY=$((Sym 'p_y') - $px) local OST=$((Sym 'p_state') - $px) lo
 local CAM=$(Sym 'cam_x') local RES=$(Sym 'w_result') local HIDE=$(Sym 'co_hide')
 local LEVEL=$lnum local LAST=$Ticks local TEST='$Mode'
 local want={} for _,s in ipairs({$Shots}) do want[s]=true end
-local started=false local lastn=-1
+local started=false local lastn=-1 local lag=0 local sl_sum=0 local sl_n=0 local sl_max=0
+emu.addMemoryCallback(function() if started then local s=emu.getState()["ppu.scanline"] sl_sum=sl_sum+s sl_n=sl_n+1 if s>sl_max and s<225 then sl_max=s end end end, emu.callbackType.exec, $(Sym 'wait_nmi') % 65536 + 0x800000)
 local function w(a,v) emu.write(a, v % 256, emu.memType.snesMemory) emu.write(a+1, (v // 256) % 256, emu.memType.snesMemory) end
 local function s16(v) if v >= 32768 then return v - 65536 end return v end
 -- base address of Mario's / Luigi's block
@@ -35,13 +36,14 @@ emu.addEventCallback(function()
   local mode = readw(MODE)
   if mode ~= 2 then
     if started then print('left the level (mode '..mode..', result '..readw(RES)..') at tick '..lastn..' lives '..readw(LIVES)); save('coop_$Mode'..'_exit'); finish(0) end
-    if f >= 60 and f % 30 == 0 then w(COOP, 1) w(FORM2, $Form2) w(DBG, LEVEL + 1) end
+    if f >= 60 and f % 30 == 0 then w(COOP, $Coop) w(FORM2, $Form2) w(DBG, LEVEL + 1) end
     pad{} pad2{}
     if f > 1200 then print('never reached the level'); finish(5) end
     return
   end
   local n = readw(FR)
   if n > 0 then started = true end
+  if started and n == lastn then lag = lag + 1 end
   local b1, b2 = {}, {}
   if TEST == 'run' then
     b1 = {right=true, y=true} if n % 40 < 18 then b1.b = true end
@@ -63,7 +65,7 @@ emu.addEventCallback(function()
     lastn = n
     if want[n] then save('coop_$Mode'..'_'..n) end
     if (TEST == 'heads' and n >= 38 and n <= 260 and n % 4 == 0) or n % 60 == 0 then log(n) end
-    if n >= LAST then log(n) finish(0) end
+    if n >= LAST then log(n) print("lag frames "..lag.." avg-end-scanline "..(sl_n>0 and sl_sum//sl_n or 0).." max "..sl_max) finish(0) end
   end
   if f > 60*150 then print('timeout at tick '..n); finish(6) end
 end, emu.eventType.endFrame)

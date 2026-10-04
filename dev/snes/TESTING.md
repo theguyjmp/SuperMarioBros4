@@ -66,3 +66,6 @@ the same tick in both); QA 55/55 levels (no crash/hang).
 `co_cur` (who is in the `p_*` slot), shared `g_lives` and `co_st` (out flags). `lives` walks Luigi into the enemies:
 4 -> 3 -> 2 -> 1 -> 0 (out), then Mario's death ends the level (the map takes that last life). Mesen2 quirk: controller 2
 is `emu.setInput(t, 0, 1)` in this build, not `(t, 1)`.
+`snes\test\menuflow.ps1 -Players 1|2` plays the real path from power-on (title -> 1/2 PLAYER GAME -> file 1 -> map -> first
+level) and prints lag frames; `coop.ps1 -Coop 0|1` also prints lag frames and the average scanline where the frame's work
+ended (CPU headroom). 2026-10-03: 1P identical to d455e7a (1-3: 5 lag / 600 ticks, avg line 83); 2P 1-3: 29 lag, avg 145.

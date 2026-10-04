@@ -21,7 +21,7 @@
 .include "scr_ids.inc"
 .endscope
 
-.import w_tick1, w_step2, ent_coop_collide
+.import w_tick1, w_step2, ent_coop_collide, pl_draw_cache, pc_id
 .import CO_X, CO_Y, CO_XVEL, CO_YVEL, CO_INAIR, CO_STATE, CO_FORM, CO_CARRY, CO_HURTINV, CO_DUCK, CO_CLIMB, CO_PWING
 .export co_tick, co_other_alive, co_level_start, co_level_end
 .ifdef scrinc::SCR_HOOKS
@@ -166,11 +166,13 @@ co_tick:
     cmp #PS_DYING
     beq @back
     jsr heads                   ; partner on the primary's head
+    jsl pl_draw_cache           ; its sprite for draw2 (no swap at draw time)
     jsl co_swap
     jsr heads                   ; primary on the partner's head
     jsr warp_check
     rtl
 @back:
+    jsl pl_draw_cache
     jsl co_swap
 @done:
     rtl
@@ -180,6 +182,7 @@ co_tick:
 @dying:
     jsl co_swap
     jsr dying2
+    jsl pl_draw_cache
     jsl co_swap
     rtl
 @hide:
@@ -428,6 +431,8 @@ heads:
 ; ------------------------------------------------------------------ level start / end (game.s)
 ; co_level_start: Mario is set up in the slot -> Luigi joins beside him (form g_form2). JSL.
 co_level_start:
+    lda #$FFFF
+    sta pc_id
     stz co_st
     stz co_st+2
     stz co_hide

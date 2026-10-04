@@ -152,15 +152,13 @@ sv_select:
     inx
     cpx #SV_SIZE
     bcc @cp
-    lda sv_tmp
-    beq :+
-    sep #$20
+    sep #$20                    ; the menu choice decides 1P / co-op for this session (not the file)
     .a8
-    lda #1
+    lda sv_tmp
     sta sv_two
     rep #$20
     .a16
-:   jsr session
+    jsr session
     plp
     clc
     rtl

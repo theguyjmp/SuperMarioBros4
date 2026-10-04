@@ -993,12 +993,12 @@ spr_level_load:
     lda spr_ld_n8
     beq @next
 @single:
-    ; cell = 119 - (s >> 2); quadrant q = s & 3 -> + (q & 1) + (q >> 1) * 16
+    ; cell = 111 (converter MaxCells - 1) - (s >> 2); quadrant q = s & 3 -> + (q & 1) + (q >> 1) * 16
     lda spr_ld_s
     lsr
     lsr
     sta spr_t0
-    lda #119
+    lda #111
     sec
     sbc spr_t0
     sta spr_t0
